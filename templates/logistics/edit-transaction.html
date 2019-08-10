@@ -1,0 +1,153 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Edit Transactino</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Transaciton ID:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'transaction-id' value = '{{head[3]}}'disabled/>        
+        </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Transaciton Type:</label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'transaction-type' disabled>
+            <option value = '{{head[0]}}' selected hidden>{{head[0]}}</option>
+            <option value = 'Inbound'>Inbound</option>
+            <option value = 'Outbound'>Outbound</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Transaciton Status:</label>
+        </div>
+        <div class = 'col-b'>
+          <select name = 'transaction-status' id = 'statuses'>
+              <option value = '{{head[2]}}' selected hidden>{{head[2]}}</option>
+              <option value = 'Complete'>Complete</option>
+              <option value = 'Pending'>Pending</option>
+              <option value = 'Canceled'>Canceled</option>
+          </select>
+        </div>
+      </div>
+  </div>
+  <div class = 'row'>
+    <div class = 'col-a'>
+      <label>Warehouse:</label>
+    </div>
+    <div class = 'col-b'>
+      <select name = 'warehouse' id = 'Warehouse' disabled>
+        <option value = ''>-----</option>
+        <option value = '{{head[1]}}' selected hidden>{{head[1]}}</option>
+        {% for w in warehouse%}
+          <option value = '{{w[0]}}'>{{w[0]}}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class = 'row'>
+    <div class = 'col-a'>
+      <label>Refernces:</label>
+    </div>
+    <div class = 'col-b'>
+        <select name = 'references' disabled>
+          <option value = '{{head[5]}}'>{{head[5]}}</option>
+          <option value = 'WH_Internal'>Warehouse internal request</option>
+          {% for r in rqst%}
+          <option value = '{{r[0]}}'>{{r[0]}}</option>
+          {% endfor %}
+        </select>
+    </div>
+  </div>
+  <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Comments:</label>
+      </div>
+      <div class = 'col-b'>
+          <textarea name="comments" id = 'comments'>{{head[4]}}</textarea>
+      </div>
+    </div>
+  <br />  
+  <div class = 'itms' style = 'text-align: left;'>
+    <br />
+    
+    <table id = 'itm-table' style = 'width: 100%;'>
+      <tr>
+        <th>Code:</th>
+        <th>Name:</th>
+        <th>Unit:</th>
+        <th>Bin:</th>
+        <th>Quantity:</th>
+      </tr>
+      {% for dt in details%}
+        <tr>
+            <td>{{dt[0]}}</td>
+            <td>{{dt[1]}}</td>
+            <td>{{dt[3]}}</td>
+            <td>{{dt[2]}}</td>
+            <td>{{dt[4]}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+    <th>ID:</th>
+    <th>Warehosue:</th>
+    <th>Type:</th>
+    <th>Creation Date:</th>
+    <th>Created By:</th>
+    <th>Last update:</th>
+    <th>Updated By:</th>
+    <th>Status:</th>
+    <th>Edit:</th>
+    <th>Invoice:</th>
+  </tr>
+  {% for tr in trans %}
+   <tr class = '{{tr[6]}}'>
+     <td>{{tr[7]}}</td>
+     <td>{{tr[5]}}</td>
+     <td>{{tr[4]}}</td>
+     <td>{{tr[0]}}</td>
+     <td>{{tr[1]}}</td>
+     <td>{{tr[2]}}</td>
+     <td>{{tr[3]}}</td>
+     <td>{{tr[6]}}</td>
+     <td><a href = "{{url_for('logistics.edit_transaction', transid = tr[7])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+     <td><a href = "{{url_for('logistics.print_invoice', transid = tr[7], transby = tr[1], transtype = tr[4], transtatus = tr[6], wh = tr[5])}}"><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+   </tr>
+  {% endfor %}
+ </table>
+</div>
+<script>
+$(document).ready(function(){
+    if($('#statuses option:selected').text() != "Pending"){
+        $('#statuses').prop('disabled', true);
+        $('#comments').prop('disabled', true);
+    }
+});
+</script>
+
+{% endblock %}

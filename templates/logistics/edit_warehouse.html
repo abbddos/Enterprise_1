@@ -1,0 +1,191 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Edit Warehouse</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% for ww in whh%}
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Name:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Name' value = '{{ww[2]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Code:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Code' value = '{{ww[1]}}' disabled />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Location:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Location' value = '{{ww[0]}}' />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Description:</label>
+      </div>
+      <div class = 'col-b'>
+        <textarea name = 'Description'>{{ww[3]}}</textarea>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <a href = "#" style = "text-decoration: none; font-weight: bold;" id = "PickItem">Add Bin</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+    <th>Bin Code:</th>
+    <th>Bin Name:</th>
+    <th>Bin Status:</th>
+    <th>Edit:</th>
+  </tr>
+  {% for b in bins %}
+  <tr>
+    <td class = "{{b[2]}}">{{b[0]}}</td>
+    <td class = "{{b[2]}}">{{b[1]}}</td>
+    <td class = "{{b[2]}}">{{b[2]}}</td>
+    <td class = "{{b[2]}}"><a href = "#" id = "{{b[0]}}" class = "edit_bin"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+<div id="myModal" class="modal">
+<div class="modal-content">
+  <span class="close">&times;</span>
+  <p>Add Bin</p>
+  <h5 style = 'color: green;'>Add a new bin to warehouse {{code}}</h5>
+  <form action = "{{url_for('logistics.add_bin', wh = code)}}" method = "POST">
+
+    <div class = 'fields'>
+      {{ render_field(form.name)}}
+      {{ render_field(form.code)}}
+      {{ render_field(form.status)}}
+      {{ render_field(form.description)}}
+    </div>
+    <div class = 'submission'>
+      <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+              <div class = "{{category}}">
+              <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+  </form>
+</div>
+</div>
+
+<div id="myModal1" class="modal">
+<div class="modal-content">
+  <span class="close">&times;</span>
+  <p>Edit Bin</p>
+
+  <form action = "{{url_for('logistics.edit_bin', whcode = code)}}" method = "POST">
+    <div class = 'fields'>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Bin Name:</label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' id = 'BinName' name = "Bname"/>
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Bin Code:</label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' id = 'BinCode' name = "Bcode"/>
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Bin Status:</label>
+        </div>
+        <div class = 'col-b'>
+          <select id = 'BinStatus' name = "Bstatus">
+            {% for b in bins%}
+            <option value = '{{b[2]}}' hidden>{{b[2]}}</option>
+            {% endfor %}
+            <option value = 'Open'>Open</option>
+            <option value = 'Locked'>Locked</option>
+          </select>
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Bin Description:</label>
+        </div>
+        <div class = 'col-b'>
+          <textarea id = 'BinDesc' name = "Bdesc" ></textarea>
+        </div>
+      </div>
+    </div>
+    <div class = 'submission'>
+      <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+              <div class = "{{category}}">
+              <p>{{ message }}</p>
+              </div>
+            {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+  </form>
+
+</div>
+</div>
+
+<script>
+  $(function(){
+    $('.edit_bin').click(function(){
+      $.getJSON('/GrabBin', {
+        BCode: $(this).attr('id'),
+      }, function(data){
+        if(data.msg == 'success'){
+          $('#BinName').val(data.BinName);
+          $('#BinCode').val(data.BinCode);
+          $('#BinStatus').val(data.BinStatus);
+          $('#BinDesc').val(data.BinDesc);
+        }
+        else{
+          $('.msg').val('Item not found');
+        }
+      });
+      return false;
+    });
+  });
+</script>
+{% endblock %}

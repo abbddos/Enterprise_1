@@ -1,0 +1,12 @@
+{% extends 'layout.html'%}
+{% block content%}
+<div class="vertical-menu">
+  <h3>{{user}}</h3>
+ <a href="{{url_for('profile.user_profile', user = user)}}">User Profile</a>
+ <a href = "{{url_for('profile.change_password', user = user)}}">Change Password</a>
+</div>
+
+  {% block profilepage%}
+  {% endblock %}
+
+{% endblock %}

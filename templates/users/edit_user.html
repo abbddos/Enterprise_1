@@ -1,0 +1,187 @@
+{% extends 'users/admin.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block adminpage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Edit User</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% for d in data2 %}
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>ID: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'ID' value = '{{d[0]}}' disabled />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>First name: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'firstname' value = '{{d[1]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Last Name: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'lastname' value = '{{d[2]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>User Name: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'usrname' value = '{{d[3]}}' disabled/>
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Company: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'company' value = '{{d[5]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Position: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'position' value = '{{d[6]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Department: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'department' value = '{{d[7]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Email: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'email' value = '{{d[8]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Phone #1: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'phone1' value = '{{d[9]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Phone #2: </label>
+        </div>
+        <div class = 'col-b'>
+          <input type = 'text' name = 'phone2' value = '{{d[10]}}' />
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>User Type: </label>
+        </div>
+        <div class = 'col-b'>
+          <select name = 'usertype'>
+            <option value = '{{d[11]}}' hidden>{{d[11]}}</option>
+            <option value = 'Admin'>Admin</option>
+            <option value = 'Viewer'>Viewer</option>
+            <option value = 'User'>User</option>
+          </select>
+        </div>
+      </div>
+      <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Status: </label>
+        </div>
+        <div class = 'col-b'>
+          <select name = 'status'>
+            <option value = '{{d[12]}}' hidden>{{d[12]}}</option>
+            <option value = 'Active'>Active</option>
+            <option value = 'Inactive'>Inactive</option>
+          </select>
+        </div>
+    </div>
+    <h5 style = 'color: rgb(0,0,100); font-weight: bold;'>Can Approve:</h5>
+    
+    <table>
+      <tr>
+        <th><input type = 'Checkbox' id = 'select_all' /></th>
+        <th>All</th>
+      </tr>
+      <tr>
+        <td><input type = 'Checkbox' value = 'inventory-requests' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'inventory-requests' %} checked {% else %}{% endif %}{%endfor%}/></td>
+        <td>Inventory Requests</td>
+      </tr>
+    </table>
+    
+    {% endfor %}
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+      <th>ID</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>UserName</th>
+      <th>Company</th>
+      <th>Position</th>
+      <th>department</th>
+      <th>Email</th>
+      <th>Phone #1</th>
+      <th>Phone #2</th>
+      <th>User Type</th>
+      <th>Status</th>
+      <th>Edit</th>
+      <th>Reset Password</th>
+    </tr>
+    {% for d in data1 %}
+      <tr>
+        <td class = '{{d[11]}}'>{{d[0]}}</td>
+        <td class = '{{d[11]}}'>{{d[1]}}</td>
+        <td class = '{{d[11]}}'>{{d[2]}}</td>
+        <td class = '{{d[11]}}'>{{d[3]}}</td>
+        <td class = '{{d[11]}}'>{{d[4]}}</td>
+        <td class = '{{d[11]}}'>{{d[5]}}</td>
+        <td class = '{{d[11]}}'>{{d[6]}}</td>
+        <td class = '{{d[11]}}'>{{d[7]}}</td>
+        <td class = '{{d[11]}}'>{{d[8]}}</td>
+        <td class = '{{d[11]}}'>{{d[9]}}</td>
+        <td class = '{{d[11]}}'>{{d[10]}}</td>
+        <td class = '{{d[11]}}'>{{d[11]}}</td>
+        <td class = '{{d[11]}}'><a href = "{{url_for('users.edit_user', id = d[0])}}""><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+        <td class = '{{d[11]}}'><a href = "{{url_for('users.reset_password', user = d[0])}}"><img src = "{{url_for('static', filename = 'images/reset_password.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#select_all').click(function(){
+            $('.appr_check').prop('checked', this.checked);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>Enterprise</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/style_main.css')}}"/>
+    <link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/jquery.treetable.css')}}"/>
+    <link rel="icon" href="{{url_for('static', filename = 'images/logo.png')}}" sizes="16x16" />
+    <script src = "{{url_for('static', filename = 'js/jquery/dist/jquery.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/jquery/dist/jquery.min.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/jquery/dist/jquery-ui.min.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/PickItem.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/PickPackage.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/BinEditor.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/toggler.js')}}"></script>
+  </head>
+  <body>
+    <nav class = "main-nav">
+      <ul>
+        <li><a href = "{{url_for('users.create_user')}}">Users</a></li>
+        <li><a href = "{{url_for('logistics.logistics')}}">Logistics</a></li>
+        <li><a href = "#'">Finance</a></li>
+        <li><a href = "#">Procurement</a></li>
+        <li><a href = "#'">Sales</a></li>
+        <li class="dropdown">
+          <a href="javascript:void(0)" class="dropbtn">{{username}}</a>
+          <div class="dropdown-content">
+            <a href="{{url_for('profile.user_profile', user = username)}}">View Profile</a>
+            <a href="{{url_for('logout')}}">Log Out</a>
+          </div>
+        </li>
+      </ul>
+    </nav>
+
+    <div class = 'mainpage'>
+    {% block content %}
+    {% endblock%}
+    </div>
+  </body>
+</html>

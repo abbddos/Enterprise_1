@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <title>Enterprise</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/style_login.css')}}" />
+    <link rel="icon" href = "{{url_for('static', filename = 'images/logo.png')}}" sizes="16x16" /> 
+  </head>
+  <body>
+    <form method = 'POST' action = "{{url_for('login')}}">
+      <div class = 'fields'>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class = 'title'>
+          <h2>Enterprise</h2>
+          <h5>for Finance and Logistics Management</h5>
+        </div>
+        <div class = 'row'>
+          <div class = 'col-a'>
+            {{form.usrname.label}}
+          </div>
+          <div class = 'col-b'>
+            {{form.usrname}}
+          </div>
+        </div>
+        <div class = 'row'>
+          <div class = 'col-a'>
+            {{form.passwd.label}}
+          </div>
+          <div class = 'col-b'>
+            {{form.passwd}}
+          </div>
+        </div>
+      </div>
+      <div class = 'submission'>
+        <input type = 'submit' name = 'submit' class = 'btn-active' value = 'Login'/>
+        <a href = '#'>Forgot Password</a>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+              {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    </form>
+  </body>
+</html>

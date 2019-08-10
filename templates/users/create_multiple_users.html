@@ -1,0 +1,61 @@
+{% extends 'users/admin.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block adminpage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Create multiple users from external template</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {{ render_field(form.FileName) }}
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+      <th>ID</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>UserName</th>
+      <th>Company</th>
+      <th>Position</th>
+      <th>department</th>
+      <th>Email</th>
+      <th>Phone #1</th>
+      <th>Phone #2</th>
+      <th>User Type</th>
+      <th>Status</th>
+      <th>Edit</th>
+      <th>Reset Password</th>
+    </tr>
+    {% for d in data %}
+      <tr>
+        <td class = '{{d[11]}}'>{{d[0]}}</td>
+        <td class = '{{d[11]}}'>{{d[1]}}</td>
+        <td class = '{{d[11]}}'>{{d[2]}}</td>
+        <td class = '{{d[11]}}'>{{d[3]}}</td>
+        <td class = '{{d[11]}}'>{{d[4]}}</td>
+        <td class = '{{d[11]}}'>{{d[5]}}</td>
+        <td class = '{{d[11]}}'>{{d[6]}}</td>
+        <td class = '{{d[11]}}'>{{d[7]}}</td>
+        <td class = '{{d[11]}}'>{{d[8]}}</td>
+        <td class = '{{d[11]}}'>{{d[9]}}</td>
+        <td class = '{{d[11]}}'>{{d[10]}}</td>
+        <td class = '{{d[11]}}'>{{d[11]}}</td>
+        <td class = '{{d[11]}}'><a href = "{{url_for('users.edit_user', id = d[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+        <td class = '{{d[11]}}'><a href = "{{url_for('users.reset_password', user = d[0])}}"><img src = "{{url_for('static', filename = 'images/reset_password.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

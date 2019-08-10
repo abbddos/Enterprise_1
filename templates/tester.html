@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Testig Page</title>
+    <script src = "{{url_for('static', filename = 'js/jquery/dist/jquery.js')}}"></script>
+    <script src = "{{url_for('static', filename = 'js/jquery/dist/jquery.min.js')}}"></script>
+  </head>
+  <body>
+    <form>
+      <div class = 'fields'>
+        <input type = 'text' name = 'fuckit' />
+        <a href = "#" id = 'adder'>Add Line</a>
+      </div>
+      <div class = 'submission'>
+        <input type = 'submit' name = 'submit' value = 'Submit'/>
+      </div>
+    </form>
+  </body>
+  <script>
+    $(document).ready(function(){
+      var i = 1;
+      $('#adder').click(function(){
+        i++;
+        $('.fields').append("<div class = 'added' id = 'div_"+i+"'><input type = 'text' name = 'fuckit' /><a href = '#' class = 'rmv' id = '"+i+"'>remove</a></div>");
+      });
+
+      $(document).on('click', '.rmv', function(){
+        var ids = $(this).attr('id');
+        $('#div_'+ ids).remove();
+      });
+    });
+  </script>
+</html>

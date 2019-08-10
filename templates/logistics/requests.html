@@ -1,0 +1,228 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Create Request</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Request Type:</label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'type'>
+            <option value = 'Inbound'>Inbound</option>
+            <option value = 'Outbound'>Outbound</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+          <label>Request Status:</label>
+        </div>
+        <div class = 'col-b'>
+          <select name = 'status'>
+              <option value = 'Pending'>Pending</option>
+              <option value = 'Approved'>Approved</option>
+              <option value = 'Rejected'>Rejected</option>
+              <option value = 'Canceled'>Canceled</option>
+              <option value = 'Complete'>Complete</option>
+          </select>
+        </div>
+      </div>
+      <div class = 'row'>
+            <div class = 'col-a'>
+              <label>Approver:</label>
+            </div>
+            <div class = 'col-b'>
+              <select name = 'approver'>
+                  <option></option>
+                  {% for a in appr %}
+                  <option value = '{{a[2]}}'>{{a[0]}} {{a[1]}}</option>
+                  {% endfor %}
+              </select>
+            </div>
+          </div>
+  
+  
+  <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Comments:</label>
+      </div>
+      <div class = 'col-b'>
+          <textarea name="comments"></textarea>
+      </div>
+    </div>
+    </div>
+  <br />  
+  <div class = 'itms' style = 'text-align: left;'>
+    <div class = 'row'>
+      <div class = 'col-a'>
+          <a href = '#' id = 'PickItem'>Add Item</a>
+      </div>
+      <div class = 'col-b'>
+          <a href = '#' id = 'PickPackage'>Add Package</a>
+      </div>
+    </div>
+    <br />
+    
+    <table id = 'itm-table' style = 'width: 100%;'>
+      <tr>
+        <th>Code:</th>
+        <th>Name:</th>
+        <th>Unit:</th>
+        <th>Quantity:</th>
+        <th>Remove:</th>
+      </tr>
+
+    </table>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+ <tr>
+   <th>ID:</th>
+   <th>Creation Date:</th>
+   <th>Created By:</th>
+   <th>Last update:</th>
+   <th>Updated By:</th>
+   <th>type</th>
+   <th>Status:</th>
+   <th>Edit:</th>
+   
+ </tr>
+ {% for tr in trans %}
+  <tr class = '{{tr[6]}}'>
+    <td>{{tr[0]}}</td>
+    <td>{{tr[1]}}</td>
+    <td>{{tr[2]}}</td>
+    <td>{{tr[3]}}</td>
+    <td>{{tr[4]}}</td>
+    <td>{{tr[5]}}</td>
+    <td>{{tr[6]}}</td>
+    <td><a href = "{{url_for('logistics.edit_request', reqid = tr[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+  </tr>
+ {% endfor %}
+</table>
+</div>
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Pick Item</p>
+    <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
+    <div class = 'items' stye = 'overflow: scroll;'>
+      <table>
+        <tr>
+          <th>Item Code:</th>
+          <th>Item Name: </th>
+          <th>Provider: </th>
+          <th>Unit: </th>
+        </tr>
+        {% for t in itms %}
+          <tr>
+            <td><a class = 'itm' href = '#'>{{t[0]}}</a></td>
+            <td>{{t[1]}}</td>
+            <td>{{t[2]}}</td>
+            <td>{{t[3]}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  </div>
+
+  <div id="myModal1" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <p>Pick Package</p>
+      <h5 style = 'color: green;'> Pick an Pakcage from the table below to add it to package</h5>
+      <div class = 'items' stye = 'overflow: scroll;'>
+        <table>
+          <tr>
+            <th>Package Code:</th>
+            <th>Package Name: </th>
+          </tr>
+          {% for p in pkgs %}
+            <tr>
+              <td><a class = 'pkg' href = '#'>{{p[0]}}</a></td>
+              <td>{{p[1]}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    </div>
+
+
+<script>
+  $(function(){
+    var i = 0;
+
+    $('.itm').click(function(){
+      i++
+      $.getJSON('/GrabItems', {
+        ItCode: $(this).text(),
+      }, function(data){
+        if(data.msg == 'success'){
+          $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.itemcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = '"+data.itemunit+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+          $.getJSON('/GetBin/' + $('#Warehouse').val(), function(data){
+            $('#bin_' + i).find('option').remove();
+            $('#bin_' + i).append('<option value = "">----------</option>');
+            $.each(data.bins, function(key, val){
+              $('#bin_' + i).append('<option value = "' + val + '">' + val + '</option>');
+            });
+          });
+        }
+        else{
+          $('.msg').val('Item not found');
+        }
+      });
+      $('#myModal').hide();
+      return false;
+    });
+
+    $('.pkg').click(function(){
+        i++
+        $.getJSON('/GrabPacks', {
+          PKCode: $(this).text(),
+        }, function(data){
+          if(data.msg == 'success'){
+            $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.packcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.packname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = 'Pack' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+            $.getJSON('/GetBin/' + $('#Warehouse').val(), function(data){
+              $('#bin_' + i).find('option').remove();
+              $('#bin_' + i).append('<option value = "">----------</option>');
+              $.each(data.bins, function(key, val){
+                $('#bin_' + i).append('<option value = "' + val + '">' + val + '</option>');
+              });
+            });
+          }
+          else{
+            $('.msg').val('Item not found');
+          }
+        });
+
+        $('#myModal1').hide();
+        return false;
+      });
+
+    $(document).on('click','.rmv', function(){
+      var ids = $(this).attr('id');
+      $('#tr_'+ ids).remove();
+    });
+  });
+</script>
+
+
+{% endblock %}

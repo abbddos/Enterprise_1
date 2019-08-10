@@ -1,0 +1,10 @@
+{% macro render_field(field) %}
+<div class = 'row'>
+  <div class = 'col-a'>
+    {{field.label}}
+  </div>
+  <div class = 'col-b'>
+    {{field(**kwargs)|safe}}
+  </div>
+</div>
+{% endmacro %}

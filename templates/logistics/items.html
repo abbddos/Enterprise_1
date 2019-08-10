@@ -1,0 +1,91 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <h3>Items</h3>
+  <div class = 'fields'>
+  <div id = "mytabs">
+  <ul>
+    <li><a href = "#tabs-1">General</a></li>
+    <li><a href = "#tabs-2">Size and Dimentions</a></li>
+    <li><a href = "#tabs-3">Specs and Numbers</a></li>
+    <li><a href = "#tabs-4">Color</a></li>
+  </ul>
+
+  <div id="tabs-1" class="tabcontent">
+    {{render_field(form.ItemName)}}
+    {{render_field(form.Brand)}}
+    {{render_field(form.Provider)}}
+    {{render_field(form.Unit)}}
+    {{render_field(form.UnitPrice)}}
+    {{render_field(form.Group)}}
+    {{render_field(form.Category)}}
+    {{render_field(form.Description)}}
+  </div>
+  <div id="tabs-2" class="tabcontent">
+    {{render_field(form.Length, value = 0.0)}}
+    {{render_field(form.LengthUnit)}}
+    {{render_field(form.Width, value = 0.0)}}
+    {{render_field(form.WidthUnit)}}
+    {{render_field(form.Height, value = 0.0)}}
+    {{render_field(form.HeightUnit)}}
+    {{render_field(form.Diameter, value = 0.0)}}
+    {{render_field(form.DiamaterUnit)}}
+    {{render_field(form.Size)}}
+  </div>
+  <div id="tabs-3" class="tabcontent">
+    {{render_field(form.SKU)}}
+    {{render_field(form.PartNumber)}}
+    {{render_field(form.IEME)}}
+  </div>
+  <div id = "tabs-4" class = "tabcontent">
+    {{render_field(form.Color)}}
+  </div>
+</div>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+    <th>Item ID:</th>
+    <th>Item Code:</th>
+    <th>Item:</th>
+    <th>Brand:</th>
+    <th>Provider:</th>
+    <th>Unit:</th>
+    <th>Unit Price:</th>
+    <th>Edit:</th>
+  </tr>
+  {%for i in data%}
+  <tr>
+    <td>{{i[0]}}</td>
+    <td>{{i[1]}}</td>
+    <td>{{i[2]}}</td>
+    <td>{{i[3]}}</td>
+    <td>{{i[4]}}</td>
+    <td>{{i[5]}}</td>
+    <td>{{i[6]}}</td>
+    <td><a href = "{{url_for('logistics.edit_item', itm = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+<script>
+$(document).ready(function(){
+  $("#mytabs").tabs();
+});
+</script>
+{% endblock %}

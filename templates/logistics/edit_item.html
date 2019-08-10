@@ -1,0 +1,323 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <h3>Edit Item</h3>
+  <div id = 'mytabs'>
+  <ul>
+    <li><a href = "#tabs-1">General</a></li>
+    <li><a href = "#tabs-2">Size and Dimentions</a></li>
+    <li><a href = "#tabs-3">Specs and Numbers</a></li>
+    <li><a href = "#tabs-4">Color</a></li>
+  </ul>
+  {%for j in data1%}
+  <div id="tabs-1" class="tabcontent">
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Item ID: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'ItemID' value = '{{j[0]}}' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Item Code: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'ItemCode' value = '{{j[1]}}' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Item Name:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'ItemName' value = '{{j[2]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Brand:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Brand' value = '{{j[3]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Provider: </label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'Provider'>
+          <option value = '{{j[4]}}' selected hidden>{{j[4]}}</option>
+          {%for prov in provs%}
+          <option value = '{{prov[0]}}'>{{prov[0]}}</option>
+          {%endfor%}
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Unit:</label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'Unit'>
+          <option value = '{{j[5]}}' selected hidden>{{j[5]}}</option>
+          <option value = 'mm'>mm</option>
+          <option value = 'cm'>cm</option>
+          <option value = 'inch'>inch</option>
+          <option value = 'foot'>foot</option>
+          <option value = 'meter'>meter</option>
+          <option value = 'Km'>Km</option>
+          <option value = 'mile'>mile</option>
+          <option value = 'g'>g</option>
+          <option value = 'ounce'>ounce</option>
+          <option value = 'lbs'>lbs</option>
+          <option value = 'Kg'>Kg</option>
+          <option value = 'Ton'>Ton</option>
+          <option value = 'cc'>cc</option>
+          <option value = 'liter'>liter</option>
+          <option value = 'US gal'>US gal</option>
+          <option value = 'UK gal'>UK gal</option>
+          <option value = 'Tank'>Tank(20 l)</option>
+          <option value = 'pack'>pack</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Unit Price:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'UnitPrice' value = '{{j[6]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Group:</label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'Group'>
+          <option value = '{{j[21]}}' hidden>{{j[21]}}</option>
+          {% for g in grp%}
+          <option value = '{{g[0]}}'>{{g[0]}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Category:</label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'Category'>
+        <option value = '{{j[22]}}' hidden>{{j[22]}}</option>
+        <option value = 'Asset'>Asset</option>
+        <option value = 'Non-Asset'>Non-Asset</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Description: </label>
+      </div>
+      <div class = 'col-b'>
+        <textarea name = 'Description'>{{j[7]}}</textarea>
+      </div>
+    </div>
+  </div>
+  <div id="tabs-2" class="tabcontent">
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Length: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Length' value = '{{j[13]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Length unit: </label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'LengthUnit'>
+          <option value = '{{j[17]}}' selected hidden>{{j[17]}}</option>
+          <option value = 'mm'>mm</option>
+          <option value = 'cm'>cm</option>
+          <option value = 'inch'>inch</option>
+          <option value = 'foot'>foot</option>
+          <option value = 'meter'>meter</option>
+          <option value = 'Km'>Km</option>
+          <option value = 'mile'>mile</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Width: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Width' value = '{{j[14]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Width unit: </label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'WidthUnit'>
+          <option value = '{{j[18]}}' selected hidden>{{j[18]}}</option>
+          <option value = 'mm'>mm</option>
+          <option value = 'cm'>cm</option>
+          <option value = 'inch'>inch</option>
+          <option value = 'foot'>foot</option>
+          <option value = 'meter'>meter</option>
+          <option value = 'Km'>Km</option>
+          <option value = 'mile'>mile</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Height: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Height' value = '{{j[15]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Height unit: </label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'HeightUnit'>
+          <option value = '{{j[19]}}' selected hidden>{{j[19]}}</option>
+          <option value = 'mm'>mm</option>
+          <option value = 'cm'>cm</option>
+          <option value = 'inch'>inch</option>
+          <option value = 'foot'>foot</option>
+          <option value = 'meter'>meter</option>
+          <option value = 'Km'>Km</option>
+          <option value = 'mile'>mile</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Diameter: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Diameter' value = '{{j[16]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Diameter unit: </label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'DiamaterUnit'>
+          <option value = '{{j[20]}}' selected hidden>{{j[20]}}</option>
+          <option value = 'mm'>mm</option>
+          <option value = 'cm'>cm</option>
+          <option value = 'inch'>inch</option>
+          <option value = 'foot'>foot</option>
+          <option value = 'meter'>meter</option>
+          <option value = 'Km'>Km</option>
+          <option value = 'mile'>mile</option>
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Size: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Size' value = '{{j[8]}}'/>
+      </div>
+    </div>
+  </div>
+  <div id="tabs-3" class="tabcontent">
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>SKU: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'SKU' value = '{{j[10]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Part Number: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'PartNumber' value = '{{j[11]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>IEME: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'IEME' value = '{{j[12]}}'/>
+      </div>
+    </div>
+  </div>
+  <div id = "tabs-4" class = "tabcontent">
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Color: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'Color' value = '{{j[9]}}'/>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+    <th>Item ID:</th>
+    <th>Item Code:</th>
+    <th>Item:</th>
+    <th>Brand:</th>
+    <th>Provider:</th>
+    <th>Unit:</th>
+    <th>Unit Price:</th>
+    <th>Edit:</th>
+  </tr>
+  {%for i in data%}
+  <tr>
+    <td>{{i[0]}}</td>
+    <td>{{i[1]}}</td>
+    <td>{{i[2]}}</td>
+    <td>{{i[3]}}</td>
+    <td>{{i[4]}}</td>
+    <td>{{i[5]}}</td>
+    <td>{{i[6]}}</td>
+    <td><a href = "{{url_for('logistics.edit_item', itm = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+<script>
+$(document).ready(function(){
+  $("#mytabs").tabs();
+});
+</script>
+{% endblock %}

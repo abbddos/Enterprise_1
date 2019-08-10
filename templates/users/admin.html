@@ -1,0 +1,12 @@
+{% extends 'layout.html'%}
+{% block content%}
+<div class="vertical-menu">
+  <h3>Users</h3>
+ <a href = "{{url_for('users.create_user')}}">Create/Edit Users</a>
+ <a href = "{{url_for('users.create_multiple_users')}}">Create users from external template</a>
+</div>
+
+  {% block adminpage%}
+  {% endblock %}
+
+{% endblock %}

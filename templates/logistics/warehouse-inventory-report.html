@@ -1,0 +1,75 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Warehouse inventory report</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>From date:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'date' name = 'from-date' id = 'from-date'/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>To date:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'date' name = 'to-date' id = 'to-date'/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>File type:</label>
+        </div>
+        <div class = 'col-b'>
+            <select name = 'file-type'>
+                <option value = 'csv'>.csv</option>
+                <option value = 'pdf'>.pdf</option>
+            </select>
+        </div>
+    </div>
+    <div class = 'row'>
+        <table>
+            <tr>
+                <th><input type = 'checkbox' id = 'select_all'/> Select all:</th>
+                <th>Warehouse code:</th>
+                <th>Warehouse Name:</th>
+            </tr>
+            {% for w in wh%}
+            <tr>
+                <td><input class = 'wh-check' type = 'checkbox' name = 'wh_check' value = '{{w[0]}}'/></td>
+                <td>{{w[0]}}</td>
+                <td>{{w[1]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+</div>
+
+<script>
+$(document).ready(function(){
+    $('#select_all').click(function(){
+        $('.wh-check').prop('checked', this.checked);
+    });
+});
+</script>
+{% endblock %}

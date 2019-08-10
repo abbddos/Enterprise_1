@@ -1,0 +1,72 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Edit Provider</h3>
+  <div class = 'fields'>
+    {% for i in data1 %}
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>ID:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'id' value = '{{i[0]}}' disabled />
+      </div>
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {{ render_field(form.name, value = i[1]) }}
+    {{ render_field(form.address, value = i[2]) }}
+    {{ render_field(form.phone1, value = i[3])}}
+    {{ render_field(form.phone2, value = i[4])}}
+    {{ render_field(form.email, value = i[5])}}
+    {{ render_field(form.pobox, value = i[6])}}
+    <div class = 'row'>
+    <div class = 'col-a'>
+      <label>Description:</label>
+    </div>
+    <div class = 'col-b'>
+      <textarea name = 'description'>{{i[7]}}</textarea>
+    </div>
+    </div>
+  </div>
+    {% endfor %}
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+      <th>ID:</th>
+      <th>Name:</th>
+      <th>Address:</th>
+      <th>Phone #1:</th>
+      <th>Phone #2:</th>
+      <th>email:</th>
+      <th>PO-BOX:</th>
+      <th>Edit:</th>
+    </tr>
+    {% for d in data %}
+      <tr>
+        <td>{{d[0]}}</td>
+        <td>{{d[1]}}</td>
+        <td>{{d[2]}}</td>
+        <td>{{d[3]}}</td>
+        <td>{{d[4]}}</td>
+        <td>{{d[5]}}</td>
+        <td>{{d[6]}}</td>
+        <td><a href = "{{url_for('logistics.edit_provider', prv = d[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

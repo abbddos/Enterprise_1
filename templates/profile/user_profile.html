@@ -1,0 +1,105 @@
+{% extends 'profile/profile.html'%}
+{% block profilepage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>User Profile</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {% for d in data %}
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>ID: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[0]}}' name = 'ID' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Username: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{username}}' name = 'username' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>User Type: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[8]}}' name = 'usertype' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>First Name: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[1]}}' name = 'firstname' />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Last Name: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[2]}}' name = 'lastname' />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Position: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[4]}}' name = 'position' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Department: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[3]}}' name = 'department' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Email: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[5]}}' name = 'email' />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Phone #1: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[6]}}' name = 'phone1' />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Phone #2: </label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{d[7]}}' name = 'phone2' />
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+</div>
+{% endblock %}

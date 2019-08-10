@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <style>
+            body{font-family: "Arial Black", Gadget, sans-serif;}
+
+            p{white-space: pre-wrap;}
+
+            h1{
+                color: white;
+                background-color: rgb(0,0,100);}
+                
+            table{
+                width: 95%;
+                border: solid;
+                border-width: 1px;
+                border-color: #eee;
+                margin-bottom: 25px;
+                font-size: 8px;}
+
+            th{
+                width: auto;
+                background-color: rgb(0,0,100);
+                color: white;
+                text-align: left;
+                padding: 5px;
+                border-bottom: solid;
+                font-size: 8px;}
+
+            tr{
+                border-bottom: solid;
+                border-width: 1px;
+                border-color: black;
+                background-color: white;
+                font-size: 8px;}
+
+            tr:nth-child(even){background-color: #eee;}
+        </style>
+    </head>
+    <body>
+        <h1>Enterprise Transaction Invoice</h1>
+        <table>
+            <tr>
+                <td>Transaction ID:</td>
+                <td>{{transid}}</td>
+                <td>Created on:</td>
+                <td>{{transdate}}</td>
+            </tr>
+            <tr>
+                <td>Transaction Type</td>
+                <td>{{transtype}}</td>
+                <td>Carried out by:</td>
+                <td>{{transby}}</td>
+            </tr>
+            <tr>
+                <td>Transaction Status:</td>
+                <td>{{transtatus}}</td>
+                <td>Warehouse:</td>
+                <td>{{wh}}</td>
+            </tr>
+            <tr>
+                <td>Last Update:</td>
+                <td>{{cmnt[0]}}</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <th>Item Code:</th>
+                <th>Item Name:</th>
+                <th>Unit:</th>
+                <th>Bin:</th>
+                <th>Quantity:</th>
+            </tr>
+            {% for d in data %}
+            <tr>
+                <td>{{d[0]}}</td>
+                <td>{{d[1]}}</td>
+                <td>{{d[3]}}</td>
+                <td>{{d[2]}}</td>
+                <td>{{d[4]}}</td>
+            </tr>
+            {% endfor%}
+        </table>
+        <h3><b>Comments: </b></h3>
+        <p>{{cmnt[2]}}</p>
+        <table>
+            <tr>
+                <td>Transaction Completed by(Name):</td>
+                <td>______________________________________________</td>
+                <td>Signature:</td>
+                <td>______________________________________________</td>
+            </tr>
+            <tr>
+                <td>Received by(Name):</td>
+                <td>______________________________________________</td>
+                <td>Signature:</td>
+                <td>______________________________________________</td>
+            </tr>
+        </table>
+    </body>
+</html>

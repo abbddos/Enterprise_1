@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <style>
+            body{font-family: "Arial Black", Gadget, sans-serif;}
+
+            p{white-space: pre-wrap;}
+
+            h1{
+                color: white;
+                background-color: rgb(0,0,100);}
+                
+            table{
+                width: 95%;
+                border: solid;
+                border-width: 1px;
+                border-color: #eee;
+                margin-bottom: 25px;
+                font-size: 10px;}
+
+            th{
+                width: auto;
+                background-color: rgb(0,0,100);
+                color: white;
+                text-align: left;
+                padding: 5px;
+                border-bottom: solid;}
+
+            tr{
+                border-bottom: solid;
+                border-width: 1px;
+                border-color: black;
+                background-color: white;}
+
+            tr:nth-child(even){background-color: #eee;}
+        </style>
+    </head>
+    <body>
+        <h1>Enterprise Items/Packs Inventory Report</h1>
+        <table>
+            <tr>
+                <td>Report Date:</td>
+                <td>{{reportdate}}</td>
+            </tr>
+        </table>
+        {% for t in itm %}
+        <h5>{{t}}</h5>
+        <table>
+            <tr>
+                <th>Last Update:</th>
+                <th>Warehouse:</th>
+                <th>Bin:</th>
+                <th>Item Code:</th>
+                <th>Item Name:</th>
+                <th>Quantity:</th>
+                <th>Unit:</th>
+                <th>Unit Price:</th>
+                <th>Bulk Price:</th>
+            </tr>
+            {% for d in data %}
+                {% if d[0] == t %}
+                    <tr>
+                        <td>{{d[6]}}</td>
+                        <td>{{d[2]}}</td>
+                        <td>{{d[3]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
+                        <td>{{d[5]}}</td>
+                        <td>{{d[4]}}</td>
+                        <td>{{d[7]}}</td>
+                        <td>{{d[8]}}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+        {% endfor%}
+
+        {% for p in pkg %}
+        <h5>{{p}}</h5>
+        <table>
+            <tr>
+                <th>Last Update:</th>
+                <th>Warehouse:</th>
+                <th>Bin:</th>
+                <th>Item Code:</th>
+                <th>Item Name:</th>
+                <th>Quantity:</th>
+                <th>Unit:</th>
+                <th>Unit Price:</th>
+                <th>Bulk Price:</th>
+            </tr>
+            {% for d in data %}
+                {% if d[0] == p %}
+                    <tr>
+                        <td>{{d[6]}}</td>
+                        <td>{{d[2]}}</td>
+                        <td>{{d[3]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
+                        <td>{{d[5]}}</td>
+                        <td>{{d[4]}}</td>
+                        <td>{{d[7]}}</td>
+                        <td>{{d[8]}}</td>
+                    </tr>
+                {% endif %}
+            {% endfor %}
+        </table>
+        {% endfor%}
+    </body>
+</html>

@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <style>
+            body{font-family: "Arial Black", Gadget, sans-serif;}
+
+            p{white-space: pre-wrap;}
+
+            h1{
+                color: white;
+                background-color: rgb(0,0,100);}
+                
+            table{
+                width: 95%;
+                border: solid;
+                border-width: 1px;
+                border-color: #eee;
+                margin-bottom: 25px;
+                font-size: 10px; }
+
+            th{
+                width: auto;
+                background-color: rgb(0,0,100);
+                color: white;
+                text-align: left;
+                padding: 5px;
+                border-bottom: solid;}
+
+            tr{
+                border-bottom: solid;
+                border-width: 1px;
+                border-color: black;
+                background-color: white;}
+
+            tr:nth-child(even){background-color: #eee;}
+
+            .Canceled{
+                color: red;
+            }
+
+            .Complete{
+                color: green;
+            }
+
+            .Pending{
+                color: black;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Enterprise Transactions Report</h1>
+        <table>
+            <tr>
+                <td>Report Date:</td>
+                <td>{{reportdate}}</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <th>ID:</th>
+                <th>Status:</th>
+                <th>Created on:</th>
+                <th>Created by:</th>
+                <th>Updated on:</th>
+                <th>Updated by:</th>
+                <th>Type:</th>
+                <th>Item code:</th>
+                <th>Item name:</th>
+                <th>Warehouse:</th>
+                <th>Bin:</th>
+                <th>Unit:</th>
+                <th>Quantity:</th>
+            </tr>
+            {% for d in data1%}
+            <tr class = '{{d[12]}}'>
+                <td>{{d[13]}}</td>
+                <td>{{d[12]}}</td>
+                <td>{{d[1]}}</td>
+                <td>{{d[2]}}</td>
+                <td>{{d[3]}}</td>
+                <td>{{d[4]}}</td>
+                <td>{{d[5]}}</td>
+                <td>{{d[6]}}</td>
+                <td>{{d[7]}}</td>
+                <td>{{d[8]}}</td>
+                <td>{{d[9]}}</td>
+                <td>{{d[10]}}</td>
+                <td>{{d[11]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

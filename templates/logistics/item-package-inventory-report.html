@@ -1,0 +1,94 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Items/Packages inventory report</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>From date:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'date' name = 'from-date' />
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>To date:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'date' name = 'to-date' />
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>File type:</label>
+        </div>
+        <div class = 'col-b'>
+            <select name = 'file-type'>
+                <option value = 'csv'>.csv</option>
+                <option value = 'pdf'>.pdf</option>
+            </select>
+        </div>
+    </div>
+    <div class = 'row'>
+        <table>
+            <tr>
+                <th><input type = 'checkbox' id = 'itm_select_all'/> Select all:</th>
+                <th>Item code:</th>
+                <th>Item Name:</th>
+            </tr>
+            {% for itm in itms%}
+            <tr>
+                <td><input class = 'itm-check' type = 'checkbox' name = 'itm_check' value = '{{itm[0]}}'/></td>
+                <td>{{itm[0]}}</td>
+                <td>{{itm[1]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class = 'row'>
+        <table>
+            <tr>
+                <th><input type = 'checkbox' id = 'pkg_select_all'/> Select all:</th>
+                <th>Package code:</th>
+                <th>Package Name:</th>
+            </tr>
+            {% for pkg in pkgs%}
+            <tr>
+                <td><input class = 'pkg-check' type = 'checkbox' name = 'pkg_check' value = '{{pkg[0]}}'/></td>
+                <td>{{pkg[0]}}</td>
+                <td>{{pkg[1]}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+</div>
+
+<script>
+$(document).ready(function(){
+    $('#itm_select_all').click(function(){
+        $('.itm-check').prop('checked', this.checked);
+    });
+    $('#pkg_select_all').click(function(){
+        $('.pkg-check').prop('checked', this.checked);
+    });
+});
+</script>
+{% endblock %}

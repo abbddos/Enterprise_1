@@ -1,0 +1,136 @@
+{% extends 'logistics/logistics.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block logisticspage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Edit Package</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Package Code:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'packagecode' value = '{{pks[0]}}' disabled/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Package Name:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'packagename' value = '{{pks[1]}}' />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Description:</label>
+      </div>
+      <div class = 'col-b'>
+        <textarea name='description'>{{pks[2]}}</textarea>
+      </div>
+    </div>
+
+  </div>
+  <div class = 'itms' style = 'text-align: left;'>
+    <a href = '#' id = 'PickItem'>Add Item</a>
+    <table id = 'itm-table'>
+      <tr>
+        <th>Item Code:</th>
+        <th>Item Name:</th>
+        <th>Unit:</th>
+        <th>Quantity:</th>
+        <th>Remove:</th>
+      </tr>
+      {% for i in itms%}
+        <tr id = "{{'tr_' + i[0]}}">
+          <td><input type = 'text' name = 'code' value = '{{i[0]}}' style = 'width: 100%' /></td>
+          <td><input type = 'text' name = 'Name' value = '{{i[1]}}' style = 'width: 100%'/></td>
+          <td><input type = 'text' name = 'unit' value = '{{i[2]}}' style = 'width: 100%' /></td>
+          <td><input type = 'text' name = 'quantity' value = '{{i[3]}}' style = 'width: 100%'/></td>
+          <td><a href = '#' class = 'rmv' id = '{{i[0]}}'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td>
+        </tr>
+      {% endfor %}
+
+    </table>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<table>
+  <tr>
+    <th>Code:</th>
+    <th>Name:</th>
+    <th>Edit:</th>
+  </tr>
+  {% for p in pkk %}
+  <tr>
+    <td>{{p[0]}}</td>
+    <td>{{p[1]}}</td>
+    <td><a href = "{{url_for('logistics.edit_package', pkg = p[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Pick Item</p>
+    <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
+    <div class = 'items' stye = 'overflow: scroll;'>
+      <table>
+        <tr>
+          <th>Item Code:</th>
+          <th>Item Name: </th>
+          <th>Provider: </th>
+          <th>Unit: </th>
+        </tr>
+        {% for t in itt %}
+          <tr>
+            <td><a class = 'itm' href = '#'>{{t[0]}}</a></td>
+            <td>{{t[1]}}</td>
+            <td>{{t[2]}}</td>
+            <td>{{t[3]}}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+<script>
+  $(function(){
+    var i = 0;
+    $('.itm').click(function(){
+      i++
+      $.getJSON('/GrabItems', {
+        ItCode: $(this).text(),
+      }, function(data){
+        if(data.msg == 'success'){
+          $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.itemcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = '"+data.itemunit+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+        }
+        else{
+          $('.msg').val('Item not found');
+        }
+      });
+      $('#myModal').hide();
+      return false;
+    });
+
+    $(document).on('click','.rmv', function(){
+      var ids = $(this).attr('id');
+      $('#tr_'+ ids).remove();
+    });
+  });
+</script>
+
+{% endblock %}

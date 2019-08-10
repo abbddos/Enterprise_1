@@ -1,0 +1,26 @@
+{% extends 'layout.html'%}
+{% block content%}
+<div class="vertical-menu">
+  <h3>Logistics</h3>
+ <a href = "{{url_for('logistics.Providers')}}">Providers</a>
+ <a href = "{{url_for('logistics.groups')}}">Groups</a>
+ <a href = "{{url_for('logistics.items')}}">Items</a>
+ <a href = "{{url_for('logistics.packages')}}">Packages</a>
+ <ul class = 'warehouse' id = 'warehouse'><a href = "#">Warehouses</a>
+   {% for w in wh%}
+    <li class = 'warehousecontent'><a href = "{{url_for('logistics.edit_warehouse', code = w[0])}}" id = 'toggler'>- {{w[0]}}</a></li>
+   {% endfor %}
+   <li class = 'warehousecontent'><a href = "{{url_for('logistics.create_warehouse')}}">+ Create New Warehouse</a></li>
+ </ul>
+ <a href = "{{url_for('logistics.requests')}}">Requests</a>
+ <a href = "{{url_for('logistics.transactions')}}">Transactions</a>
+ <ul class = 'reports' id = 'reports'><a href = "#">Reports</a>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.warehouse_inventory')}}">Warehouses inventory report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.items_packages_inventory')}}">Items/Packages inventory report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.bins_report')}}">Current Bins statuses report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.transactions_report')}}">Transactions report:</a></li>
+ </ul>
+ </div>
+{% block logisticspage%}
+{% endblock %}
+{% endblock %}
