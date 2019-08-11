@@ -84,6 +84,7 @@
   <form action = "{{url_for('logistics.add_bin', wh = code)}}" method = "POST">
 
     <div class = 'fields'>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       {{ render_field(form.name)}}
       {{ render_field(form.code)}}
       {{ render_field(form.status)}}
@@ -112,6 +113,7 @@
 
   <form action = "{{url_for('logistics.edit_bin', whcode = code)}}" method = "POST">
     <div class = 'fields'>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       <div class = 'row'>
         <div class = 'col-a'>
           <label>Bin Name:</label>
