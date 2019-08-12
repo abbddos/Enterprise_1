@@ -106,7 +106,6 @@ CREATE TABLE bins(
 
 CREATE TABLE Transactions(
 	ID SERIAL NOT NULL PRIMARY KEY,
-	transid VARCHAR(25),
 	CreatedOn DATE,
 	CreatedBy VARCHAR(50),
 	EditedOn DATE,
