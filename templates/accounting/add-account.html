@@ -1,0 +1,100 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'> 
+    <form method = 'POST' action = "{{url_for('accounting.add_account', category = category, account = account)}}">
+        <h3>Add {{account}} Account</h3>
+        <div class = 'fields'>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px;" class = 'edit_category'>Edit Category</a>
+                </div>
+            </div><br>
+            {{ render_field(form.AccountCode) }}
+            {{ render_field(form.AccountName) }}
+            {{ render_field(form.Currency) }}
+            {{ render_field(form.OpeningBalance) }}
+            {{ render_field(form.CurrentBalance) }}
+            {{ render_field(form.Comments) }}
+        </div>
+        <div class = 'submission'>
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </form>
+
+<table>
+    <tr>
+        <th>Account Code:</th>
+        <th>Account Name:</th>
+        <th>Currency:</th>
+        <th>Open Balance:</th>
+        <th>Current Balance:</th>
+        <th>Edit:</th>
+        <th>View Ledger:</th>
+    </tr>
+    {% for acc in accounts %}
+        <tr>
+            <td>{{acc[0]}}</td>
+            <td>{{acc[1]}}</td>
+            <td>{{acc[2]}}</td>
+            <td>{{acc[3]}}</td>
+            <td>{{acc[4]}}</td>
+            <td><a href = "#"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+            <td><a href = "#"><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+        </tr>
+    {% endfor%}
+</table>
+
+<div id="myModal" class="modal">
+        <div class="modal-content">
+          
+          <form method = 'POST' action = "{{url_for('accounting.edit_category', category = category, account = account)}}">
+                <h3>Edit {{category}} category <span class="close">&times;</span></h3>
+                <div class = 'fields'>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <div class = 'row'>
+                        <div class = 'col-a'>
+                            <label>Category Name:</label>
+                        </div>
+                        <div class = 'col-b'>
+                            <input type = 'text' name = 'CategoryName' value = '{{cats[1]}}'/>
+                        </div>
+                    </div>
+                    <div class = 'row'>
+                        <div class = 'col-a'>
+                            <label>Comments:</label>
+                        </div>
+                        <div class = 'col-b'>
+                            <textarea name='CategoryDescription'>{{cats[2]}}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class = 'submission'>
+                    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+                </div>
+            </form>
+        </div>
+        </div>
+</div>
+<script>
+$(document).ready(function(){
+    $('.edit_category').click(function(){
+      $('#myModal').show();
+    });
+  
+    $('.close').click(function(){
+      $('#myModal').hide();
+    });
+  });
+</script>
+{% endblock %}

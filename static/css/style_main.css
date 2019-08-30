@@ -88,6 +88,10 @@ li.dropdown {
   float: left;
 }
 
+.vertical-menu:hover{
+  overflow: scroll;
+}
+
 .vertical-menu a {
   background-color: #eee; /* Grey background color */
   color: black; /* Black text color */
@@ -128,6 +132,16 @@ h3{
   text-align: center;
 }
 
+.form-container:hover{
+  background-color: white;
+}
+
+.form-td{
+  margin-top: 0px;
+  padding: 0pd;
+  align-content: left;
+}
+
 form{
   width: 60%;
   background-color: #eee; /* Grey background color */
@@ -135,6 +149,13 @@ form{
   padding: 15px;
   box-shadow: 5px 10px 20px rgb(200,200,200);
 }
+
+.form-in-table{
+  margin-top: 0px;
+  width: 90%;
+  margin-left: 5%;
+}
+
 .row{
   padding: 10px;
 }
@@ -266,7 +287,7 @@ table{
   border-width: 1px;
   border-color: #eee;
   box-shadow: 5px 10px 20px rgb(200,200,200);
-
+  overflow: scroll;
 }
 
 th{
@@ -369,7 +390,7 @@ tr:nth-child(even):hover{
     height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    background-color: rgba(0,0,0,0.7); /* Black w/ opacity */
 }
 
 .modal p{
@@ -382,16 +403,17 @@ tr:nth-child(even):hover{
 .modal-content {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
+    align-items: center;
+    padding: 15px;
     border: 1px solid #888;
-    width: 60%; /* Could be more or less, depending on screen size */
+    width: 50%; /* Could be more or less, depending on screen size */
 }
 
 /* The Close Button */
 .close {
-    color: #aaa;
+    color: white;
     float: right;
-    font-size: 28px;
+    font-size: 22px;
     font-weight: bold;
 }
 

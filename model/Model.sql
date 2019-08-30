@@ -106,7 +106,6 @@ CREATE TABLE bins(
 
 CREATE TABLE Transactions(
 	ID SERIAL NOT NULL PRIMARY KEY,
-	transid VARCHAR(25),
 	CreatedOn DATE,
 	CreatedBy VARCHAR(50),
 	EditedOn DATE,
@@ -155,26 +154,117 @@ CREATE TABLE Inventory(
 	BulkPrice REAL
 );
 
+-- Creating accounting tables...
+CREATE TABLE Categories(
+	CategoryId SERIAL NOT NULL PRIMARY KEY,
+	CategoryName VARCHAR(100) UNIQUE,
+	Description TEXT
+);
+
+CREATE TABLE Accounts(
+	AccountID SERIAL NOT NULL PRIMARY KEY,
+	AccountType VARCHAR(25) UNIQUE,        
+	AccountCategory VARCHAR(100),
+	AccountName VARCHAR(100) UNIQUE,
+	Currency VARCHAR(5),
+	OpeningBalance REAL,
+	CurrentBalance REAL,
+	Comments TEXT,
+	AccountCode VARCHAR(25),
+);
+
+CREATE TABLE Journal(
+	EntryID SERIAL NOT NULL PRIMARY KEY,
+	EntryDate DATE,
+	AccountType VARCHAR(25),
+	AccountCategory VARCHAR(100),
+	AccountName VARCHAR(100),
+	Currency VARCHAR(5),
+	Debit REAL,
+	Credit REAL,
+	CreatedBy VARCHAR(50),
+	CreatedOn DATE,
+	AdjustedBy VARCHAR(50),
+	AdjustedOn DATE,
+	Comments TEXT
+);
+
+CREATE TABLE CashAccount(
+	TransactionID SERIAL NOT NULL PRIMARY KEY,
+	TransactionDate DATE,
+	CreatedBy VARCHAR(50),
+	Income REAL,
+	Spending REAL,
+	Comments TEXT
+);
+
+CREATE TABLE Budget(
+	BudgetId SERIAL NOT NULL PRIMARY KEY,
+	BudgetCode VARCHAR(50),
+	StartingMonth VARCHAR(10),
+	CreatedBy VARCHAR(50),
+	CreatedOn DATE,
+	UpdatedBy VARCHAR(50),
+	UpdatedOn DATE,
+	LineType VARCHAR(25),
+	WBS VARCHAR(50),
+    Month1 REAL,
+	Month2 REAL,
+	Month3 REAL,
+	Month4 REAL,
+	Month5 REAL,
+	Month6 REAL,
+	Month7 REAL,
+	Month8 REAL,
+	Month9 REAL,
+	Month10 REAL,
+	Month11 REAL,
+	Month12 REAL,
+	Comments TEXT
+);
+
+CREATE TABLE Currency(
+CurrencyID SERIAL NOT NULL PRIMARY KEY,
+CurrencyName VARCHAR(25),
+CurrencyCode VARCHAR(5)
+);
+
+-- Adding Default Currencies...
+--INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('US Dollars', 'USD');
+--INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Euro', 'EUR');
+--INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Syrian Pound', 'SYP');
+
 -- addition of foreign keys...
+
 -- addition of foreign keys for logistics.
-ALTER TABLE approvers ADD FOREIGN KEY(username) REFERENCES users(username);
-ALTER TABLE items ADD FOREIGN KEY(provider) REFERENCES providers(name);
-ALTER TABLE items ADD FOREIGN KEY(grp) REFERENCES grp(groupname);
-ALTER TABLE packages ADD FOREIGN KEY(itemcode) REFERENCES items(code);
-ALTER TABLE bins ADD FOREIGN KEY(warehouse) REFERENCES warehouses(code);
-ALTER TABLE Transactions ADD FOREIGN KEY(createdby) REFERENCES users(username);
-ALTER TABLE Transactions ADD FOREIGN KEY(editedby) REFERENCES users(username);
-ALTER TABLE Transactions ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
-ALTER TABLE Transactions ADD FOREIGN KEY(bin) REFERENCES bins(code);
-ALTER TABLE Inventory ADD FOREIGN KEY(ItemCode) REFERENCES Items(code);
-ALTER TABLE Inventory ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
-ALTER TABLE Inventory ADD FOREIGN KEY(bin) REFERENCES Bins(code);
-ALTER TABLE Request ADD FOREIGN KEY(Createdby) REFERENCES users(username);
-ALTER TABLE Request ADD FOREIGN KEY(Editedby) REFERENCES users(username);
+--ALTER TABLE approvers ADD FOREIGN KEY(username) REFERENCES users(username);
+--ALTER TABLE items ADD FOREIGN KEY(provider) REFERENCES providers(name);
+--ALTER TABLE items ADD FOREIGN KEY(grp) REFERENCES grp(groupname);
+--ALTER TABLE packages ADD FOREIGN KEY(itemcode) REFERENCES items(code);
+--ALTER TABLE bins ADD FOREIGN KEY(warehouse) REFERENCES warehouses(code);
+--ALTER TABLE Transactions ADD FOREIGN KEY(createdby) REFERENCES users(username);
+--ALTER TABLE Transactions ADD FOREIGN KEY(editedby) REFERENCES users(username);
+--ALTER TABLE Transactions ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
+--ALTER TABLE Transactions ADD FOREIGN KEY(bin) REFERENCES bins(code);
+--ALTER TABLE Inventory ADD FOREIGN KEY(ItemCode) REFERENCES Items(code);
+--ALTER TABLE Inventory ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
+--ALTER TABLE Inventory ADD FOREIGN KEY(bin) REFERENCES Bins(code);
+--ALTER TABLE Request ADD FOREIGN KEY(Createdby) REFERENCES users(username);
+--ALTER TABLE Request ADD FOREIGN KEY(Editedby) REFERENCES users(username);
+
+
+--Creation of accounting tables foreign keys...
+--ALTER TABLE Accounts ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+--ALTER TABLE Journal ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
+--ALTER TABLE Journal ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+--ALTER TABLE Journal ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);
+--ALTER TABLE Journal ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
+--ALTER TABLE Journal ADD FOREIGN KEY(AdjustedBy) REFERENCES users(username);
+--ALTER TABLE CashAccount ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
 
 -- Creation of Admin user with superuser role, login and password 'admin'
-INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
-CREATE ROLE Admin WITH SUPERUSER LOGIN PASSWORD 'admin';
+--INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
+--CREATE ROLE Admin WITH SUPERUSER LOGIN PASSWORD 'admin';
 
 CREATE OR REPLACE FUNCTION Inbound(transid_ VARCHAR, creator_ VARCHAR, item_name_ VARCHAR, item_code_ VARCHAR, warehouse_ VARCHAR, bin_ VARCHAR, unit_ VARCHAR, quantity_ REAL, status_ VARCHAR)
 RETURNS VOID AS $$
@@ -279,6 +369,21 @@ BEGIN
 			UPDATE bins SET status = 'Open' WHERE code = rec.bin;
 		END IF;
 	END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION CreateJournalEntry(_date Date, accttype VARCHAR, acctcat VARCHAR, acctname VARCHAR, crncy VARCHAR, dbt REAL, cdt REAL, createdon_ DATE, createdby_ VARCHAR, comnts TEXT)
+RETURNS void AS $$
+BEGIN
+	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments) VALUES(_date, accttype, acctcat, acctname, crncy, dbt, crd, createdon_, createdby_, comnts);
+	IF accttype = 'Assets' OR accttype = 'Expenses' OR accttype = 'Dividends' THEN
+		UPDATE Accounts SET CurrentBalance = CurrentBalance + dbt - cdt WHERE AccountName = acctname;
+	END IF;
+	IF accttype = 'Equities' OR accttype = 'Liabilities' OR accttype = 'Reveneus' THEN
+		UPDATE Accounts SET CurrentBalance = CurrentBalance - dbt + cdt WHERE AccountName = acctname;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 

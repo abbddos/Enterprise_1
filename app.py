@@ -7,20 +7,20 @@ from APIs.EnterpriseAPI import *
 from views import profile
 from views import users
 from views import logistics
-import EnterpriseConfig
+from views import accounting
 
 app = Flask(__name__)
 sk = str(random.randint(1, 101))
 app.secret_key = sk
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
-app.config['MAIL_SERVER'] = EnterpriseConfig.Server
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = EnterpriseConfig.Email_Username
-app.config['MAIL_PASSWORD'] = EnterpriseConfig.Email_Password
-app.config['MAIL_DEFAULT_SENDER'] = EnterpriseConfig.Email_Username
+app.config['MAIL_USERNAME'] = 'abbddos@gmail.com'
+app.config['MAIL_PASSWORD'] = 'AbdulRahman*SS1983'
+app.config['MAIL_DEFAULT_SENDER'] = 'abbddos@gmail.com'
 
 csrf = CSRFProtect(app)
 #csrf.init_app(app)
@@ -97,7 +97,18 @@ def GetBin(code):
         BINS.append(s[0])
     return jsonify(bins = BINS)
 
+#@app.route('/testing', methods = ['GET','POST'])
+#def testing():
+
+#    if request.method == 'POST':
+#        field = request.form.getlist('fuckit')
+#        return str(field)
+#    return render_template('tester.html')
+
 app.register_blueprint(profile.mod)
 app.register_blueprint(users.mod)
 app.register_blueprint(logistics.mod)
+app.register_blueprint(accounting.mod)
 
+#if __name__ == '__main__':
+#    app.run(debug = True)

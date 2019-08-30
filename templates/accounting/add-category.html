@@ -1,0 +1,26 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Add {{category}} category</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {{ render_field(form.CategoryName) }}
+    {{ render_field(form.CategoryDescription) }}
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+</div>
+{% endblock %}

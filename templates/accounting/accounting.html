@@ -1,0 +1,66 @@
+{% extends 'layout.html'%}
+{% block content%}
+<div class="vertical-menu">
+  <h3>Accounting</h3>
+ <ul class = 'warehouse' id = 'assets'><a href = "#">Assets</a>
+    {% for ast in data['Assets'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Assets', account = ast)}}" id = 'toggler'>- {{ast}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Assets')}}">+ Add new Assets Category</a></li>
+  </ul>
+ <ul class = 'warehouse' id = 'equities'><a href = "#">Equities</a>
+    {% for eqt in data['Equities'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Equities', account = eqt)}}" id = 'toggler'>- {{eqt}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Equities')}}">+ Add new Equities Category</a></li>
+  </ul>
+  <ul class = 'warehouse' id = 'liabilities'><a href = "#">Liabilities</a>
+    {% for lbt in data['Liabilities'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Liabilities', account = lbt)}}" id = 'toggler'>- {{lbt}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Liabilities')}}">+ Add new Liabilities Category</a></li>
+  </ul>
+  <ul class = 'warehouse' id = 'revenues'><a href = "#">Revenues</a>
+    {% for rvn in data['Revenues'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Revenues', account = rvn)}}" id = 'toggler'>- {{rvn}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Revenues')}}">+ Add new Revenues Category</a></li>
+  </ul>
+  <ul class = 'warehouse' id = 'expenses'><a href = "#">Expenses</a>
+    {% for exp in data['Expenses'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Expenses', account = exp)}}" id = 'toggler'>- {{exp}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Expenses')}}">+ Add new Expenses Category</a></li>
+  </ul>
+  <ul class = 'warehouse' id = 'dividends'><a href = "#">Dividends</a>
+    {% for dvd in data['Dividends'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Dividends', account = dvd)}}" id = 'toggler'>- {{dvd}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Dividends')}}">+ Add new Dividends Category</a></li>
+  </ul>
+  <ul class = 'warehouse' id = 'cash-check'><a href = "#">Cash Checking</a>
+    {% for csh in data['Cash_Check'] %}
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Checking_Account', account = csh)}}" id = 'toggler'>- {{csh}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Checking_Account')}}">+ Add new Cash Checking Category</a></li>
+  </ul>
+
+  <a href = "#">Journal</a>
+ 
+  <ul class = 'warehouse' id = 'budget'><a href = "#">Budget</a>
+    {% for bdg in bdgts %}
+     <li class = 'warehousecontent'><a href = "#" id = 'toggler'>- {{bdg}}</a></li>
+    {% endfor %}
+    <li class = 'warehousecontent'><a href = "#">+ Create New Budget</a></li>
+  </ul>
+
+ <ul class = 'reports' id = 'statements'><a href = "#">Statements</a>
+  <li class = 'warehousecontent'><a href = "#">Balance Sheet</a></li>
+  <li class = 'warehousecontent'><a href = "#">Trial Sheet</a></li>
+  <li class = 'warehousecontent'><a href = "#">Net Income Statement</a></li>
+  <li class = 'warehousecontent'><a href = "#">Comprehensive Income Statement</a></li>
+ </ul>
+ </div>
+{% block accountingpage%}
+{% endblock %}
+{% endblock %}

@@ -3,7 +3,6 @@ from openpyxl import load_workbook
 import random
 from datetime import date
 import pandas as pd
-import EnterpriseConfig
 
 
 # Creating connection engine using Root connection to handle administrative
@@ -12,7 +11,7 @@ import EnterpriseConfig
 
 
 def root():
-    conn = psycopg2.connect("dbname = enterprise user = {} password = {} port = 5432".format(EnterpriseConfig.dbusername, EnterpriseConfig.dbpassword))
+    conn = psycopg2.connect("dbname = enterprise user = abdul password = ar*big1980 port = 5432")
     cur = conn.cursor()
     return conn, cur
 
@@ -544,3 +543,4 @@ def Bins_Report_to_PDF(sess_uname, sess_pswd, whs):
     con.close()
     return data
 
+#ApprRequests()
