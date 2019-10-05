@@ -1,0 +1,190 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'> 
+    <form method = 'POST'>
+        <h3>Edit {{account}} Account</h3>
+        <div class = 'fields'>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Account Code:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'AccountCode' value = '{{acdata[0]}}' disabled />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Account Name:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'AccountName' value = '{{acdata[1]}}'/>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Currency:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'Currency'>
+                        <option value = '{{acdata[2]}}' selected hidden>{{acdata[2]}}</option>
+                        {% for c in curs%}
+                            <option value = '{{c[0]}}'>{{c[0]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Opening Balance:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'OpenBalance' value = '{{acdata[3]}}'/>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Current Balance:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'CurrentBalance' value = '{{acdata[4]}}'/>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Comments:</label>
+                </div>
+                <div class = 'col-b'>
+                    <textarea name = 'Comments'>{{acdata[5]}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class = 'submission'>
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </form>
+
+<table>
+    <tr>
+        <th>Account Code:</th>
+        <th>Account Name:</th>
+        <th>Currency:</th>
+        <th>Open Balance:</th>
+        <th>Current Balance:</th>
+        <th>Edit:</th>
+        <th>View Ledger:</th>
+    </tr>
+    {% for acc in accounts %}
+        <tr>
+            <td>{{acc[0]}}</td>
+            <td>{{acc[1]}}</td>
+            <td>{{acc[2]}}</td>
+            <td>{{acc[3]}}</td>
+            <td>{{acc[4]}}</td>
+            <td><a href = "{{url_for('accounting.edit_account', type = category, category = account , account = acc[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+            <td><a href = "#" class = 't-sheet' id = '{{acc[1]}}'><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+        </tr>
+    {% endfor%}
+</table>
+</div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+      
+      <form method = 'POST' action = "{{url_for('accounting.edit_category', category = category, account = account)}}">
+            <h3>Edit {{category}} category <span class="close">&times;</span></h3>
+            <div class = 'fields'>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                <div class = 'row'>
+                    <div class = 'col-a'>
+                        <label>Category Name:</label>
+                    </div>
+                    <div class = 'col-b'>
+                        <input type = 'text' name = 'CategoryName' value = '{{cats[1]}}'/>
+                    </div>
+                </div>
+                <div class = 'row'>
+                    <div class = 'col-a'>
+                        <label>Comments:</label>
+                    </div>
+                    <div class = 'col-b'>
+                        <textarea name='CategoryDescription'>{{cats[2]}}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class = 'submission'>
+                <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+            </div>
+        </form>
+    </div>
+    </div>
+</div>
+
+<div id="myModal1" class="modal">
+<div class="modal-content">
+    <h3 id = 't-title'></h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Entry Date:</th>
+                <th>Debit:</th>
+                <th>Credit:</th>
+                <th>Comments:</th>
+            </tr>
+        </thead>
+        <tbody  id = 'AccountContent'></tbody>
+        <tfoot>
+            <tr style = 'background-color: rgb(204,204,255);'>
+                <td><p>Totals:</p></td>
+                <td><p id = 'dbt'></p></td>
+                <td><p id = 'cdt'></p></td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+</br>
+    <table>
+        <tr>
+            <td>Opening Balance:</td>
+            <td id = 'openbalance'></td>
+        </tr>
+        <tr>
+            <td>Current Balance:</td>
+            <td id = 'currentbalance'></td>
+        </tr>
+    </table>
+</div>
+</div>
+<script>
+$(document).ready(function(){
+    $('.t-sheet').click(function(){
+        var Name = $(this).attr('id');
+        $('#t-title').text(Name);
+        $('#t-title').append('<span class="close">&times;</span>');
+        $.getJSON('/accounting/GrabAccountEntries/' + Name, function(data){
+            $.each(data['info'], function(key, value){
+                $('#AccountContent').append('<tr><td>'+value[0]+'</td><td>'+value[1]+'</td><td>'+value[2]+'</td><td>'+value[3]+'</td></tr>');
+            });
+            $('#dbt').text(data['totals'][0]);
+            $('#cdt').text(data['totals'][1]);
+            $('#openbalance').text(data['balances'][0]);
+            $('#currentbalance').text(data['balances'][1]);
+        });
+        
+        $('.close').click(function(){
+            $('#AccountContent').find('tr').remove();  
+            $('#myModal1').hide();
+        });
+    });
+});
+</script>
+{% endblock %}

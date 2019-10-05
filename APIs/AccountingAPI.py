@@ -4,6 +4,61 @@ from datetime import date
 import pandas as pd
 from . import EnterpriseAPI
 
+def Checker():
+    data = {}
+    con, cur = EnterpriseAPI.root()
+    #getting assets..
+    cur.execute(" SELECT SUM(currentbalance) FROM accounts WHERE accounttype = 'Assets'")
+    Ast = cur.fetchone()
+    #getting equities..
+    cur.execute(" SELECT SUM(currentbalance) FROM accounts WHERE accounttype = 'Equities'")
+    Eqt = cur.fetchone()
+    #getting liabilities..
+    cur.execute(" SELECT SUM(currentbalance) FROM accounts WHERE accounttype = 'Liabilities'")
+    Lbt = cur.fetchone()
+    #getting Expenses..
+    cur.execute(" SELECT SUM(currentbalance) FROM accounts WHERE accounttype = 'Expenses'")
+    Exp = cur.fetchone()
+    #getting Revenues..
+    cur.execute(" SELECT SUM(currentbalance) FROM accounts WHERE accounttype = 'Revenues'")
+    Rev = cur.fetchone()
+    #getting dividends..
+    cur.execute(" SELECT SUM(currentbalance) FROM accounts WHERE accounttype = 'Dividends'")
+    Dvd = cur.fetchone()
+    con.close()
+
+    if Ast[0] == None:
+        Ast = 0
+    else:
+        Ast = float(Ast[0])
+    if Eqt[0] == None:
+        Eqt = 0
+    else:
+        Eqt = float(Eqt[0])
+    if Lbt[0] == None:
+        Lbt = 0
+    else:
+        Lbt = float(Lbt[0])
+    if Exp[0] == None:
+        Exp = 0
+    else:
+        Exp = float(Exp[0])
+    if Rev[0] == None:
+        Rev = 0
+    else:
+        Rev = float(Rev[0])
+    if Dvd[0] == None:
+        Dvd = 0
+    else:
+        Dvd = float(Dvd[0])
+    
+    if Ast == Eqt + Lbt + Rev - Exp - Dvd:
+        data['status'] = True
+    else:
+        data['status'] = False
+    
+    return data
+
 def GetCategories():
     Assets = []
     Equities = []
@@ -67,6 +122,13 @@ def GetCategory(sess_uname, sess_pswd, catname):
     con.close()
     return data
 
+def GrabCategory(sess_uname, sess_pswd, type):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT categoryname FROM categories WHERE categorytype = %s', (type,))
+    data = cur.fetchall()
+    con.close()
+    return data
+
 def EditCategory(sess_uname, sess_pswd, id, name, comments):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
     cur.execute('UPDATE categories SET categoryname = %s, description = %s WHERE categoryid = %s', (name, comments, id))
@@ -95,3 +157,82 @@ def AddNewAccount(sess_uname, sess_pswd, account, category, code, name, currency
     cur.execute('INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)', (account, category, name, currency, OBalance, CBalance, comments, code ))
     con.commit()
     con.close()
+
+def GetAccountData(sess_uname, sess_pswd, type, category, account):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT accountcode, accountname, currency, openingbalance, currentbalance, comments FROM accounts WHERE accounttype = %s AND accountcategory = %s AND accountcode = %s', (type, category, account))
+    data = cur.fetchone()
+    con.close()
+    return data
+
+def UpdateAccount(sess_uname, sess_pswd, type, category, account, name, currency, openbalance, currentbalance, comments):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('UPDATE accounts SET accountname = %s, currency = %s, openingbalance = %s, currentbalance = %s, comments = %s WHERE accounttype = %s AND accountcategory = %s AND accountcode = %s',
+    (name, currency, openbalance, currentbalance, comments, type, category, account))
+    con.commit()
+    con.close()
+
+def GrabAccount(sess_uname, sess_pswd, cat):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT accountname FROM accounts WHERE accountcategory = %s', (cat,))
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def GrabCurrency(sess_uname, sess_pswd, act):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT currency FROM accounts WHERE accountname = %s', (act,))
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def GetJournals():
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT entrycode, createdby, createdon, EntryType FROM journal GROUP BY entrycode, createdby, createdon, EntryType')
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def AddJournalEntry(sess_uname, sess_pswd, entrytype, acttype, actcat, actname, crncy, dbt, cdt, comments):
+    JournalCode = 'JRN_' + str(date.today()) + '-' + str(random.randint(100000,999999))
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    for i in range(len(acttype)):
+        if dbt[i] == '':
+            dbt[i] = 0;
+        elif cdt[i] == '':
+            cdt[i] = 0
+        cur.execute('SELECT CreateJournalEntry(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (JournalCode, acttype[i], actcat[i], actname[i], crncy[i], dbt[i], cdt[i], sess_uname, comments[i]))
+        cur.execute('UPDATE journal SET entrytype = %s WHERE entrycode = %s', (entrytype, JournalCode))
+        con.commit()
+    con.close()
+
+def GrabJournalEntry(entrycode):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT accounttype, accountcategory, accountname, currency, debit, credit, comments FROM journal WHERE entrycode = %s',(entrycode,))
+    data1 = cur.fetchall()
+    cur.execute('SELECT entrycode, createdon, createdby, entrytype FROM journal WHERE entrycode = %s GROUP BY entrycode, createdon, createdby, entrytype', (entrycode,))
+    data2 = cur.fetchone()
+    con.close()
+    data3 = []
+    dbt = 0
+    cdt = 0
+    for d in data1:
+        dbt += d[4]
+        cdt += d[5]
+    data3.append(dbt)
+    data3.append(cdt)
+    return data1, data2, data3
+
+def GrabAccountEntries(AccountName):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('select entrydate, debit, credit, comments from journal where accountname = %s', (AccountName,))
+    data1 = cur.fetchall()
+    cur.execute('select sum(debit) as Debit, sum(credit) as Credit from journal where accountname  = %s group by accountname', (AccountName,))
+    data2 = cur.fetchone()
+    cur.execute('select openingbalance, currentbalance from accounts where accountname = %s', (AccountName,))
+    data3 = cur.fetchone()
+    con.close()
+    return data1, data2, data3
+    
+

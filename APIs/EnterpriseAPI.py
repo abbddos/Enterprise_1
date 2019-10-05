@@ -1,14 +1,20 @@
 import psycopg2
+#from werkzeug.utils import secure_filename
+import os
 from openpyxl import load_workbook
 import random
 from datetime import date
 import pandas as pd
 
 
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'xls','xlsx'])
 # Creating connection engine using Root connection to handle administrative
 # functions such as loging in, sending emails in case of missing passords, and
 # changing users' passwords.
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def root():
     conn = psycopg2.connect("dbname = enterprise user = abdul password = ar*big1980 port = 5432")
@@ -137,8 +143,8 @@ def CreateMultipleUsers(sess_uname, sess_pswd, FileName):
         phone1 = str(ws.cell(row = i, column = 7).value)
         phone2 = str(ws.cell(row = i, column = 8).value)
         type = str(ws.cell(row = i, column = 9).value)
-
-        CreateUser(sess_uname, sess_pswd, firstname, lastname, company, position, department, email, phone1, phone2, type)
+        approvals = []
+        CreateUser(sess_uname, sess_pswd, firstname, lastname, company, position, department, email, phone1, phone2, type, approvals)
         i += 1
 
 def ResetPassword(sess_uname, sess_pswd, user):

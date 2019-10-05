@@ -67,13 +67,13 @@ def create_multiple_users():
     data = EnterpriseAPI.GetUsers()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit' and form.validate():
-            try:
-                EnterpriseAPI.CreateMultipleUsers(session['username'], session['password'], request.form['FileName'])
-                flash('Multiple Users successfully created', category = 'success')
-                return redirect(url_for('users.create_multiple_users'))
-            except Exception as e:
-                flash(str(e), category = 'fail')
-                return render_template('users/create_multiple_users.html', username = session['username'], form = form)
+            #try:
+            EnterpriseAPI.CreateMultipleUsers(session['username'], session['password'], request.form['FileName'])
+            flash('Multiple Users successfully created', category = 'success')
+            return redirect(url_for('users.create_multiple_users'))
+            #except Exception as e:
+            #    flash(str(e), category = 'fail')
+            #    return render_template('users/create_multiple_users.html', username = session['username'], form = form)
     return render_template('users/create_multiple_users.html', username = session['username'], form = form, data = data)
 
 # ........ Updating user information using UpdateUser API at Model.py

@@ -2,7 +2,6 @@ body{
   margin: 0px;;
   padding: 0px;;
   font-family: "Arial Black", Gadget, sans-serif;
-
   background-size: cover;
 }
 
@@ -76,7 +75,7 @@ li.dropdown {
 }
 
 .mainpage{
-  margin-top: 3%;
+  margin-top: 0px;
 }
 
 .vertical-menu {
@@ -125,11 +124,11 @@ h3{
 }
 
 .actionpage{
-  margin-top: 50px;
+  margin-top: none;
   padding: 15px;
   width: 77%;
   float: right;
-  text-align: center;
+  text-align: right;
 }
 
 .form-container:hover{
@@ -248,6 +247,7 @@ textarea:disabled{
 
 .submission{
     text-align: center;
+    padding-top: 20px;
 }
 
 .btn-active{
@@ -270,6 +270,13 @@ textarea:disabled{
   color: rgb(0,0,100);
   border: solid;
   border-color: rgb(0,0,100);
+}
+
+.btn-active:disabled{
+  background-color: rgb(59,59,59);
+  color: white;
+  border: solid;
+  border-color: rgb(59, 59, 59);
 }
 
 .success {
@@ -420,6 +427,13 @@ tr:nth-child(even):hover{
 .close:hover,
 .close:focus {
     color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.hide-message:hover,
+.hide-message:focus {
+    color: white;
     text-decoration: none;
     cursor: pointer;
 }

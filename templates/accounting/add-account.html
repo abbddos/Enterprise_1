@@ -49,8 +49,8 @@
             <td>{{acc[2]}}</td>
             <td>{{acc[3]}}</td>
             <td>{{acc[4]}}</td>
-            <td><a href = "#"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
-            <td><a href = "#"><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+            <td><a href = "{{url_for('accounting.edit_account', type = category, category = account , account = acc[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+            <td><a href = "#" class = 't-sheet' id = '{{acc[1]}}'><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
         </tr>
     {% endfor%}
 </table>
@@ -86,15 +86,68 @@
         </div>
         </div>
 </div>
+
+<div id="myModal1" class="modal">
+    <div class="modal-content">
+        
+        <h3 id = 't-title'></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Entry Date:</th>
+                    <th>Debit:</th>
+                    <th>Credit:</th>
+                    <th>Comments:</th>
+                </tr>
+            </thead>
+            <tbody  id = 'AccountContent'></tbody>
+            <tfoot>
+                <tr style = 'background-color: rgb(204,204,255);'>
+                    <td><p>Totals:</p></td>
+                    <td><p id = 'dbt'></p></td>
+                    <td><p id = 'cdt'></p></td>
+                    <td></td>
+                </tr>
+            </tfoot>
+        </table>
+    </br>
+        <table>
+            <tr>
+                <td>Opening Balance:</td>
+                <td id = 'openbalance'></td>
+            </tr>
+            <tr>
+                <td>Current Balance:</td>
+                <td id = 'currentbalance'></td>
+            </tr>
+        </table>
+    </div>
+    </div>
 <script>
 $(document).ready(function(){
-    $('.edit_category').click(function(){
-      $('#myModal').show();
+    $('.t-sheet').click(function(){
+        var Name = $(this).attr('id');
+        $('#t-title').text(Name);
+        $('#t-title').append('<span class="close">&times;</span>');
+        $.getJSON('/accounting/GrabAccountEntries/' + Name, function(data){
+            $('#openbalance').text(data['balances'][0]);
+            $('#currentbalance').text(data['balances'][1]);
+            $.each(data['info'], function(key, value){
+                $('#AccountContent').append('<tr><td>'+value[0]+'</td><td>'+value[1]+'</td><td>'+value[2]+'</td><td>'+value[3]+'</td></tr>');
+            });
+            $('#dbt').text(data['totals'][0]);
+            $('#cdt').text(data['totals'][1]);
+        });
+        
+        $('.close').click(function(){
+            $('#AccountContent').find('tr').remove(); 
+            $('#dbt').text('');
+            $('#cdt').text('');
+            $('#openbalance').text('');
+            $('#currentbalance').text(''); 
+            $('#myModal1').hide();
+        });
     });
-  
-    $('.close').click(function(){
-      $('#myModal').hide();
-    });
-  });
+});
 </script>
 {% endblock %}

@@ -1,5 +1,8 @@
 {% extends 'layout.html'%}
 {% block content%}
+<div id = 'msg-container' style = 'float:right;'>
+  <p id = 'msg-text' style = 'margin-right: 35px; border-style: solid; border-width: 1px; border-radius: 5px; padding: 8px;'>s <span id = 'msg-hide' class = 'hide-message'>&times;</span></p>
+</div>
 <div class="vertical-menu">
   <h3>Accounting</h3>
  <ul class = 'warehouse' id = 'assets'><a href = "#">Assets</a>
@@ -45,7 +48,7 @@
     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Checking_Account')}}">+ Add new Cash Checking Category</a></li>
   </ul>
 
-  <a href = "#">Journal</a>
+  <a href = "{{url_for('accounting.journal')}}">Journal</a>
  
   <ul class = 'warehouse' id = 'budget'><a href = "#">Budget</a>
     {% for bdg in bdgts %}
@@ -61,6 +64,36 @@
   <li class = 'warehousecontent'><a href = "#">Comprehensive Income Statement</a></li>
  </ul>
  </div>
+ 
 {% block accountingpage%}
 {% endblock %}
+<script>
+$(document).ready(function(){
+  $.getJSON('/accounting/checker/', function(data){
+    if(data['status'] == true){
+      $('#msg-text').text('Your accounts are balanced.');
+      $('#msg-text').append("<span id = 'msg-hide' class = 'hide-message'>&times;</span>");
+      $('#msg-text').css('color','green');
+      $('#msg-text').css('border-color','green');
+      $('#msg-text').css('background-color','#CCFFCC');
+      $('#msg-hide').css('color','green');
+      $('#msg-hide').click(function(){
+        $('#msg-container').slideToggle(400);
+      });
+    }
+    else if(data['status'] == false){
+      $('#msg-text').text('Your accounts are not balanced, please check your accounts to maintain balance.');
+      $('#msg-text').append("<span id = 'msg-hide' class = 'hide-message'>&times;</span>");
+      $('#msg-text').css('color','red');
+      $('#msg-text').css('border-color','red');
+      $('#msg-text').css('background-color','#FFCCCC');
+      $('#msg-hide').css('color','red');
+      $('#msg-hide').click(function(){
+        $('#msg-container').slideToggle(400);
+      });
+    }
+  });
+
+});
+</script>
 {% endblock %}

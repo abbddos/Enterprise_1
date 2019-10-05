@@ -79,3 +79,102 @@ def add_account(category, account):
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_account', category = category, account = account))
     return render_template('accounting/add-account.html', username = session['username'], data = data, category = category, bdgts = bdgts, cats = cats, form = form, accounts = AllAccounts, account = account)
+
+@mod.route('/edit_account/<type>/<category>/<account>', methods = ['GET','POST'])
+def edit_account(type, category, account):
+    data = AccountingAPI.GetCategories()
+    bdgts = AccountingAPI.GetBudgets()
+    cats = AccountingAPI.GetCategory(session['username'], session['password'], account)
+    currencies = AccountingAPI.GetCurrencies()
+    AllAccounts = AccountingAPI.GetAccounts(type, category)
+    AccountData = AccountingAPI.GetAccountData(session['username'], session['password'], type, category, account)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                AccountingAPI.UpdateAccount(session['username'], session['password'],
+                type, category, account, 
+                request.form['AccountName'],
+                request.form['Currency'],
+                request.form['OpenBalance'],
+                request.form['CurrentBalance'],
+                request.form['Comments'])
+                flash('Account successfully updated...', category = 'success')
+                return redirect(url_for('accounting.add_account', category = type, account = category))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+    return render_template('accounting/edit-account.html', username = session['username'], data = data, category = type, bdgts = bdgts, cats = cats, accounts = AllAccounts, account = category, acdata = AccountData, curs = currencies)     
+
+@mod.route('/journal', methods = ['GET','POST'])
+def journal():
+    data = AccountingAPI.GetCategories()
+    bdgts = AccountingAPI.GetBudgets()
+    jrns = AccountingAPI.GetJournals()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                AccountingAPI.AddJournalEntry(session['username'], session['password'],
+                request.form['entry-type'],
+                request.form.getlist('account-type'),
+                request.form.getlist('account-category'),
+                request.form.getlist('account-name'),
+                request.form.getlist('currency'),
+                request.form.getlist('debit'),
+                request.form.getlist('credit'),
+                request.form.getlist('comments'))
+                flash('Journal successfully created...', category = 'success')
+                return redirect(url_for('accounting.journal'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('accounting.journal'))
+    return render_template('accounting/journal.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns)
+
+@mod.route('/view_journal_entry/<entrycode>', methods = ['GET','POST'])
+def view_journal_entry(entrycode):
+    data = AccountingAPI.GetCategories()
+    bdgts = AccountingAPI.GetBudgets()
+    jrns = AccountingAPI.GetJournals()
+    data1, data2, data3 = AccountingAPI.GrabJournalEntry(entrycode)
+    if request.method == 'POST':
+        return redirect(url_for('accounting.journal'))
+    return render_template('accounting/view-journal-entry.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns, data1 = data1, data2 = data2, data3 = data3)
+
+
+#JSON returning urls...
+@mod.route('/checker/')
+def checker():
+    data = AccountingAPI.Checker()
+    return jsonify(data)
+
+@mod.route('/GrabCategory/<type>')
+def GrabCategory(type):
+    cats = AccountingAPI.GrabCategory(session['username'], session['password'], type)
+    cat = []
+    for c in cats:
+        cat.append(c[0])
+    return jsonify(cat = cat)
+
+@mod.route('/GrabActName/<cat>')
+def GrabActName(cat):
+    acts = AccountingAPI.GrabAccount(session['username'], session['password'], cat)
+    act = []
+    for a in acts:
+        act.append(a[0])
+    return jsonify(act = act)
+
+@mod.route('/GrabCurrency/<act>')
+def GrabCurrency(act):
+    curs = AccountingAPI.GrabCurrency(session['username'], session['password'], act)
+    cur = []
+    for c in curs:
+        cur.append(c[0])
+    return jsonify(cur = cur)
+
+@mod.route('/GrabJournalEntry/<entrycode>')
+def GranJournalEntry(entrycode):
+    data = AccountingAPI.GrabJournalEntry(entrycode)
+    return jsonify([{'Account-type': d[0], 'Account-Category': d[1], 'Account-Name': d[2], 'Currency':d[3], 'Debit': d[4], 'Credit':d[5], 'Comments':d[6]} for d in data])
+
+@mod.route('/GrabAccountEntries/<AccountName>')
+def GrabAccountEntries(AccountName):
+    data1, data2, data3 = AccountingAPI.GrabAccountEntries(AccountName)
+    return jsonify(info = data1, totals = data2, balances = data3)

@@ -1,0 +1,116 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'>
+<form method = 'post' style = 'float: left; margin-left: 0px; width: 98%;' >
+  <h3>Journal Entries</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Entry Code:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{data2[0]}}' disabled />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Entry Date:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{data2[1]}}' disabled />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Created by:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' value = '{{data2[2]}}' disabled />
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Entry Type:</label>
+      </div>
+      <div class = 'col-b'>
+        <select disabled>
+          <option value = '{{data2[3]}}' selected hidden>{{data2[3]}}</option>
+        </select>
+      </div>
+    </div>
+    <table style = 'width: 100%;'>
+        <thead>
+        <tr>
+            <th>Account Type</th>
+            <th>Account Category</th>
+            <th>Account Name</th>
+            <th>Currency</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody id = 'entry-table'>
+          {% for d in data1 %}
+          <tr>
+            <td>{{d[0]}}</td>
+            <td>{{d[1]}}</td>
+            <td>{{d[2]}}</td>
+            <td>{{d[3]}}</td>
+            <td>{{d[4]}}</td>
+            <td>{{d[5]}}</td>
+            <td>{{d[6]}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class = 'totals' style = 'font-weight: bold; color: green;'>
+            <td>Total:</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><p id = 'deb-total'>{{data3[0]}}</p></td>
+            <td><p id = 'crd-total'>{{data3[1]}}</p></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tfoot>
+    </table>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' value = 'Return to Journal' class = 'btn-active' style = 'width: 200px;'/>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <p id = 'message'></p>
+  </div>
+</form>
+<table>
+  <tr>
+    <th>Entry ID</th>
+    <th>Created by</th>
+    <th>Created on</th>
+    <th>Entry Type</th>
+    <th>View</th>
+  </tr>
+  {% for j in jrns %}
+    <tr>
+      <td>{{j[0]}}</td>
+      <td>{{j[1]}}</td>
+      <td>{{j[2]}}</td>
+      <td>{{j[3]}}</td>
+      <td><a href = "{{url_for('accounting.view_journal_entry', entrycode = j[0])}}"><img src = "{{url_for('static', filename = 'images/view.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
+    </tr>
+  {% endfor %}
+</table>
+</div>
+
+{% endblock %}

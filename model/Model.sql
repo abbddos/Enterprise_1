@@ -184,9 +184,9 @@ CREATE TABLE Journal(
 	Credit REAL,
 	CreatedBy VARCHAR(50),
 	CreatedOn DATE,
-	AdjustedBy VARCHAR(50),
-	AdjustedOn DATE,
-	Comments TEXT
+	Comments TEXT,
+	EntryCode VARCHAR(25),
+	EntryType VARCHAR(50)
 );
 
 CREATE TABLE CashAccount(
@@ -374,10 +374,10 @@ $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
 
-CREATE OR REPLACE FUNCTION CreateJournalEntry(_date Date, accttype VARCHAR, acctcat VARCHAR, acctname VARCHAR, crncy VARCHAR, dbt REAL, cdt REAL, createdon_ DATE, createdby_ VARCHAR, comnts TEXT)
+CREATE OR REPLACE FUNCTION CreateJournalEntry(jrncode VARCHAR, accttype VARCHAR, acctcat VARCHAR, acctname VARCHAR, crncy VARCHAR, dbt REAL, cdt REAL, createdby_ VARCHAR, comnts TEXT)
 RETURNS void AS $$
 BEGIN
-	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments) VALUES(_date, accttype, acctcat, acctname, crncy, dbt, crd, createdon_, createdby_, comnts);
+	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode) VALUES(now(), accttype, acctcat, acctname, crncy, dbt, cdt, now(), createdby_, comnts, jrncode);
 	IF accttype = 'Assets' OR accttype = 'Expenses' OR accttype = 'Dividends' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance + dbt - cdt WHERE AccountName = acctname;
 	END IF;
@@ -388,7 +388,22 @@ END;
 $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
+CREATE OR REPLACE FUNCTION GetDebitCreditTotals(entrycode_ VARCHAR)
+RETURNS TABLE(
+	record_debit REAL,
+	record_credit REAL
+) AS $$
 
+BEGIN
+	RETURN QUERY SELECT SUM(Debit) , SUM(Credit)  FROM journal WHERE entrycode = entrycode_ GROUP BY entrycode;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+--===============================================================================================================================================================
 CREATE OR REPLACE VIEW Bins_view AS
 SELECT bins.warehouse, bins.code, bins.status, inventory.itemcode, inventory.itemname, inventory.unit, inventory.quantity FROM bins LEFT OUTER JOIN inventory ON inventory.bin = bins.code;
+
+--===============================================================================================================================================================
 

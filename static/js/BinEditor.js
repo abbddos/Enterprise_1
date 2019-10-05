@@ -6,4 +6,5 @@ $(document).ready(function(){
   $('.close').click(function(){
     $('#myModal1').hide();
   });
-});
+  });
+
