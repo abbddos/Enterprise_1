@@ -158,6 +158,7 @@ CREATE TABLE Inventory(
 CREATE TABLE Categories(
 	CategoryId SERIAL NOT NULL PRIMARY KEY,
 	CategoryName VARCHAR(100) UNIQUE,
+	CategoryType VARCHAR(100),
 	Description TEXT
 );
 
@@ -170,7 +171,7 @@ CREATE TABLE Accounts(
 	OpeningBalance REAL,
 	CurrentBalance REAL,
 	Comments TEXT,
-	AccountCode VARCHAR(25),
+	AccountCode VARCHAR(25)
 );
 
 CREATE TABLE Journal(
@@ -185,8 +186,7 @@ CREATE TABLE Journal(
 	CreatedBy VARCHAR(50),
 	CreatedOn DATE,
 	Comments TEXT,
-	EntryCode VARCHAR(25),
-	EntryType VARCHAR(50)
+	EntryCode VARCHAR(25)
 );
 
 CREATE TABLE CashAccount(
@@ -230,41 +230,41 @@ CurrencyCode VARCHAR(5)
 );
 
 -- Adding Default Currencies...
---INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('US Dollars', 'USD');
---INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Euro', 'EUR');
---INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Syrian Pound', 'SYP');
+INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('US Dollars', 'USD');
+INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Euro', 'EUR');
+INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Syrian Pound', 'SYP');
 
 -- addition of foreign keys...
 
--- addition of foreign keys for logistics.
---ALTER TABLE approvers ADD FOREIGN KEY(username) REFERENCES users(username);
---ALTER TABLE items ADD FOREIGN KEY(provider) REFERENCES providers(name);
---ALTER TABLE items ADD FOREIGN KEY(grp) REFERENCES grp(groupname);
---ALTER TABLE packages ADD FOREIGN KEY(itemcode) REFERENCES items(code);
---ALTER TABLE bins ADD FOREIGN KEY(warehouse) REFERENCES warehouses(code);
---ALTER TABLE Transactions ADD FOREIGN KEY(createdby) REFERENCES users(username);
---ALTER TABLE Transactions ADD FOREIGN KEY(editedby) REFERENCES users(username);
---ALTER TABLE Transactions ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
---ALTER TABLE Transactions ADD FOREIGN KEY(bin) REFERENCES bins(code);
---ALTER TABLE Inventory ADD FOREIGN KEY(ItemCode) REFERENCES Items(code);
---ALTER TABLE Inventory ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
---ALTER TABLE Inventory ADD FOREIGN KEY(bin) REFERENCES Bins(code);
---ALTER TABLE Request ADD FOREIGN KEY(Createdby) REFERENCES users(username);
---ALTER TABLE Request ADD FOREIGN KEY(Editedby) REFERENCES users(username);
+ --addition of foreign keys for logistics.
+ALTER TABLE approvers ADD FOREIGN KEY(username) REFERENCES users(username);
+ALTER TABLE items ADD FOREIGN KEY(provider) REFERENCES providers(name);
+ALTER TABLE items ADD FOREIGN KEY(grp) REFERENCES grp(groupname);
+ALTER TABLE packages ADD FOREIGN KEY(itemcode) REFERENCES items(code);
+ALTER TABLE bins ADD FOREIGN KEY(warehouse) REFERENCES warehouses(code);
+ALTER TABLE Transactions ADD FOREIGN KEY(createdby) REFERENCES users(username);
+ALTER TABLE Transactions ADD FOREIGN KEY(editedby) REFERENCES users(username);
+ALTER TABLE Transactions ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
+ALTER TABLE Transactions ADD FOREIGN KEY(bin) REFERENCES bins(code);
+ALTER TABLE Inventory ADD FOREIGN KEY(ItemCode) REFERENCES Items(code);
+ALTER TABLE Inventory ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
+ALTER TABLE Inventory ADD FOREIGN KEY(bin) REFERENCES Bins(code);
+ALTER TABLE Request ADD FOREIGN KEY(Createdby) REFERENCES users(username);
+ALTER TABLE Request ADD FOREIGN KEY(Editedby) REFERENCES users(username);
 
 
 --Creation of accounting tables foreign keys...
---ALTER TABLE Accounts ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
---ALTER TABLE Journal ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
---ALTER TABLE Journal ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
---ALTER TABLE Journal ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);
---ALTER TABLE Journal ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
---ALTER TABLE Journal ADD FOREIGN KEY(AdjustedBy) REFERENCES users(username);
---ALTER TABLE CashAccount ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
+ALTER TABLE Accounts ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+ALTER TABLE Journal ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
+ALTER TABLE Journal ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+ALTER TABLE Journal ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);
+ALTER TABLE Journal ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
+ALTER TABLE Journal ADD FOREIGN KEY(AdjustedBy) REFERENCES users(username);
+ALTER TABLE CashAccount ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
 
 -- Creation of Admin user with superuser role, login and password 'admin'
---INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
---CREATE ROLE Admin WITH SUPERUSER LOGIN PASSWORD 'admin';
+INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
+CREATE ROLE Admin WITH SUPERUSER LOGIN PASSWORD 'admin';
 
 CREATE OR REPLACE FUNCTION Inbound(transid_ VARCHAR, creator_ VARCHAR, item_name_ VARCHAR, item_code_ VARCHAR, warehouse_ VARCHAR, bin_ VARCHAR, unit_ VARCHAR, quantity_ REAL, status_ VARCHAR)
 RETURNS VOID AS $$

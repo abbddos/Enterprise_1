@@ -188,12 +188,12 @@ def GrabCurrency(sess_uname, sess_pswd, act):
 
 def GetJournals():
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT entrycode, createdby, createdon, EntryType FROM journal GROUP BY entrycode, createdby, createdon, EntryType')
+    cur.execute('SELECT entrycode, createdby, createdon FROM journal GROUP BY entrycode, createdby, createdon')
     data = cur.fetchall()
     con.close()
     return data
 
-def AddJournalEntry(sess_uname, sess_pswd, entrytype, acttype, actcat, actname, crncy, dbt, cdt, comments):
+def AddJournalEntry(sess_uname, sess_pswd, acttype, actcat, actname, crncy, dbt, cdt, comments):
     JournalCode = 'JRN_' + str(date.today()) + '-' + str(random.randint(100000,999999))
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
     for i in range(len(acttype)):
@@ -203,7 +203,6 @@ def AddJournalEntry(sess_uname, sess_pswd, entrytype, acttype, actcat, actname, 
             cdt[i] = 0
         cur.execute('SELECT CreateJournalEntry(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
         (JournalCode, acttype[i], actcat[i], actname[i], crncy[i], dbt[i], cdt[i], sess_uname, comments[i]))
-        cur.execute('UPDATE journal SET entrytype = %s WHERE entrycode = %s', (entrytype, JournalCode))
         con.commit()
     con.close()
 
@@ -211,7 +210,7 @@ def GrabJournalEntry(entrycode):
     con, cur = EnterpriseAPI.root()
     cur.execute('SELECT accounttype, accountcategory, accountname, currency, debit, credit, comments FROM journal WHERE entrycode = %s',(entrycode,))
     data1 = cur.fetchall()
-    cur.execute('SELECT entrycode, createdon, createdby, entrytype FROM journal WHERE entrycode = %s GROUP BY entrycode, createdon, createdby, entrytype', (entrycode,))
+    cur.execute('SELECT entrycode, createdon, createdby FROM journal WHERE entrycode = %s GROUP BY entrycode, createdon, createdby', (entrycode,))
     data2 = cur.fetchone()
     con.close()
     data3 = []

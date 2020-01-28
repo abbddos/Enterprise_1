@@ -9,4 +9,12 @@ $(document).ready(function(){
         $('#cdt').text(''); 
         $('#myModal1').hide();
       });
+
+      $('.edit_category').click(function(){
+        $('#myModal').show();
+      });
+      $('.close').click(function(){
+        $('#myModal').hide();
+      });
+
 });

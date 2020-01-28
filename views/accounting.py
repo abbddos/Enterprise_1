@@ -113,7 +113,6 @@ def journal():
         if request.form['submit'] == 'Submit':
             try:
                 AccountingAPI.AddJournalEntry(session['username'], session['password'],
-                request.form['entry-type'],
                 request.form.getlist('account-type'),
                 request.form.getlist('account-category'),
                 request.form.getlist('account-name'),

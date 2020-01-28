@@ -1,6 +1,6 @@
 {% extends 'layout.html'%}
 {% block content%}
-<div id = 'msg-container' style = 'float:right;'>
+<div id = 'msg-container' style = 'float: right;'>
   <p id = 'msg-text' style = 'margin-right: 35px; border-style: solid; border-width: 1px; border-radius: 5px; padding: 8px;'>s <span id = 'msg-hide' class = 'hide-message'>&times;</span></p>
 </div>
 <div class="vertical-menu">
@@ -71,7 +71,7 @@
 $(document).ready(function(){
   $.getJSON('/accounting/checker/', function(data){
     if(data['status'] == true){
-      $('#msg-text').text('Your accounts are balanced.');
+      $('#msg-text').text('Your accounts are balanced; please make sure that your accounts balance is always maintained.');
       $('#msg-text').append("<span id = 'msg-hide' class = 'hide-message'>&times;</span>");
       $('#msg-text').css('color','green');
       $('#msg-text').css('border-color','green');

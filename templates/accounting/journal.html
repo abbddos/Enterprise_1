@@ -12,22 +12,6 @@
         </div>
         <div class = 'col-b'><p id = 'date-time' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px; color: rgba(0,0,100);"></p></div>
       </div>
-      <div class = 'row'>
-        <div class = 'col-a'>
-          <label>Entry Type:</label>
-        </div>
-        <div class = 'col-b'>
-          <select name = 'entry-type'>
-            <option value = 'Regular Entry'>Regular Entry</option>
-            <option value = 'Adjusting Entry-Accrued Revenue'>Adjusting Entry-Accrued Revenue</option>
-            <option value = 'Adjusting Entry-Accrued Expense'>Adjusting Entry-Accrued Expense</option>
-            <option value = 'Adjusting Entry-Unearned Revenue'>Adjusting Entry-Unearned Revenue</option>
-            <option value = 'Adjusting Entry-Prepaid Expense'>Adjusting Entry-Prepaid Expense</option>
-            <option value = 'Adjusting Entry-Depreciation'>Adjusting Entry-Depreciation</option>
-            <option value = 'Reveral Entry'>Revesal Entry</option>
-          </select>
-        </div>
-      </div>
         <div class = 'col-a'>
             <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px; color: rgba(0,0,100);" id = 'add-entry'>Add Entry</a>
         </div>
@@ -78,7 +62,6 @@
     <th>Entry ID</th>
     <th>Created by</th>
     <th>Created on</th>
-    <th>Entry Type</th>
     <th>View</th>
   </tr>
   {% for j in jrns %}
@@ -86,7 +69,6 @@
       <td>{{j[0]}}</td>
       <td>{{j[1]}}</td>
       <td>{{j[2]}}</td>
-      <td>{{j[3]}}</td>
       <td><a href = "{{url_for('accounting.view_journal_entry', entrycode = j[0])}}"><img src = "{{url_for('static', filename = 'images/view.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
     </tr>
   {% endfor %}
