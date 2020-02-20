@@ -186,6 +186,13 @@ def GrabCurrency(sess_uname, sess_pswd, act):
     con.close()
     return data
 
+def GrabAllCurrencies(sess_uname, sess_pswd):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT currencycode FROM currency')
+    data = cur.fetchall()
+    con.close()
+    return data
+
 def GetJournals():
     con, cur = EnterpriseAPI.root()
     cur.execute('SELECT entrycode, createdby, createdon FROM journal GROUP BY entrycode, createdby, createdon')

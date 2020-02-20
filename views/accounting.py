@@ -177,3 +177,8 @@ def GranJournalEntry(entrycode):
 def GrabAccountEntries(AccountName):
     data1, data2, data3 = AccountingAPI.GrabAccountEntries(AccountName)
     return jsonify(info = data1, totals = data2, balances = data3)
+
+@mod.route('/GrabAllCurrencies/')
+def GrabAllCurrencies():
+    data = AccountingAPI.GrabAllCurrencies(session['username'], session['password'])
+    return jsonify( cur = data)

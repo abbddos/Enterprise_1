@@ -87,7 +87,7 @@
         $('#add-entry').click(function(){
             i++;
             tp++;
-            $('#entry-table').append("<tr id = 'tr_" + i+ "'><td><select name = 'account-type' style = 'width: 100%;' id = '"+tp+"' class = 'type'><option></option><option value = 'Assets'>Assets</option><option value = 'Equities'>Equities</option><option value = 'Liabilities'>Liabilities</option><option value = 'Revenues'>Revenues</option><option value = 'Expenses'>Expenses</option><option value = 'Dividends'>Dividends</option></select></td><td><select name = 'account-category' style = 'width: 100%;' id = 'cat_"+tp+"' class = 'category'></select></td><td><select name = 'account-name' style = 'width: 100%;' id = 'act_cat_"+tp+"' class = 'account'></select></td><td><select name = 'currency' style = 'width: 100%;' id = 'cur_act_cat_"+tp+"' class = 'currency'></select></td><td><input type = 'text' name = 'debit' style = 'width: 100%;' class = 'debit' id = 'deb_"+i+"'/></td><td><input type = 'text' name = 'credit' style = 'width: 100%;' class = 'credit' id = 'crd_"+i+"'/></td><td><input type = 'text' name = 'comments' style = 'width: 100%;' /></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
+            $('#entry-table').append("<tr id = 'tr_" + i+ "'><td><select name = 'account-type' style = 'width: 100%;' id = '"+tp+"' class = 'type'><option></option><option value = 'Assets'>Assets</option><option value = 'Equities'>Equities</option><option value = 'Liabilities'>Liabilities</option><option value = 'Revenues'>Revenues</option><option value = 'Expenses'>Expenses</option><option value = 'Dividends'>Dividends</option><option value = 'currency exchange'>Currency Exchange</option></select></td><td><select name = 'account-category' style = 'width: 100%;' id = 'cat_"+tp+"' class = 'category'></select></td><td><select name = 'account-name' style = 'width: 100%;' id = 'act_cat_"+tp+"' class = 'account'></select></td><td><select name = 'currency' style = 'width: 100%;' id = 'cur_act_cat_"+tp+"' class = 'currency'></select></td><td><input type = 'text' name = 'debit' style = 'width: 100%;' class = 'debit' id = 'deb_"+i+"'/></td><td><input type = 'text' name = 'credit' style = 'width: 100%;' class = 'credit' id = 'crd_"+i+"'/></td><td><input type = 'text' name = 'comments' style = 'width: 100%;' /></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
         });
         
         $(document).on('focus', '.debit', function(){
@@ -132,13 +132,25 @@
 
         $(document).on('change', '.account', function(){
           var ids = $(this).attr('id');
-          $.getJSON('/accounting/GrabCurrency/'+ $(this).val(), function(data){
+          var dude = $(this).val();
+          //alert(dude);
+          if(dude =='currency exchange adjustment'){
+            $.getJSON('/accounting/GrabAllCurrencies', function(data){
+              $('#cur_'+ids).find('option').remove();
+              $('#cur_'+ids).append("<option></option>");
+              $.each(data.cur, function(key, val){
+              $('#cur_'+ids).append("<option value = '"+val+"'>"+val+"</option>");
+            });
+            });
+          }
+         else{ $.getJSON('/accounting/GrabCurrency/'+ $(this).val(), function(data){
             $('#cur_'+ids).find('option').remove();
             $('#cur_'+ids).append("<option></option>");
             $.each(data.cur, function(key, val){
               $('#cur_'+ids).append("<option value = '"+val+"'>"+val+"</option>");
             });
           });
+        }
         });
 
         $(document).on('change', '.debit', function(){
