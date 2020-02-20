@@ -108,6 +108,7 @@ def items():
     data = EnterpriseAPI.GetItems()
     wh = EnterpriseAPI.GetWareHouses()
     form.Group.choices = EnterpriseAPI.Groups()
+    form.SecondaryUnit.choices = EnterpriseAPI.SecondaryUnits()
     form.Provider.choices = EnterpriseAPI.ProvidersList()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit' and form.validate():
@@ -133,7 +134,8 @@ def items():
                 request.form['HeightUnit'],
                 request.form['DiamaterUnit'],
                 request.form['Group'],
-                request.form['Category'])
+                request.form['Category'],
+                request.form['SecondaryUnit'])
                 flash('Item added successfully', category = 'success')
                 return redirect(url_for('logistics.items'))
             except Exception as e:
@@ -147,6 +149,7 @@ def edit_item(itm):
     data1 = EnterpriseAPI.FetchItem(itm)
     provs = EnterpriseAPI.ProvidersList()
     grp = EnterpriseAPI.Groups()
+    secunit = EnterpriseAPI.SecondaryUnits()
     wh = EnterpriseAPI.GetWareHouses()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -172,7 +175,8 @@ def edit_item(itm):
                 request.form['HeightUnit'],
                 request.form['DiamaterUnit'],
                 request.form['Group'],
-                request.form['Category'])
+                request.form['Category'],
+                request.form['SecondaryUnit'])
                 flash('Item updated successfully', category = 'success')
                 return redirect(url_for('logistics.items'))
             except Exception as e:
@@ -226,6 +230,43 @@ def edit_package(pkg):
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.packages'))
     return render_template('logistics/edit_package.html', username = session['username'], pks = pks, itms = itms, pkk = pkk, itt = itt, wh = wh)
+
+@mod.route('Secondary_units/', methods = ['GET','POST'])
+def SecondaryUnits():
+    data = EnterpriseAPI.GetSecondaryUnits()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                EnterpriseAPI.CreateSecondaryUnit(session['username'], session['password'],
+                request.form['secuntname'],
+                request.form['secuntcode'],
+                request.form['unit'],
+                request.form['secuntmeasure'])
+                flash('Secondary unit created successfully...', category = 'success')
+                return redirect(url_for('logistics.SecondaryUnits'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('logistics.SecondaryUnits'))
+    return render_template('logistics/Secondary_units.html', username = session['username'], data = data)
+
+@mod.route('Edit_Secondary_unit/<code>/', methods = ['GET','POST'])
+def EditSecondaryUnit(code):
+    data = EnterpriseAPI.GetSecondaryUnits()
+    data1 = EnterpriseAPI.GrabSecondaryUnit(code)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                EnterpriseAPI.UpdateSecondaryUnit(session['username'], session['password'],
+                request.form['secuntname'],
+                code,
+                request.form['unit'],
+                request.form['secuntmeasure'])
+                flash('Secondary Unit updated successfully...', category = 'success')
+                return redirect(url_for('logistics.SecondaryUnits'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('logistics.SecondaryUnits'))
+    return render_template('logistics/Edit_secondary_unit.html', username = session['username'], data = data, data1 = data1)
 
 @mod.route('/warehouses/create_warehouse/', methods = ['GET','POST'])
 def create_warehouse():

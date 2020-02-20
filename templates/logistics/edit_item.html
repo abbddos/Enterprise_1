@@ -89,6 +89,19 @@
     </div>
     <div class = 'row'>
       <div class = 'col-a'>
+        <label>Secondary Unit</label>
+      </div>
+      <div class = 'col-b'>
+        <select name = 'SecondaryUnit'>
+          <option value = "{{j[23]}}" selected hidden>{{j[23]}}</option>
+          {% for s in secunit%}
+            <option value = "{{s[0]}}">{{s[0]}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
         <label>Unit Price:</label>
       </div>
       <div class = 'col-b'>

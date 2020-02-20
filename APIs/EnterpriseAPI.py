@@ -232,18 +232,18 @@ def UpdateGroup(sess_uname, sess_pswd, id, name, description):
     con.commit()
     con.close()
 
-def CreateItem(sess_uname, sess_pswd, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category):
+def CreateItem(sess_uname, sess_pswd, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
     code = random.randint(100000000000,999999999999)
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('INSERT INTO Items(Code, Item, Brand, Provider, Unit, Unit_Price, Description, Size, Color, sku, part_number, ieme, lengh, width, height, diameter, l_unit, w_unit, h_unit, d_unit, grp, category) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-    (code, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category))
+    cur.execute('INSERT INTO Items(Code, Item, Brand, Provider, Unit, Unit_Price, Description, Size, Color, sku, part_number, ieme, lengh, width, height, diameter, l_unit, w_unit, h_unit, d_unit, grp, category, secondaryunit) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    (code, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
     con.commit()
     con.close()
 
-def UpdateItem(sess_uname, sess_pswd, itm, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category):
+def UpdateItem(sess_uname, sess_pswd, itm, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('UPDATE items SET Item = %s, Brand = %s, Provider = %s, Unit = %s, Unit_Price = %s, Description = %s, Size = %s, Color = %s, sku = %s, part_number = %s, ieme = %s, lengh = %s, width = %s, height = %s, diameter = %s, l_unit = %s, w_unit = %s, h_unit = %s, d_unit = %s, grp = %s, category = %s WHERE id = %s',
-    (itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, itm))
+    cur.execute('UPDATE items SET Item = %s, Brand = %s, Provider = %s, Unit = %s, Unit_Price = %s, Description = %s, Size = %s, Color = %s, sku = %s, part_number = %s, ieme = %s, lengh = %s, width = %s, height = %s, diameter = %s, l_unit = %s, w_unit = %s, h_unit = %s, d_unit = %s, grp = %s, category = %s , secondaryunit = %s WHERE id = %s',
+    (itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit, itm))
     con.commit()
     con.close()
 
@@ -322,6 +322,42 @@ def PackagePicker():
 def PackageAdder(code):
     con, cur = root()
     cur.execute('SELECT packagecode, packagename FROM packages WHERE packagecode = %s GROUP BY packagecode, packagename ORDER BY packagecode', (code,))
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def CreateSecondaryUnit(sess_uname, sess_pswd,name, code, unit, measure):
+    con, cur = connector(sess_uname, sess_pswd)
+    cur.execute('INSERT INTO SecondaryUnits(Name, Code, Unit, Measure) VALUES(%s, %s, %s, %s)', (name, code, unit, measure))
+    con.commit()
+    con.close()
+
+def GetSecondaryUnits():
+    con, cur = root()
+    cur.execute('SELECT * FROM SecondaryUnits')
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def SecondaryUnits():
+    con, cur = root()
+    cur.execute('SELECT code FROM SecondaryUnits')
+    data = cur.fetchall()
+    choices = []
+    for i in data:
+        choices.append((i[0],i[0]))
+    con.close()
+    return choices
+
+def UpdateSecondaryUnit(sess_uname, sess_pswd, name, code, unit, measure):
+    con, cur = connector(sess_uname, sess_pswd)
+    cur.execute('UPDATE SecondaryUnits SET name = %s, unit = %s, measure = %s WHERE code = %s',(name, unit, measure, code))
+    con.commit()
+    con.close()
+
+def FetchSecondaryUnits():
+    con, cur = root()
+    cur.execute('SELECT code FROM SecondaryUnits')
     data = cur.fetchall()
     con.close()
     return data

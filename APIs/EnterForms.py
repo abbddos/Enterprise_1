@@ -69,6 +69,7 @@ class ItemsForm(Form):
     Category = SelectField('Category: ', choices = [
     ('Asset','Asset'),
     ('Non-Asset','Non-Asset')])
+    SecondaryUnit = SelectField('Secondary Unit', choices = [])
     Description = TextAreaField('Description: ')
 
     #Size and dimentions

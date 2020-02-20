@@ -6,6 +6,7 @@
  <a href = "{{url_for('logistics.groups')}}">Groups</a>
  <a href = "{{url_for('logistics.items')}}">Items</a>
  <a href = "{{url_for('logistics.packages')}}">Packages</a>
+ <a href = "{{url_for('logistics.SecondaryUnits')}}">Secondary Units</a>
  <ul class = 'warehouse' id = 'warehouse'><a href = "#">Warehouses</a>
    {% for w in wh%}
     <li class = 'warehousecontent'><a href = "{{url_for('logistics.edit_warehouse', code = w[0])}}" id = 'toggler'>- {{w[0]}}</a></li>

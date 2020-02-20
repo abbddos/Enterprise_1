@@ -73,7 +73,15 @@ CREATE TABLE items(
   h_unit VARCHAR(10),
   d_unit VARCHAR(10),
   grp VARCHAR(50),
-  category VARCHAR(50)
+  category VARCHAR(50),
+  secondaryunit VARCHAR(10)
+);
+
+CREATE TABLE SecondaryUnits(
+	Name VARCHAR(25),
+	Code VARCHAR(10) PRIMARY KEY,
+	Unit VARCHAR(5),
+	Measure REAL
 );
 
 CREATE TABLE packages(
@@ -251,6 +259,7 @@ ALTER TABLE Inventory ADD FOREIGN KEY(warehouse) REFERENCES Warehouses(code);
 ALTER TABLE Inventory ADD FOREIGN KEY(bin) REFERENCES Bins(code);
 ALTER TABLE Request ADD FOREIGN KEY(Createdby) REFERENCES users(username);
 ALTER TABLE Request ADD FOREIGN KEY(Editedby) REFERENCES users(username);
+ALTER TABLE items ADD FOREIGN KEY(secondaryunit) REFERENCES SecondaryUnits(code);
 
 
 --Creation of accounting tables foreign keys...
