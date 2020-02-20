@@ -339,6 +339,13 @@ def GetSecondaryUnits():
     con.close()
     return data
 
+def GrabSecondaryUnit(code):
+    con, cur = root()
+    cur.execute('SELECT * FROM SecondaryUnits WHERE code = %s', (code,))
+    data = cur.fetchone()
+    con.close()
+    return data
+
 def SecondaryUnits():
     con, cur = root()
     cur.execute('SELECT code FROM SecondaryUnits')
