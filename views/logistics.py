@@ -234,6 +234,7 @@ def edit_package(pkg):
 @mod.route('Secondary_units/', methods = ['GET','POST'])
 def SecondaryUnits():
     data = EnterpriseAPI.GetSecondaryUnits()
+    wh = EnterpriseAPI.GetWareHouses()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -247,12 +248,13 @@ def SecondaryUnits():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.SecondaryUnits'))
-    return render_template('logistics/Secondary_units.html', username = session['username'], data = data)
+    return render_template('logistics/Secondary_units.html', username = session['username'], data = data, wh = wh)
 
 @mod.route('Edit_Secondary_unit/<code>/', methods = ['GET','POST'])
 def EditSecondaryUnit(code):
     data = EnterpriseAPI.GetSecondaryUnits()
     data1 = EnterpriseAPI.GrabSecondaryUnit(code)
+    wh = EnterpriseAPI.GetWareHouses()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -266,7 +268,7 @@ def EditSecondaryUnit(code):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.SecondaryUnits'))
-    return render_template('logistics/Edit_secondary_unit.html', username = session['username'], data = data, data1 = data1)
+    return render_template('logistics/Edit_secondary_unit.html', username = session['username'], data = data, data1 = data1, wh = wh)
 
 @mod.route('/warehouses/create_warehouse/', methods = ['GET','POST'])
 def create_warehouse():
