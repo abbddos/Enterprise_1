@@ -234,7 +234,9 @@ CREATE TABLE Budget(
 CREATE TABLE Currency(
 CurrencyID SERIAL NOT NULL PRIMARY KEY,
 CurrencyName VARCHAR(25),
-CurrencyCode VARCHAR(5)
+CurrencyCode VARCHAR(5),
+ExchangeRate REAL,
+FunctionalCurrency VARCHAR(3)
 );
 
 -- Adding Default Currencies...

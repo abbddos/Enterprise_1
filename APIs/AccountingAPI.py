@@ -241,4 +241,31 @@ def GrabAccountEntries(AccountName):
     con.close()
     return data1, data2, data3
     
+def GetAllCurrencies():
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT * FROM currency ORDER BY currencyid')
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def GetCurrency(id):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT * FROM currency WHERE currencyid = %s', (id,))
+    data = cur.fetchone()
+    con.close()
+    return data
+
+def AddCurrency(sess_uname, sess_pswd, name, code, ex_rate, func):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('INSERT INTO currency(currencyname, currencycode, exchangerate, functionalcurrency) VALUES(%s, %s, %s, %s)',(name, code, ex_rate, func))
+    con.commit()
+    con.close()
+
+def UpdateCurrency(sess_uname, sess_pswd, id, name, code, ex_rate, func):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('UPDATE currency SET CurrencyName = %s, CurrencyCode = %s, ExchangeRate = %s, FunctionalCurrency = %s WHERE CurrencyID = %s',
+    (name, code, ex_rate, func, id))
+    con.commit()
+    con.close()
+
 

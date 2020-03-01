@@ -1,0 +1,89 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Currencies</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Currency ID: </label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'CurrencyID' value = '{{data[0]}}' disabled/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Currency Name: </label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'CurrencyName' value = '{{data[1]}}'/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Currency Code: </label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'CurrencyCode' value = '{{data[2]}}'/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Exchange rate: </label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'ExchangeRate' value = '{{data[3]}}'/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Functional Currency: </label>
+        </div>
+        <div class = 'col-b'>
+           <select name = 'Functional'>
+            <option value = '{{data[4]}}'>{{data[4]}}</option>   
+            <option value = 'Yes'>Yes</option>
+            <option value = 'No'>No</option>
+           </select>
+        </div>
+    </div>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <p id = 'message'></p>
+  </div>
+</form>
+<table>
+  <tr>
+    <th>Currency ID</th>
+    <th>Currency Name</th>
+    <th>Currency Code</th>
+    <th>Exchange Rate</th>
+    <th>Functional Currency</th>
+    <th>Edit</th>
+  </tr>
+  {% for i in data1 %}
+    <tr>
+      <td>{{i[0]}}</td>
+      <td>{{i[1]}}</td>
+      <td>{{i[2]}}</td>
+      <td>{{i[3]}}</td>
+      <td>{{i[4]}}</td>
+      <td><a href = "{{url_for('accounting.EditCurrency', code = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
+    </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}

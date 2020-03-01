@@ -137,6 +137,44 @@ def view_journal_entry(entrycode):
         return redirect(url_for('accounting.journal'))
     return render_template('accounting/view-journal-entry.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns, data1 = data1, data2 = data2, data3 = data3)
 
+@mod.route('/currencies', methods = ['GET','POST'])
+def currencies():
+    form = AccountingForms.Currencies(request.form)
+    data = AccountingAPI.GetAllCurrencies()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                AccountingAPI.AddCurrency(session['username'], session['password'],
+                request.form['CurrencyName'],
+                request.form['CurrencyCode'],
+                request.form['ExchageRate'],
+                request.form['Functional'])
+                flash('Currency is successfully added', category = 'success')
+                return redirect(url_for('accounting.currencies'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('accounting.currencies'))
+    return render_template('accounting/currencies.html', username = session['username'], form = form, data = data)
+
+@mod.route('/edit_currency/<code>', methods = ['GET','POST'])
+def EditCurrency(code):
+    data = AccountingAPI.GetCurrency(code)
+    data1 = AccountingAPI.GetAllCurrencies()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                AccountingAPI.UpdateCurrency(session['username'], session['password'],
+                code, 
+                request.form['CurrencyName'],
+                request.form['CurrencyCode'],
+                request.form['ExchangeRate'],
+                request.form['Functional'])
+                flash('Currency updated successfully...', category = 'success')
+                return redirect(url_for('accounting.currencies'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('accounting.currencies'))
+    return render_template('accounting/edit_currency.html', username = session['username'], data = data, data1 = data1)
 
 #JSON returning urls...
 @mod.route('/checker/')

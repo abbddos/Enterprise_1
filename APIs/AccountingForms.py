@@ -14,3 +14,14 @@ class Accounts(Form):
     CurrentBalance = StringField('Current Balance:', validators = [DataRequired()])
     Comments = TextAreaField('Comments:')
 
+class Currencies(Form):
+    CurrencyName = StringField('Currency Name:', validators = [DataRequired()])
+    CurrencyCode = StringField('Currency Code:', validators = [DataRequired()])
+    ExchageRate = StringField('Exchange rate:', validators = [DataRequired()])
+    Functional = SelectField('Functional Currency: ', choices = [
+        ('Yes','Yes'),
+        ('No','No')
+    ])
+
+
+
