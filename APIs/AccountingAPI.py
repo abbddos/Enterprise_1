@@ -137,7 +137,7 @@ def EditCategory(sess_uname, sess_pswd, id, name, comments):
 
 def GetCurrencies():
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT CurrencyCode FROM currency')
+    cur.execute('SELECT CurrencyCode FROM currency ORDER BY currencyid')
     currencies = cur.fetchall();
     con.close()
     data = []
@@ -154,21 +154,21 @@ def GetAccounts(type, category):
 
 def AddNewAccount(sess_uname, sess_pswd, account, category, code, name, currency, OBalance, CBalance, comments):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)', (account, category, name, currency, OBalance, CBalance, comments, code ))
+    cur.execute('SELECT CreateAccount(%s, %s, %s, %s, %s, %s, %s, %s)', (account, category, code, name, currency, OBalance, CBalance, comments))
     con.commit()
     con.close()
 
 def GetAccountData(sess_uname, sess_pswd, type, category, account):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT accountcode, accountname, currency, openingbalance, currentbalance, comments FROM accounts WHERE accounttype = %s AND accountcategory = %s AND accountcode = %s', (type, category, account))
+    cur.execute('SELECT * FROM GetAccount(%s)', (account,))
     data = cur.fetchone()
     con.close()
     return data
 
 def UpdateAccount(sess_uname, sess_pswd, type, category, account, name, currency, openbalance, currentbalance, comments):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('UPDATE accounts SET accountname = %s, currency = %s, openingbalance = %s, currentbalance = %s, comments = %s WHERE accounttype = %s AND accountcategory = %s AND accountcode = %s',
-    (name, currency, openbalance, currentbalance, comments, type, category, account))
+    cur.execute('SELECT UpdateAccount(%s, %s, %s, %s, %s, %s, %s, %s)',
+    (type, category, account, name, currency, openbalance, currentbalance, comments))
     con.commit()
     con.close()
 

@@ -418,3 +418,49 @@ SELECT bins.warehouse, bins.code, bins.status, inventory.itemcode, inventory.ite
 
 --===============================================================================================================================================================
 
+CREATE OR REPLACE FUNCTION CreateAccount(account VARCHAR, category VARCHAR, code VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments TEXT)
+RETURNS void AS $$
+DECLARE 
+	ex_rate REAL;
+
+BEGIN
+	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
+	INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(account, category, name, currency_, OBalance * ex_rate, CBalance * ex_rate, comments, code); 
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION UpdateAccount(account VARCHAR, category VARCHAR, code VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments_ TEXT)
+RETURNS void AS $$
+DECLARE
+	ex_rate REAL;
+BEGIN
+	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
+	UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance * ex_rate, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION GetAccount(code_ VARCHAR)
+RETURNS TABLE(
+	AccountType VARCHAR,        
+	AccountCategory VARCHAR,
+	AccountName VARCHAR,
+	Currency VARCHAR,
+	OpeningBalance REAL,
+	CurrentBalance REAL,
+	Comments TEXT,
+	AccountCode VARCHAR
+) AS $$
+
+DECLARE
+	ex_rate REAL;
+	cur VARCHAR;
+BEGIN
+	SELECT Accounts.currency INTO cur FROM Accounts WHERE Accounts.AccountCode = code_;
+	SELECT ExchangeRate INTO ex_rate FROM currency WHERE currencycode = cur;
+	RETURN QUERY SELECT Accounts.AccountType AS AccountType, Accounts.AccountCategory AS Category, Accounts.AccountName AS AccountName, Accounts.Currency AS Currency, Accounts.OpeningBalance / ex_rate AS OpeningBalance, Accounts.CurrentBalance / ex_rate AS CurrentBalance, Accounts.Comments AS Comments, Accounts.AccountCode FROM Accounts WHERE Accounts.AccountCode = code_;
+END;
+$$ LANGUAGE plpgsql;

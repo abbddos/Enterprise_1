@@ -41,12 +41,6 @@
     {% endfor %}
     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Dividends')}}">+ Add new Dividends Category</a></li>
   </ul>
-  <ul class = 'warehouse' id = 'cash-check'><a href = "#">Cash Checking</a>
-    {% for csh in data['Cash_Check'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Checking_Account', account = csh)}}" id = 'toggler'>- {{csh}}</a></li>
-    {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Checking_Account')}}">+ Add new Cash Checking Category</a></li>
-  </ul>
 
   <a href = "{{url_for('accounting.journal')}}">Journal</a>
   <a href = "{{url_for('accounting.currencies')}}">Currencies</a>

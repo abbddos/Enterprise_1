@@ -139,8 +139,9 @@ def view_journal_entry(entrycode):
 
 @mod.route('/currencies', methods = ['GET','POST'])
 def currencies():
+    data = AccountingAPI.GetCategories()
     form = AccountingForms.Currencies(request.form)
-    data = AccountingAPI.GetAllCurrencies()
+    data1 = AccountingAPI.GetAllCurrencies()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -154,12 +155,13 @@ def currencies():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.currencies'))
-    return render_template('accounting/currencies.html', username = session['username'], form = form, data = data)
+    return render_template('accounting/currencies.html', username = session['username'], form = form, data = data, data1 = data1)
 
 @mod.route('/edit_currency/<code>', methods = ['GET','POST'])
 def EditCurrency(code):
-    data = AccountingAPI.GetCurrency(code)
-    data1 = AccountingAPI.GetAllCurrencies()
+    data = AccountingAPI.GetCategories()
+    data1 = AccountingAPI.GetCurrency(code)
+    data2 = AccountingAPI.GetAllCurrencies()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -174,7 +176,7 @@ def EditCurrency(code):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.currencies'))
-    return render_template('accounting/edit_currency.html', username = session['username'], data = data, data1 = data1)
+    return render_template('accounting/edit_currency.html', username = session['username'], data = data, data1 = data1, data2 = data2)
 
 #JSON returning urls...
 @mod.route('/checker/')

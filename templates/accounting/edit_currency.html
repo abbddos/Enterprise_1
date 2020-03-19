@@ -11,7 +11,7 @@
             <label>Currency ID: </label>
         </div>
         <div class = 'col-b'>
-            <input type = 'text' name = 'CurrencyID' value = '{{data[0]}}' disabled/>
+            <input type = 'text' name = 'CurrencyID' value = '{{data1[0]}}' disabled/>
         </div>
     </div>
     <div class = 'row'>
@@ -19,7 +19,7 @@
             <label>Currency Name: </label>
         </div>
         <div class = 'col-b'>
-            <input type = 'text' name = 'CurrencyName' value = '{{data[1]}}'/>
+            <input type = 'text' name = 'CurrencyName' value = '{{data1[1]}}'/>
         </div>
     </div>
     <div class = 'row'>
@@ -27,7 +27,7 @@
             <label>Currency Code: </label>
         </div>
         <div class = 'col-b'>
-            <input type = 'text' name = 'CurrencyCode' value = '{{data[2]}}'/>
+            <input type = 'text' name = 'CurrencyCode' value = '{{data1[2]}}'/>
         </div>
     </div>
     <div class = 'row'>
@@ -35,7 +35,7 @@
             <label>Exchange rate: </label>
         </div>
         <div class = 'col-b'>
-            <input type = 'text' name = 'ExchangeRate' value = '{{data[3]}}'/>
+            <input type = 'text' name = 'ExchangeRate' value = '{{data1[3]}}'/>
         </div>
     </div>
     <div class = 'row'>
@@ -44,7 +44,7 @@
         </div>
         <div class = 'col-b'>
            <select name = 'Functional'>
-            <option value = '{{data[4]}}'>{{data[4]}}</option>   
+            <option value = '{{data1[4]}}'>{{data[4]}}</option>   
             <option value = 'Yes'>Yes</option>
             <option value = 'No'>No</option>
            </select>
@@ -74,7 +74,7 @@
     <th>Functional Currency</th>
     <th>Edit</th>
   </tr>
-  {% for i in data1 %}
+  {% for i in data2 %}
     <tr>
       <td>{{i[0]}}</td>
       <td>{{i[1]}}</td>

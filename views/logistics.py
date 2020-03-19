@@ -182,7 +182,7 @@ def edit_item(itm):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.items'))
-    return render_template('logistics/edit_item.html', username = session['username'], data = data, data1 = data1, provs = provs, grp = grp, wh = wh)
+    return render_template('logistics/edit_item.html', username = session['username'], data = data, data1 = data1, provs = provs, grp = grp, wh = wh, secunit = secunit)
 
 @mod.route('/packages/', methods = ['GET','POST'])
 def packages():
