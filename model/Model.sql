@@ -393,10 +393,10 @@ BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = crncy;
 	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode) VALUES(now(), accttype, acctcat, acctname, crncy, dbt * ex_rate, cdt * ex_rate, now(), createdby_, comnts, jrncode);
 	IF accttype = 'Assets' OR accttype = 'Expenses' OR accttype = 'Dividends' THEN
-		UPDATE Accounts SET CurrentBalance = CurrentBalance + dbt - cdt WHERE AccountName = acctname;
+		UPDATE Accounts SET CurrentBalance = CurrentBalance + (dbt * ex_rate) - (cdt * ex_rate) WHERE AccountName = acctname;
 	END IF;
 	IF accttype = 'Equities' OR accttype = 'Liabilities' OR accttype = 'Reveneus' THEN
-		UPDATE Accounts SET CurrentBalance = CurrentBalance - dbt + cdt WHERE AccountName = acctname;
+		UPDATE Accounts SET CurrentBalance = CurrentBalance - (dbt * ex_rate) + (cdt * ex_rate) WHERE AccountName = acctname;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
