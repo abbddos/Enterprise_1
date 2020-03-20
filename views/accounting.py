@@ -109,6 +109,7 @@ def journal():
     data = AccountingAPI.GetCategories()
     bdgts = AccountingAPI.GetBudgets()
     jrns = AccountingAPI.GetJournals()
+    FCurr = AccountingAPI.GetFuntionalCurrency()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -125,7 +126,7 @@ def journal():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.journal'))
-    return render_template('accounting/journal.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns)
+    return render_template('accounting/journal.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns, FC = FCurr)
 
 @mod.route('/view_journal_entry/<entrycode>', methods = ['GET','POST'])
 def view_journal_entry(entrycode):
@@ -222,3 +223,8 @@ def GrabAccountEntries(AccountName):
 def GrabAllCurrencies():
     data = AccountingAPI.GrabAllCurrencies(session['username'], session['password'])
     return jsonify( cur = data)
+
+@mod.route('/GetExchange/<curr>')
+def GetExchange(curr):
+    data = AccountingAPI.GetExchange(str(curr).upper())
+    return jsonify(ex = data[0])

@@ -268,4 +268,18 @@ def UpdateCurrency(sess_uname, sess_pswd, id, name, code, ex_rate, func):
     con.commit()
     con.close()
 
+def GetFuntionalCurrency():
+    con, cur = EnterpriseAPI.root()
+    cur.execute("SELECT currencycode FROM currency WHERE functionalcurrency = 'Yes'")
+    data = cur.fetchone()
+    con.close()
+    return data
+
+def GetExchange(curr):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT exchangerate FROM currency WHERE currencycode = %s', (curr,))
+    data = cur.fetchone()
+    con.close()
+    return data
+
 

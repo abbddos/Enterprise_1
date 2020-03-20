@@ -387,8 +387,11 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION CreateJournalEntry(jrncode VARCHAR, accttype VARCHAR, acctcat VARCHAR, acctname VARCHAR, crncy VARCHAR, dbt REAL, cdt REAL, createdby_ VARCHAR, comnts TEXT)
 RETURNS void AS $$
+DECLARE
+	ex_rate REAL;
 BEGIN
-	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode) VALUES(now(), accttype, acctcat, acctname, crncy, dbt, cdt, now(), createdby_, comnts, jrncode);
+	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = crncy;
+	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode) VALUES(now(), accttype, acctcat, acctname, crncy, dbt * ex_rate, cdt * ex_rate, now(), createdby_, comnts, jrncode);
 	IF accttype = 'Assets' OR accttype = 'Expenses' OR accttype = 'Dividends' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance + dbt - cdt WHERE AccountName = acctname;
 	END IF;
