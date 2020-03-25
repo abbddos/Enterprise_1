@@ -45,18 +45,10 @@
   <a href = "{{url_for('accounting.journal')}}">Journal</a>
   <a href = "{{url_for('accounting.currencies')}}">Currencies</a>
  
-  <ul class = 'warehouse' id = 'budget'><a href = "#">Budget</a>
-    {% for bdg in bdgts %}
-     <li class = 'warehousecontent'><a href = "#" id = 'toggler'>- {{bdg}}</a></li>
-    {% endfor %}
-    <li class = 'warehousecontent'><a href = "#">+ Create New Budget</a></li>
-  </ul>
-
  <ul class = 'reports' id = 'statements'><a href = "#">Statements</a>
   <li class = 'warehousecontent'><a href = "#">Balance Sheet</a></li>
   <li class = 'warehousecontent'><a href = "#">Trial Sheet</a></li>
   <li class = 'warehousecontent'><a href = "#">Net Income Statement</a></li>
-  <li class = 'warehousecontent'><a href = "#">Comprehensive Income Statement</a></li>
  </ul>
  </div>
  

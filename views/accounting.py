@@ -179,7 +179,7 @@ def EditCurrency(code):
                 return redirect(url_for('accounting.currencies'))
     return render_template('accounting/edit_currency.html', username = session['username'], data = data, data1 = data1, data2 = data2)
 
-#JSON returning urls...
+#REST API
 @mod.route('/checker/')
 def checker():
     data = AccountingAPI.Checker()

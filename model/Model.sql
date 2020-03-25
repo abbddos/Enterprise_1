@@ -206,30 +206,6 @@ CREATE TABLE CashAccount(
 	Comments TEXT
 );
 
-CREATE TABLE Budget(
-	BudgetId SERIAL NOT NULL PRIMARY KEY,
-	BudgetCode VARCHAR(50),
-	StartingMonth VARCHAR(10),
-	CreatedBy VARCHAR(50),
-	CreatedOn DATE,
-	UpdatedBy VARCHAR(50),
-	UpdatedOn DATE,
-	LineType VARCHAR(25),
-	WBS VARCHAR(50),
-    Month1 REAL,
-	Month2 REAL,
-	Month3 REAL,
-	Month4 REAL,
-	Month5 REAL,
-	Month6 REAL,
-	Month7 REAL,
-	Month8 REAL,
-	Month9 REAL,
-	Month10 REAL,
-	Month11 REAL,
-	Month12 REAL,
-	Comments TEXT
-);
 
 CREATE TABLE Currency(
 CurrencyID SERIAL NOT NULL PRIMARY KEY,
