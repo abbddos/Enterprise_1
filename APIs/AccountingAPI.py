@@ -214,8 +214,8 @@ def GrabJournalEntry(entrycode):
     dbt = 0
     cdt = 0
     for d in data1:
-        dbt += d[5]
-        cdt += d[6]
+        dbt += d[6]
+        cdt += d[7]
     data3.append(dbt)
     data3.append(cdt)
     return data1, data2, data3
