@@ -11,13 +11,11 @@ mod = Blueprint('accounting', __name__, url_prefix = '/accounting')
 @mod.route('/')
 def accounting():
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
-    return render_template('accounting/accounting.html', username = session['username'], data = data, bdgts = bdgts)
+    return render_template('accounting/accounting.html', username = session['username'], data = data)
 
 @mod.route('/add_category/<category>', methods = ['GET','POST'])
 def add_category(category):
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
     form = AccountingForms.CategoryForm(request.form)
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -31,12 +29,11 @@ def add_category(category):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_category', category = category))
-    return render_template('accounting/add-category.html', username = session['username'], data = data, category = category, form = form, bdgts = bdgts)
+    return render_template('accounting/add-category.html', username = session['username'], data = data, category = category, form = form)
 
 @mod.route('/edit_category/<category>/<account>', methods = ['GET','POST'])
 def edit_category(category, account):
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
     form = AccountingForms.Accounts(request.form)
     cats = AccountingAPI.GetCategory(session['username'], session['password'], account)
     AllAccounts = AccountingAPI.GetAccounts(category, account)
@@ -52,12 +49,11 @@ def edit_category(category, account):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_account', category = category, account = account))
-    return render_template('accounting/add-account.html', username = session['username'], data = data, category = category, bdgts = bdgts, cats = cats, form = form, accounts = AllAccounts, account = account)
+    return render_template('accounting/add-account.html', username = session['username'], data = data, category = category,  cats = cats, form = form, accounts = AllAccounts, account = account)
 
 @mod.route('/add_account/<category>/<account>', methods = ['GET','POST'])
 def add_account(category, account):
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
     form = AccountingForms.Accounts(request.form)
     cats = AccountingAPI.GetCategory(session['username'], session['password'], account)
     AllAccounts = AccountingAPI.GetAccounts(category, account)
@@ -78,12 +74,11 @@ def add_account(category, account):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_account', category = category, account = account))
-    return render_template('accounting/add-account.html', username = session['username'], data = data, category = category, bdgts = bdgts, cats = cats, form = form, accounts = AllAccounts, account = account)
+    return render_template('accounting/add-account.html', username = session['username'], data = data, category = category, cats = cats, form = form, accounts = AllAccounts, account = account)
 
 @mod.route('/edit_account/<type>/<category>/<account>', methods = ['GET','POST'])
 def edit_account(type, category, account):
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
     cats = AccountingAPI.GetCategory(session['username'], session['password'], account)
     currencies = AccountingAPI.GetCurrencies()
     AllAccounts = AccountingAPI.GetAccounts(type, category)
@@ -102,12 +97,11 @@ def edit_account(type, category, account):
                 return redirect(url_for('accounting.add_account', category = type, account = category))
             except Exception as e:
                 flash(str(e), category = 'fail')
-    return render_template('accounting/edit-account.html', username = session['username'], data = data, category = type, bdgts = bdgts, cats = cats, accounts = AllAccounts, account = category, acdata = AccountData, curs = currencies)     
+    return render_template('accounting/edit-account.html', username = session['username'], data = data, category = type,  cats = cats, accounts = AllAccounts, account = category, acdata = AccountData, curs = currencies)     
 
 @mod.route('/journal', methods = ['GET','POST'])
 def journal():
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
     jrns = AccountingAPI.GetJournals()
     FCurr = AccountingAPI.GetFuntionalCurrency()
     if request.method == 'POST':
@@ -126,17 +120,17 @@ def journal():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.journal'))
-    return render_template('accounting/journal.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns, FC = FCurr)
+    return render_template('accounting/journal.html', username = session['username'], data = data,  jrns = jrns, FC = FCurr)
 
 @mod.route('/view_journal_entry/<entrycode>', methods = ['GET','POST'])
 def view_journal_entry(entrycode):
     data = AccountingAPI.GetCategories()
-    bdgts = AccountingAPI.GetBudgets()
     jrns = AccountingAPI.GetJournals()
     data1, data2, data3 = AccountingAPI.GrabJournalEntry(entrycode)
+    FCurr = AccountingAPI.GetFuntionalCurrency()
     if request.method == 'POST':
         return redirect(url_for('accounting.journal'))
-    return render_template('accounting/view-journal-entry.html', username = session['username'], data = data, bdgts = bdgts, jrns = jrns, data1 = data1, data2 = data2, data3 = data3)
+    return render_template('accounting/view-journal-entry.html', username = session['username'], data = data,  jrns = jrns, data1 = data1, data2 = data2, data3 = data3, FC = FCurr)
 
 @mod.route('/currencies', methods = ['GET','POST'])
 def currencies():

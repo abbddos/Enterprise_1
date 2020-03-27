@@ -11,7 +11,7 @@
                     <label>Account Code:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'AccountCode' value = '{{acdata[7]}}' disabled />
+                    <input type = 'text' name = 'AccountCode' value = '{{acdata[0]}}' disabled />
                 </div>
             </div>
             <div class = 'row'>
@@ -19,7 +19,7 @@
                     <label>Account Name:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'AccountName' value = '{{acdata[2]}}'/>
+                    <input type = 'text' name = 'AccountName' value = '{{acdata[1]}}'/>
                 </div>
             </div>
             <div class = 'row'>
@@ -28,7 +28,7 @@
                 </div>
                 <div class = 'col-b'>
                     <select name = 'Currency'>
-                        <option value = '{{acdata[3]}}' selected hidden>{{acdata[3]}}</option>
+                        <option value = '{{acdata[2]}}' selected hidden>{{acdata[3]}}</option>
                         {% for c in curs%}
                             <option value = '{{c[0]}}'>{{c[0]}}</option>
                         {% endfor %}
@@ -40,7 +40,7 @@
                     <label>Opening Balance:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'OpenBalance' value = '{{acdata[4]}}'/>
+                    <input type = 'text' name = 'OpenBalance' value = '{{acdata[3]/acdata[6]}}'/>
                 </div>
             </div>
             <div class = 'row'>
@@ -48,7 +48,7 @@
                     <label>Current Balance:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'CurrentBalance' value = '{{acdata[5]}}'/>
+                    <input type = 'text' name = 'CurrentBalance' value = '{{acdata[4]/acdata[6]}}'/>
                 </div>
             </div>
             <div class = 'row'>
@@ -56,7 +56,7 @@
                     <label>Comments:</label>
                 </div>
                 <div class = 'col-b'>
-                    <textarea name = 'Comments'>{{acdata[6]}}</textarea>
+                    <textarea name = 'Comments'>{{acdata[5]}}</textarea>
                 </div>
             </div>
         </div>
@@ -89,8 +89,8 @@
             <td>{{acc[0]}}</td>
             <td>{{acc[1]}}</td>
             <td>{{acc[2]}}</td>
-            <td>{{acc[3]}}</td>
-            <td>{{acc[4]}}</td>
+            <td>{{acc[3]/acc[5]}}</td>
+            <td>{{acc[4]/acc[5]}}</td>
             <td><a href = "{{url_for('accounting.edit_account', type = category, category = account , account = acc[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
             <td><a href = "#" class = 't-sheet' id = '{{acc[1]}}'><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
         </tr>
@@ -172,12 +172,12 @@ $(document).ready(function(){
         $('#t-title').append('<span class="close">&times;</span>');
         $.getJSON('/accounting/GrabAccountEntries/' + Name, function(data){
             $.each(data['info'], function(key, value){
-                $('#AccountContent').append('<tr><td>'+value[0]+'</td><td>'+value[1]+'</td><td>'+value[2]+'</td><td>'+value[3]+'</td></tr>');
+                $('#AccountContent').append('<tr><td>'+value[0]+'</td><td>'+value[1]/value[4]+'</td><td>'+value[2]/value[4]+'</td><td>'+value[3]+'</td></tr>');
             });
-            $('#dbt').text(data['totals'][0]);
-            $('#cdt').text(data['totals'][1]);
-            $('#openbalance').text(data['balances'][0]);
-            $('#currentbalance').text(data['balances'][1]);
+            $('#dbt').text(data['totals'][0]/data['totals'][2]);
+            $('#cdt').text(data['totals'][1]/data['totals'][2]);
+            $('#openbalance').text(data['balances'][0]/data['balances'][2]);
+            $('#currentbalance').text(data['balances'][1]/data['balances'][2]);
         });
         
         $('.close').click(function(){

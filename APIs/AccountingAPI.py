@@ -99,16 +99,6 @@ def GetCategories():
 
     return data
 
-def GetBudgets():
-    con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT budgetcode FROM budget')
-    data = cur.fetchone()
-    con.close()
-    if data == None:
-        return ('---',)
-    else:
-        return data
-
 def AddCategory(sess_uname, sess_pswd, category, name, description):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
     cur.execute('INSERT INTO categories(categoryname, description, categorytype) VALUES(%s, %s, %s)',(name, description, category))
@@ -147,7 +137,7 @@ def GetCurrencies():
 
 def GetAccounts(type, category):
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT AccountCode, AccountName, Currency, openingbalance, currentbalance FROM accounts Where AccountType = %s AND AccountCategory = %s', (type, category))
+    cur.execute('SELECT AccountCode, AccountName, Currency, openingbalance, currentbalance, exchangerate FROM GetAccount Where AccountType = %s AND AccountCategory = %s', (type, category))
     data = cur.fetchall()
     con.close()
     return data
@@ -160,7 +150,7 @@ def AddNewAccount(sess_uname, sess_pswd, account, category, code, name, currency
 
 def GetAccountData(sess_uname, sess_pswd, type, category, account):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT * FROM GetAccount(%s)', (account,))
+    cur.execute('SELECT accountcode, accountname, currency, openingbalance, currentbalance, comments, exchangerate from GetAccount WHERE accountcode = %s', (account,))
     data = cur.fetchone()
     con.close()
     return data
@@ -215,7 +205,7 @@ def AddJournalEntry(sess_uname, sess_pswd, acttype, actcat, actname, crncy, dbt,
 
 def GrabJournalEntry(entrycode):
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT accounttype, accountcategory, accountname, currency, debit, credit, comments FROM journal WHERE entrycode = %s',(entrycode,))
+    cur.execute('SELECT * FROM View_Journal WHERE entrycode = %s',(entrycode,))
     data1 = cur.fetchall()
     cur.execute('SELECT entrycode, createdon, createdby FROM journal WHERE entrycode = %s GROUP BY entrycode, createdon, createdby', (entrycode,))
     data2 = cur.fetchone()
@@ -224,19 +214,19 @@ def GrabJournalEntry(entrycode):
     dbt = 0
     cdt = 0
     for d in data1:
-        dbt += d[4]
-        cdt += d[5]
+        dbt += d[5]
+        cdt += d[6]
     data3.append(dbt)
     data3.append(cdt)
     return data1, data2, data3
 
 def GrabAccountEntries(AccountName):
     con, cur = EnterpriseAPI.root()
-    cur.execute('select entrydate, debit, credit, comments from journal where accountname = %s', (AccountName,))
+    cur.execute('select entrydate, debit, credit, comments, exchangerate from view_journal where accountname = %s', (AccountName,))
     data1 = cur.fetchall()
-    cur.execute('select sum(debit) as Debit, sum(credit) as Credit from journal where accountname  = %s group by accountname', (AccountName,))
+    cur.execute('select sum(debit) as Debit, sum(credit) as Credit, exchangerate from view_journal where accountname  = %s group by accountname, exchangerate', (AccountName,))
     data2 = cur.fetchone()
-    cur.execute('select openingbalance, currentbalance from accounts where accountname = %s', (AccountName,))
+    cur.execute('select openingbalance, currentbalance, exchangerate from getaccount where accountname = %s', (AccountName,))
     data3 = cur.fetchone()
     con.close()
     return data1, data2, data3

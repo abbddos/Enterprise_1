@@ -392,10 +392,6 @@ $$ LANGUAGE plpgsql;
 
 
 --===============================================================================================================================================================
-CREATE OR REPLACE VIEW Bins_view AS
-SELECT bins.warehouse, bins.code, bins.status, inventory.itemcode, inventory.itemname, inventory.unit, inventory.quantity FROM bins LEFT OUTER JOIN inventory ON inventory.bin = bins.code;
-
---===============================================================================================================================================================
 
 CREATE OR REPLACE FUNCTION CreateAccount(account VARCHAR, category VARCHAR, code VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments TEXT)
 RETURNS void AS $$
@@ -422,24 +418,16 @@ $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
 
-CREATE OR REPLACE FUNCTION GetAccount(code_ VARCHAR)
-RETURNS TABLE(
-	AccountType VARCHAR,        
-	AccountCategory VARCHAR,
-	AccountName VARCHAR,
-	Currency VARCHAR,
-	OpeningBalance REAL,
-	CurrentBalance REAL,
-	Comments TEXT,
-	AccountCode VARCHAR
-) AS $$
+-- Views...
 
-DECLARE
-	ex_rate REAL;
-	cur VARCHAR;
-BEGIN
-	SELECT Accounts.currency INTO cur FROM Accounts WHERE Accounts.AccountCode = code_;
-	SELECT ExchangeRate INTO ex_rate FROM currency WHERE currencycode = cur;
-	RETURN QUERY SELECT Accounts.AccountType AS AccountType, Accounts.AccountCategory AS Category, Accounts.AccountName AS AccountName, Accounts.Currency AS Currency, Accounts.OpeningBalance / ex_rate AS OpeningBalance, Accounts.CurrentBalance / ex_rate AS CurrentBalance, Accounts.Comments AS Comments, Accounts.AccountCode FROM Accounts WHERE Accounts.AccountCode = code_;
-END;
-$$ LANGUAGE plpgsql;
+CREATE OR REPLACE VIEW Bins_view AS
+SELECT bins.warehouse, bins.code, bins.status, inventory.itemcode, inventory.itemname, inventory.unit, inventory.quantity FROM bins LEFT OUTER JOIN inventory ON inventory.bin = bins.code;
+
+--===============================================================================================================================================================
+CREATE OR REPLACE VIEW View_Journal AS
+SELECT journal.entrydate, journal.entrycode, journal.accounttype, journal.accountcategory, journal.accountname, journal.currency, journal.debit, journal.credit, journal.comments, currency.exchangerate FROM journal INNER JOIN currency ON journal.currency = currency.currencycode;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE VIEW GetAccount AS
+SELECT accounts.accountid, accounts.accounttype, accounts.accountcategory, accounts.accountname, accounts.currency, accounts.openingbalance, accounts.currentbalance, accounts.comments, accounts.accountcode, currency.exchangerate FROM accounts INNER JOIN currency ON accounts.currency = currency.currencycode;
