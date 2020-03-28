@@ -194,7 +194,8 @@ CREATE TABLE Journal(
 	CreatedBy VARCHAR(50),
 	CreatedOn DATE,
 	Comments TEXT,
-	EntryCode VARCHAR(25)
+	EntryCode VARCHAR(25),
+	Forex REAL
 );
 
 CREATE TABLE CashAccount(
@@ -367,7 +368,7 @@ DECLARE
 	ex_rate REAL;
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = crncy;
-	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode) VALUES(now(), accttype, acctcat, acctname, crncy, dbt * ex_rate, cdt * ex_rate, now(), createdby_, comnts, jrncode);
+	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode, Forex) VALUES(now(), accttype, acctcat, acctname, crncy, dbt * ex_rate, cdt * ex_rate, now(), createdby_, comnts, jrncode, ex_rate);
 	IF accttype = 'Assets' OR accttype = 'Expenses' OR accttype = 'Dividends' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance + (dbt * ex_rate) - (cdt * ex_rate) WHERE AccountName = acctname;
 	END IF;
@@ -400,7 +401,7 @@ DECLARE
 
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
-	INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(account, category, name, currency_, OBalance * ex_rate, CBalance * ex_rate, comments, code); 
+	INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(account, category, name, currency_, OBalance, CBalance * ex_rate, comments, code); 
 END;
 $$ LANGUAGE plpgsql;
 
@@ -412,7 +413,7 @@ DECLARE
 	ex_rate REAL;
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
-	UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance * ex_rate, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+	UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -425,7 +426,7 @@ SELECT bins.warehouse, bins.code, bins.status, inventory.itemcode, inventory.ite
 
 --===============================================================================================================================================================
 CREATE OR REPLACE VIEW View_Journal AS
-SELECT journal.entrydate, journal.entrycode, journal.accounttype, journal.accountcategory, journal.accountname, journal.currency, journal.debit, journal.credit, journal.comments, currency.exchangerate FROM journal INNER JOIN currency ON journal.currency = currency.currencycode;
+select entrydate, entrycode, accounttype, accountcategory, accountname, currency, debit/forex as dbt, credit/forex as cdt, comments, forex from journal;
 
 --===============================================================================================================================================================
 

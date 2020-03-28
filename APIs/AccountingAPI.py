@@ -214,17 +214,17 @@ def GrabJournalEntry(entrycode):
     dbt = 0
     cdt = 0
     for d in data1:
-        dbt += d[6]
-        cdt += d[7]
+        dbt += d[6]*d[9]
+        cdt += d[7]*d[9]
     data3.append(dbt)
     data3.append(cdt)
     return data1, data2, data3
 
 def GrabAccountEntries(AccountName):
     con, cur = EnterpriseAPI.root()
-    cur.execute('select entrydate, debit, credit, comments, exchangerate from view_journal where accountname = %s', (AccountName,))
+    cur.execute('select entrydate, dbt, cdt, comments, forex from view_journal where accountname = %s', (AccountName,))
     data1 = cur.fetchall()
-    cur.execute('select sum(debit) as Debit, sum(credit) as Credit, exchangerate from view_journal where accountname  = %s group by accountname, exchangerate', (AccountName,))
+    cur.execute('select sum(dbt) as Debit, sum(cdt) as Credit, forex from view_journal where accountname  = %s group by accountname, forex', (AccountName,))
     data2 = cur.fetchone()
     cur.execute('select openingbalance, currentbalance, exchangerate from getaccount where accountname = %s', (AccountName,))
     data3 = cur.fetchone()
