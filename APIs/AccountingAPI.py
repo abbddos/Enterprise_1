@@ -246,16 +246,38 @@ def GetCurrency(id):
     return data
 
 def AddCurrency(sess_uname, sess_pswd, name, code, ex_rate, func):
+    funcur = False
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('INSERT INTO currency(currencyname, currencycode, exchangerate, functionalcurrency) VALUES(%s, %s, %s, %s)',(name, code, ex_rate, func))
-    con.commit()
+    cur.execute('SELECT functionalcurrency from currency')
+    data = cur.fetchall()
+    for d in data:
+        if func in d:
+            funcur = True
+    if funcur:
+        con.close()
+        return funcur
+    else:
+        cur.execute('INSERT INTO currency(currencyname, currencycode, exchangerate, functionalcurrency) VALUES(%s, %s, %s, %s)',(name, code, ex_rate, func))
+        con.commit()
+        return funcur
     con.close()
 
 def UpdateCurrency(sess_uname, sess_pswd, id, name, code, ex_rate, func):
+    funcur = False
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('UPDATE currency SET CurrencyName = %s, CurrencyCode = %s, ExchangeRate = %s, FunctionalCurrency = %s WHERE CurrencyID = %s',
-    (name, code, ex_rate, func, id))
-    con.commit()
+    cur.execute('SELECT functionalcurrency from currency')
+    data = cur.fetchall()
+    for d in data:
+        if func in d:
+            funcur = True
+    if funcur:
+        con.close()
+        return funcur
+    else:
+        cur.execute('UPDATE currency SET CurrencyName = %s, CurrencyCode = %s, ExchangeRate = %s, FunctionalCurrency = %s WHERE CurrencyID = %s',
+        (name, code, ex_rate, func, id))
+        con.commit()
+        return funcur
     con.close()
 
 def GetFuntionalCurrency():

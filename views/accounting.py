@@ -140,13 +140,17 @@ def currencies():
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
-                AccountingAPI.AddCurrency(session['username'], session['password'],
+                NewCur = AccountingAPI.AddCurrency(session['username'], session['password'],
                 request.form['CurrencyName'],
                 request.form['CurrencyCode'],
                 request.form['ExchageRate'],
                 request.form['Functional'])
-                flash('Currency is successfully added', category = 'success')
-                return redirect(url_for('accounting.currencies'))
+                if NewCur == False:
+                    flash('Currency is successfully added', category = 'success')
+                    return redirect(url_for('accounting.currencies'))
+                else:
+                    flash('You already have a functional currency', category = 'fail')
+                    return redirect(url_for('accounting.currencies'))
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.currencies'))
@@ -160,14 +164,18 @@ def EditCurrency(code):
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
-                AccountingAPI.UpdateCurrency(session['username'], session['password'],
+                UpCur = AccountingAPI.UpdateCurrency(session['username'], session['password'],
                 code, 
                 request.form['CurrencyName'],
                 request.form['CurrencyCode'],
                 request.form['ExchangeRate'],
                 request.form['Functional'])
-                flash('Currency updated successfully...', category = 'success')
-                return redirect(url_for('accounting.currencies'))
+                if UpCur == False:
+                    flash('Currency updated successfully...', category = 'success')
+                    return redirect(url_for('accounting.currencies'))
+                else:
+                    flash('You already have a functional currency', category = 'fail')
+                    return redirect(url_for('accounting.EditCurrency', code = code))
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.currencies'))
