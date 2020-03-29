@@ -198,14 +198,15 @@ CREATE TABLE Journal(
 	Forex REAL
 );
 
-CREATE TABLE CashAccount(
-	TransactionID SERIAL NOT NULL PRIMARY KEY,
-	TransactionDate DATE,
-	CreatedBy VARCHAR(50),
-	Income REAL,
-	Spending REAL,
-	Comments TEXT
+CREATE TABLE Ledger(
+	entryid SERIAL NOT NULL PRIMARY KEY,
+	entrydate  DATE,
+	AccountType VARCHAR(25),
+	AccountCategory VARCHAR(100),
+	AccountName VARCHAR(100),
+	BalanceAtDate REAL
 );
+
 
 
 CREATE TABLE Currency(
@@ -249,6 +250,9 @@ ALTER TABLE Journal ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName
 ALTER TABLE Journal ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
 ALTER TABLE Journal ADD FOREIGN KEY(AdjustedBy) REFERENCES users(username);
 ALTER TABLE CashAccount ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
+ALTER TABLE Ledger ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+--ALTER TABLE Ledger ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
+ALTER TABLE Ledger ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);
 
 -- Creation of Admin user with superuser role, login and password 'admin'
 INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
@@ -366,14 +370,28 @@ CREATE OR REPLACE FUNCTION CreateJournalEntry(jrncode VARCHAR, accttype VARCHAR,
 RETURNS void AS $$
 DECLARE
 	ex_rate REAL;
+	CB REAL;
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = crncy;
-	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode, Forex) VALUES(now(), accttype, acctcat, acctname, crncy, dbt * ex_rate, cdt * ex_rate, now(), createdby_, comnts, jrncode, ex_rate);
+	SELECT CurrentBalance INTO CB FROM Accounts WHERE AccountName = acctname;
+	INSERT INTO Journal(EntryDate, AccountType, AccountCategory, AccountName, Currency, Debit, Credit, CreatedOn, CreatedBy, Comments, entrycode, Forex) VALUES(current_date, accttype, acctcat, acctname, crncy, dbt * ex_rate, cdt * ex_rate, now(), createdby_, comnts, jrncode, ex_rate);
 	IF accttype = 'Assets' OR accttype = 'Expenses' OR accttype = 'Dividends' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance + (dbt * ex_rate) - (cdt * ex_rate) WHERE AccountName = acctname;
+		IF EXISTS(SELECT * FROM Ledger WHERE accountname = acctname AND entrydate = current_date) THEN
+			UPDATE Ledger SET BalanceAtDate = CB + (dbt * ex_rate) - (cdt * ex_rate) WHERE AccountName = acctname;
+		END IF;
+		IF NOT EXISTS(SELECT * FROM Ledger WHERE AccountName = acctname AND entrydate = current_date) THEN
+			INSERT INTO Ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date,accttype, acctcat, acctname, CB + (dbt * ex_rate) - (cdt * ex_rate));
+		END IF;
 	END IF;
 	IF accttype = 'Equities' OR accttype = 'Liabilities' OR accttype = 'Reveneus' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance - (dbt * ex_rate) + (cdt * ex_rate) WHERE AccountName = acctname;
+		IF EXISTS(SELECT * FROM Ledger WHERE accountname = acctname AND entrydate = current_date) THEN
+			UPDATE Ledger SET BalanceAtDate = CB - (dbt * ex_rate) + (cdt * ex_rate);
+		END IF;
+		IF NOT EXISTS(SELECT * FROM Ledger WHERE accountname = acctname AND entrydate = current_date) THEN
+			INSERT INTO Ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date,accttype, acctcat, acctname,CB - (dbt * ex_rate) + (cdt * ex_rate));
+		END IF;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
