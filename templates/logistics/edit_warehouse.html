@@ -77,10 +77,10 @@
 </table>
 </div>
 <div id="myModal" class="modal">
-<div class="modal-content">
+<div class="modal-content" style = 'background-color:rgba(0,0,0,0); border: none;'>
   
   
-  <form action = "{{url_for('logistics.add_bin', wh = code)}}" method = "POST">
+  <form action = "{{url_for('logistics.add_bin', wh = code)}}" method = "POST" style = 'width: 100%;'>
       <h3>Add Bin <span class="close">&times;</span></h3>
       <h5 style = 'color: green;'>Add a new bin to warehouse {{code}}</h5>
     <div class = 'fields'>
@@ -107,11 +107,11 @@
 </div>
 
 <div id="myModal1" class="modal">
-<div class="modal-content">
+<div class="modal-content" style = 'background-color:rgba(0,0,0,0); border: none;'>
   
   
 
-  <form action = "{{url_for('logistics.edit_bin', whcode = code)}}" method = "POST">
+  <form action = "{{url_for('logistics.edit_bin', whcode = code)}}" method = "POST" style = 'width: 100%'>
       <h3>Edit Bin <span class="close">&times;</span></h3>
     <div class = 'fields'>
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

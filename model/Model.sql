@@ -419,7 +419,8 @@ DECLARE
 
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
-	INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(account, category, name, currency_, OBalance, CBalance * ex_rate, comments, code); 
+	INSERT INTO accounts(accounttype, accountcategory, accountname, currency, openingbalance, currentbalance, comments, accountcode) VALUES(account, category, name, currency_, OBalance, CBalance * ex_rate, comments, code);
+	INSERT INTO ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date, account, category, name, CBalance * ex_rate); 
 END;
 $$ LANGUAGE plpgsql;
 
@@ -432,6 +433,28 @@ DECLARE
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
 	UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+	INSERT INTO ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date, account, category, name, CBalance * ex_rate);
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+CREATE OR REPLACE FUNCTION Balance_sheet(acttype VARCHAR, entry DATE)
+RETURNS TABLE(
+    id INT,
+    entrdate Date,
+    type VARCHAR,
+    category VARCHAR,
+    name VARCHAR,
+    balance REAL
+) AS $$ 
+
+BEGIN
+    IF EXISTS(SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = entry) THEN
+        RETURN QUERY SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = entry;
+    END IF;
+    IF NOT EXISTS(SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = entry) THEN
+        RETURN QUERY SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = (SELECT MAX(entrydate) FROM ledger WHERE accounttype = acttype AND entrydate < entry);
+    END IF;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -450,3 +473,6 @@ select entrydate, entrycode, accounttype, accountcategory, accountname, currency
 
 CREATE OR REPLACE VIEW GetAccount AS
 SELECT accounts.accountid, accounts.accounttype, accounts.accountcategory, accounts.accountname, accounts.currency, accounts.openingbalance, accounts.currentbalance, accounts.comments, accounts.accountcode, currency.exchangerate FROM accounts INNER JOIN currency ON accounts.currency = currency.currencycode;
+
+--===============================================================================================================================================================
+

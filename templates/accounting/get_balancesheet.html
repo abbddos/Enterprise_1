@@ -1,0 +1,44 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'> 
+    <form method = 'POST' action = "{{url_for('accounting.BalanceSheet')}}">
+        <h3>Get Balance Sheet</h3>
+        <p style =' color: rgb(0,0,100); text-align: left;'>Balance sheet will be displayed in your functional currency</p>
+        <div class = 'fields'>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Date:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'date' name = 'SheetDate' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Format:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'SheetFormat'>
+                        <option value = 'pdf'>pdf</option>
+                        <option value = 'csv'>csv</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class = 'submission'>
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </form>
+</div>
+{% endblock %}

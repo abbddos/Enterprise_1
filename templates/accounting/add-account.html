@@ -56,9 +56,9 @@
 </table>
 
 <div id="myModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style = 'background-color:rgba(0,0,0,0); border: none;'>
           
-          <form method = 'POST' action = "{{url_for('accounting.edit_category', category = category, account = account)}}">
+          <form method = 'POST' action = "{{url_for('accounting.edit_category', category = category, account = account)}}" style = 'width: 100%; float:left;'>
                 <h3>Edit {{category}} category <span class="close">&times;</span></h3>
                 <div class = 'fields'>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>

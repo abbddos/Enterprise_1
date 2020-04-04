@@ -294,4 +294,106 @@ def GetExchange(curr):
     con.close()
     return data
 
+def GetBalanceSheetPDF(sess_uname, sess_pswd, date):
+    data1 = {}
+    data2 = {}
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute("SELECT * FROM Balance_Sheet('Assets', %s)", (date,))
+    data1['ast'] = cur.fetchall()
+    cur.execute("SELECT * FROM Balance_Sheet('Equities', %s)", (date,))
+    data1['eqt'] = cur.fetchall()
+    cur.execute("SELECT * FROM Balance_Sheet('Liabilities', %s)", (date,))
+    data1['lbt'] = cur.fetchall()
+    cur.execute("SELECT * FROM Balance_Sheet('Revenues', %s)", (date,))
+    data1['rev'] = cur.fetchall()
+    cur.execute("SELECT * FROM Balance_Sheet('Expenses', %s)", (date,))
+    data1['exp'] = cur.fetchall()
+    cur.execute("SELECT * FROM Balance_Sheet('Dividends', %s)", (date,))
+    data1['dvd'] = cur.fetchall()
+    
+    cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Assets', %s)", (date,))
+    ast = cur.fetchone()
+    cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Equities', %s)", (date,))
+    eqt = cur.fetchone()
+    cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Liabilities', %s)", (date,))
+    lbt = cur.fetchone()
+    cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Revenues', %s)", (date,))
+    rev = cur.fetchone()
+    cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Expenses', %s)", (date,))
+    exp = cur.fetchone()
+    cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Dividends', %s)", (date,))
+    dvd = cur.fetchone()
 
+    if ast[0] == None:
+        data2['ast'] = 0
+    else:
+        data2['ast'] = ast[0]
+    if eqt[0] == None:
+        data2['eqt'] = 0
+    else:
+        data2['eqt']  = eqt[0]
+    if lbt[0] == None:
+        data2['lbt'] = 0
+    else:
+        data2['lbt'] = lbt[0]
+    if exp[0] == None:
+        data2['exp'] = 0
+    else:
+        data2['exp'] = exp[0]
+    if rev[0] == None:
+        data2['rev'] = 0
+    else:
+        data2['rev'] = rev[0]
+    if dvd[0] == None:
+        data2['dvd'] = 0
+    else:
+        data2['dvd'] = dvd[0]
+    con.close()
+    return data1, data2
+
+def BalanceSheetCSV(sess_uname, sess_pswd, date):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    ast = pd.read_sql("SELECT entrdate as entrydate, type, name, balance FROM Balance_Sheet('Assets', '{}')".format(date), con)
+    eqt = pd.read_sql("SELECT entrdate as entrydate, type, name, balance FROM Balance_Sheet('Equities', '{}')".format(date), con)
+    lbt = pd.read_sql("SELECT entrdate as entrydate, type, name, balance FROM Balance_Sheet('Liabilities', '{}')".format(date), con)
+    rev = pd.read_sql("SELECT entrdate as entrydate, type, name, balance FROM Balance_Sheet('Revenues', '{}')".format(date), con)
+    exp = pd.read_sql("SELECT entrdate as entrydate, type, name, balance FROM Balance_Sheet('Expenses', '{}')".format(date), con)
+    dvd = pd.read_sql("SELECT entrdate as entrydate, type, name, balance FROM Balance_Sheet('Dividends', '{}')".format(date), con)
+
+    data = pd.concat([ast, eqt, lbt, rev, exp, dvd], ignore_index=True)
+    file = data.to_csv()
+    con.close()
+    return file
+
+def NetIncomeStatementPDF(sess_uname, sess_pswd, startdate, enddate):
+    data1 = {}
+    data2 = {}
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute("SELECT * FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)", (startdate, enddate))
+    data1['rev'] = cur.fetchall()
+    cur.execute("SELECT * FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)", (startdate, enddate))
+    data1['exp'] = cur.fetchall()
+
+    cur.execute("SELECT SUM(balanceatdate) FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)",(startdate, enddate))
+    rev = cur.fetchone()
+    cur.execute("SELECT SUM(balanceatdate) FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)", (startdate, enddate))
+    exp = cur.fetchone()
+
+    if exp[0] == None:
+        data2['exp'] = 0
+    else:
+        data2['exp'] = exp[0]
+    if rev[0] == None:
+        data2['rev'] = 0
+
+    con.close()
+    return data1, data2
+
+def NetIncomeStatementCSV(sess_uname, sess_pswd, startdate, enddate):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    rev = pd.read_sql("SELECT * FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= '{0}' AND entrydate <= '{1}')".format(startdate, enddate), con)
+    exp = pd.read_sql("SELECT * FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= '{0}' AND entrydate <= '{1}')".format(startdate, enddate), con)
+    data = pd.concat([rev, exp], ignore_index = True)
+    file = data.to_csv()
+    con.close()
+    return file

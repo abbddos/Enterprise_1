@@ -181,6 +181,51 @@ def EditCurrency(code):
                 return redirect(url_for('accounting.currencies'))
     return render_template('accounting/edit_currency.html', username = session['username'], data = data, data1 = data1, data2 = data2)
 
+@mod.route('/BalanceSheet/', methods = ['GET','POST'])
+def BalanceSheet():
+    data = AccountingAPI.GetCategories()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            if request.form['SheetFormat'] == 'pdf':
+                data1, data2 = AccountingAPI.GetBalanceSheetPDF(session['username'], session['password'], request.form['SheetDate'])
+                rendered = render_template('accounting/balance_sheet.html', data1 = data1, data2 = data2, date = request.form['SheetDate'])
+                pdf = pdfkit.from_string(rendered, False)
+                response = make_response(pdf)
+                response.headers['Content-type'] = 'application/pdf'
+                response.headers['Content-Disposition'] = 'attachement; filename = balance-sheet.pdf'
+                return response
+            elif request.form['SheetFormat'] == 'csv':
+                file = AccountingAPI.BalanceSheetCSV(session['username'], session['password'], request.form['SheetDate'])
+                response = make_response(file)
+                response.headers['Content-type'] = 'text/csv'
+                response.headers['Content-Disposition'] = 'attachement; filename = Balance_Sheet.csv'
+                return response
+
+    return render_template('accounting/get_balancesheet.html', username = session['username'], data = data)
+
+@mod.route('/NetIncomeStatement/', methods = ['GET','POST'])
+def NetINcomeStatement():
+    data = AccountingAPI.GetCategories()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            if request.form['SheetFormat'] == 'pdf':
+                data1, data2 = AccountingAPI.NetIncomeStatementPDF(session['username'], session['password'],
+                request.form['StartDate'],
+                request.form['EndDate'])
+                rendered = render_template('accounting/net_income_statement.html', data1 = data1, data2 = data2, date1 = request.form['StartDate'], date2 = request.form['EndDate'])
+                pdf = pdfkit.from_string(rendered, False)
+                response = make_response(pdf)
+                response.headers['Content-type'] = 'application/pdf'
+                response.headers['Content-Disposition'] = 'attachement; filename = balance-sheet.pdf'
+                return response
+            elif request.form['SheetFormat'] == 'csv':
+                file = AccountingAPI.NetIncomeStatementCSV(session['username'], session['password'], request.form['StartDate'], request.form['EndDate'])
+                response = make_response(file)
+                response.headers['Content-type'] = 'text/csv'
+                response.headers['Content-Disposition'] = 'attachement; filename = Net_Income_Statement.csv'
+                return response
+    return render_template('accounting/get_income_statement.html', username = session['username'], data = data)
+
 #REST API
 @mod.route('/checker/')
 def checker():
