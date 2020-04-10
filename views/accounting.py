@@ -216,7 +216,7 @@ def NetINcomeStatement():
                 pdf = pdfkit.from_string(rendered, False)
                 response = make_response(pdf)
                 response.headers['Content-type'] = 'application/pdf'
-                response.headers['Content-Disposition'] = 'attachement; filename = balance-sheet.pdf'
+                response.headers['Content-Disposition'] = 'attachement; filename = net_income_statement.pdf'
                 return response
             elif request.form['SheetFormat'] == 'csv':
                 file = AccountingAPI.NetIncomeStatementCSV(session['username'], session['password'], request.form['StartDate'], request.form['EndDate'])
@@ -225,6 +225,34 @@ def NetINcomeStatement():
                 response.headers['Content-Disposition'] = 'attachement; filename = Net_Income_Statement.csv'
                 return response
     return render_template('accounting/get_income_statement.html', username = session['username'], data = data)
+
+@mod.route('/TrialSheet/', methods = ['GET','POST'])
+def TrialSheet():
+    data = AccountingAPI.GetCategories()
+    data1 = AccountingAPI.GetAllAccounts()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            if request.form['SheetFormat'] == 'pdf':
+                trial1, trial2 = AccountingAPI.TrialBalancePDF(session['username'],session['password'],
+                request.form['StartDate'],
+                request.form['EndDate'],
+                request.form.getlist('act_check'))
+                rendered = render_template('accounting/trial_balance_sheet.html', data = trial1, sums = trial2, date1 = request.form['StartDate'], date2 = request.form['EndDate'])
+                pdf = pdfkit.from_string(rendered, False)
+                response = make_response(pdf)
+                response.headers['Content-type'] = 'application/pdf'
+                response.headers['Content-Disposition'] = 'attachement; filename = trial_balance_statement.pdf'
+                return response
+            elif request.form['SheetFormat'] == 'csv':
+                file = AccountingAPI.TrialBalanceCSV(session['username'],session['password'],
+                request.form['StartDate'],
+                request.form['EndDate'],
+                request.form.getlist('act_check'))
+                response = make_response(file)
+                response.headers['Content-type'] = 'text/csv'
+                response.headers['Content-Disposition'] = 'attachement; filename = Trial_Balance_Statement.csv'
+                return response
+    return render_template('accounting/get_trial_sheet.html', username = session['username'], data = data, data1 = data1)
 
 #REST API
 @mod.route('/checker/')
@@ -275,3 +303,8 @@ def GrabAllCurrencies():
 def GetExchange(curr):
     data = AccountingAPI.GetExchange(str(curr).upper())
     return jsonify(ex = data[0])
+
+@mod.route('/BringAllJournals')
+def BringAllJournals():
+    data = AccountingAPI.JournalsJSON()
+    return jsonify(data)

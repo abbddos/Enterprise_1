@@ -243,7 +243,7 @@ ALTER TABLE items ADD FOREIGN KEY(secondaryunit) REFERENCES SecondaryUnits(code)
 
 
 --Creation of accounting tables foreign keys...
-ALTER TABLE Accounts ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+
 ALTER TABLE Journal ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
 ALTER TABLE Journal ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
 ALTER TABLE Journal ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);

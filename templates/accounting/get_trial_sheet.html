@@ -1,0 +1,73 @@
+{% extends 'accounting/accounting.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block accountingpage%}
+<div class = 'actionpage'> 
+    <form method = 'POST' action = "{{url_for('accounting.TrialSheet')}}">
+        <h3>Get Trial Balance</h3>
+        <p style =' color: rgb(0,0,100); text-align: left;'>Trial balance will be displayed in your functional currency</p>
+        <div class = 'fields'>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Starting Date:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'date' name = 'StartDate' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Ending Date:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'date' name = 'EndDate' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Format:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'SheetFormat'>
+                        <option value = 'pdf'>pdf</option>
+                        <option value = 'csv'>csv</option>
+                    </select>
+                </div>
+            </div>
+            <table>
+                <tr>
+                    <th><input type = 'checkbox' id = 'selectall'/>Select All</th>
+                    <th>Account Code</th>
+                    <th>Account Name</th>
+                </tr>
+                {% for d in data1 %}
+                <tr>
+                    <td><input class = 'act-check' type = 'checkbox' name = 'act_check' value = '{{d[1]}}'/></td>
+                    <td>{{d[0]}}</td>
+                    <td>{{d[1]}}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class = 'submission'>
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </form>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#selectall').click(function(){
+            $('.act-check').prop('checked', this.checked);
+        });
+    });
+</script>
+{% endblock %}

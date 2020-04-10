@@ -3,6 +3,8 @@ import random
 from datetime import date
 import pandas as pd
 from . import EnterpriseAPI
+import json
+
 
 def Checker():
     data = {}
@@ -394,6 +396,29 @@ def NetIncomeStatementCSV(sess_uname, sess_pswd, startdate, enddate):
     rev = pd.read_sql("SELECT * FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= '{0}' AND entrydate <= '{1}')".format(startdate, enddate), con)
     exp = pd.read_sql("SELECT * FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= '{0}' AND entrydate <= '{1}')".format(startdate, enddate), con)
     data = pd.concat([rev, exp], ignore_index = True)
+    file = data.to_csv()
+    con.close()
+    return file
+
+def GetAllAccounts():
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT accountcode, accountname FROM accounts ORDER BY accountcode')
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def TrialBalancePDF(sess_uname, sess_pswd, startdate, enddate, accounts):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute("SELECT accountname, SUM(debit) AS Debit, SUM(credit) AS Credit FROM journal WHERE accountname = ANY(Array{}::VARCHAR[]) AND entrydate BETWEEN '{}' AND '{}' GROUP BY accountname;".format(accounts, startdate, enddate))
+    data1 = cur.fetchall()
+    cur.execute("SELECT SUM(debit), SUM(credit) FROM Journal WHERE accountname = ANY(Array{}::VARCHAR[]) AND entrydate BETWEEN '{}' AND '{}'".format(accounts, startdate, enddate))
+    data2 = cur.fetchone()
+    con.close()
+    return data1, data2
+
+def TrialBalanceCSV(sess_uname, sess_pswd, startdate, enddate, accounts):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    data = pd.read_sql("SELECT accountname, SUM(debit) AS Debit, SUM(credit) AS Credit FROM journal WHERE accountname = ANY(Array{}::VARCHAR[]) AND entrydate BETWEEN '{}' AND '{}' GROUP BY accountname;".format(accounts, startdate, enddate), con)
     file = data.to_csv()
     con.close()
     return file
