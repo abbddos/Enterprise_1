@@ -38,17 +38,22 @@
                 font-weight: bold;
                 font-size: 12px;
             }
+
         </style>
     </head>
     <body>
         <h1>Enterprise Balance Sheet   -  {{date}}</h1>
-        <h3>Assets</h3>
+
         <table>
+            <tr style = 'background-color: lightskyblue;'>
+                <td><h3>Assets:</h3></td>
+                <td></td>
+            </tr>
             {% for d in data1['ast']%}    
               
                    <tr>
-                        <td>{{d[4]}}</td>
-                        <td>{{d[5]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
                     </tr>
                 
             {% endfor %}
@@ -56,14 +61,16 @@
                 <td>Total:</td>
                 <td>{{data2['ast']}}</td>
             </tr>
-        </table>
-        <h3>Equities</h3>
-        <table>
+
+            <tr style = 'background-color: lightskyblue;'>
+                <td><h3>Equities:</h3></td>
+                <td></td>
+            </tr>
             {% for d in data1['eqt']%}    
               
                    <tr>
-                        <td>{{d[4]}}</td>
-                        <td>{{d[5]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
                     </tr>
               
             {% endfor %}
@@ -71,14 +78,16 @@
                 <td>Total:</td>
                 <td>{{data2['eqt']}}</td>
             </tr>
-        </table>
-        <h3>Liabilities</h3>
-        <table>
+
+            <tr style = 'background-color: lightskyblue;'>
+                <td><h3>Liabilities:</h3></td>
+                <td></td>
+            </tr>
             {% for d in data1['lbt']%}    
                 
                    <tr>
-                        <td>{{d[4]}}</td>
-                        <td>{{d[5]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
                     </tr>
                
             {% endfor %}
@@ -86,14 +95,16 @@
                 <td >Total:</td>
                 <td>{{data2['lbt']}}</td>
             </tr>
-        </table>
-        <h3>Revenues</h3>
-        <table>
+ 
+            <tr style = 'background-color: lightskyblue;'>
+                <td><h3>Revenues:</h3></td>
+                <td></td>
+            </tr>
             {% for d in data1['rev']%}    
              
                    <tr>
-                        <td>{{d[4]}}</td>
-                        <td>{{d[5]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
                     </tr>
                 
             {% endfor %}
@@ -101,29 +112,33 @@
                 <td>Total:</td>
                 <td>{{data2['rev']}}</td>
             </tr>
-        </table>
-        <h3>Expenses</h3>
-        <table>
+           
+            <tr style = 'background-color: lightskyblue;'>
+                <td><h3>Expenses:</h3></td>
+                <td></td>
+            </tr>
             {% for d in data1['exp']%}    
               
-                   <tr>
-                        <td>{{d[4]}}</td>
-                        <td>{{d[5]}}</td>
-                    </tr>
-                
+            <tr>
+                 <td>{{d[0]}}</td>
+                 <td>{{d[1]}}</td>
+             </tr>
+         
             {% endfor %}
             <tr class = 'balance-total'>
                 <td>Total:</td>
                 <td>{{data2['exp']}}</td>
             </tr>
-        </table>
-        <h3>Dividends</h3>
-        <table>
+           
+            <tr style = 'background-color: lightskyblue;'>
+                <td><h3>Dividends:</h3></td>
+                <td></td>
+            </tr>
             {% for d in data1['dvd']%}    
                 { 
                    <tr>
-                        <td>{{d[4]}}</td>
-                        <td>{{d[5]}}</td>
+                        <td>{{d[0]}}</td>
+                        <td>{{d[1]}}</td>
                     </tr>
                
             {% endfor %}
@@ -132,6 +147,7 @@
                 <td>{{data2['dvd']}}</td>
             </tr>
         </table>
+
         <table>
             <tr class = 'balance-total'>
                 <td>Balance:</td>

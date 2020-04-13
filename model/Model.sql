@@ -387,7 +387,7 @@ BEGIN
 	IF accttype = 'Equities' OR accttype = 'Liabilities' OR accttype = 'Reveneus' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance - (dbt * ex_rate) + (cdt * ex_rate) WHERE AccountName = acctname;
 		IF EXISTS(SELECT * FROM Ledger WHERE accountname = acctname AND entrydate = current_date) THEN
-			UPDATE Ledger SET BalanceAtDate = CB - (dbt * ex_rate) + (cdt * ex_rate);
+			UPDATE Ledger SET BalanceAtDate = CB - (dbt * ex_rate) + (cdt * ex_rate) WHERE AccountName = acctname;
 		END IF;
 		IF NOT EXISTS(SELECT * FROM Ledger WHERE accountname = acctname AND entrydate = current_date) THEN
 			INSERT INTO Ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date,accttype, acctcat, acctname,CB - (dbt * ex_rate) + (cdt * ex_rate));
@@ -432,29 +432,30 @@ DECLARE
 	ex_rate REAL;
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
-	UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
-	INSERT INTO ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date, account, category, name, CBalance * ex_rate);
+	IF NOT EXISTS(SELECT * FROM ledger WHERE accountname = name AND entrydate = current_date) THEN
+		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+		INSERT INTO ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date, account, category, name, CBalance * ex_rate);
+	END IF;
+	IF EXISTS(SELECT * FROM ledger WHERE accountname = name AND entrydate = current_date) THEN
+		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+		UPDATE ledger SET balanceatdate = CBalance * ex_rate WHERE accountname = name AND entrydate = current_date;
+	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
+
 CREATE OR REPLACE FUNCTION Balance_sheet(acttype VARCHAR, entry DATE)
 RETURNS TABLE(
-    id INT,
-    entrdate Date,
-    type VARCHAR,
-    category VARCHAR,
-    name VARCHAR,
-    balance REAL
+    
+	name VARCHAR,
+	balance REAL,
+	entrdate DATE,
+	type VARCHAR
 ) AS $$ 
 
 BEGIN
-    IF EXISTS(SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = entry) THEN
-        RETURN QUERY SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = entry;
-    END IF;
-    IF NOT EXISTS(SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = entry) THEN
-        RETURN QUERY SELECT * FROM ledger WHERE accounttype = acttype AND entrydate = (SELECT MAX(entrydate) FROM ledger WHERE accounttype = acttype AND entrydate < entry);
-    END IF;
+	RETURN QUERY SELECT DISTINCT ON (accountname) accountname, balanceatdate, entrydate, accounttype FROM ledger WHERE entrydate <= entry AND accounttype = acttype;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -475,4 +476,5 @@ CREATE OR REPLACE VIEW GetAccount AS
 SELECT accounts.accountid, accounts.accounttype, accounts.accountcategory, accounts.accountname, accounts.currency, accounts.openingbalance, accounts.currentbalance, accounts.comments, accounts.accountcode, currency.exchangerate FROM accounts INNER JOIN currency ON accounts.currency = currency.currencycode;
 
 --===============================================================================================================================================================
+
 
