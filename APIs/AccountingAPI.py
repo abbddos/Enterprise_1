@@ -139,7 +139,7 @@ def GetCurrencies():
 
 def GetAccounts(type, category):
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT AccountCode, AccountName, Currency, openingbalance, currentbalance, exchangerate FROM GetAccount Where AccountType = %s AND AccountCategory = %s', (type, category))
+    cur.execute('SELECT AccountCode, AccountName, Currency, openingbalance, currentbalance, exchangerate FROM GetAccount Where AccountType = %s AND AccountCategory = %s ORDER BY accountcode', (type, category))
     data = cur.fetchall()
     con.close()
     return data
@@ -166,7 +166,7 @@ def UpdateAccount(sess_uname, sess_pswd, type, category, account, name, currency
 
 def GrabAccount(sess_uname, sess_pswd, cat):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT accountname FROM accounts WHERE accountcategory = %s', (cat,))
+    cur.execute('SELECT accountname FROM accounts WHERE accountcategory = %s ORDER BY accountcode ', (cat,))
     data = cur.fetchall()
     con.close()
     return data
@@ -187,7 +187,7 @@ def GrabAllCurrencies(sess_uname, sess_pswd):
 
 def GetJournals():
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT entrycode, createdby, createdon FROM journal GROUP BY entrycode, createdby, createdon')
+    cur.execute('SELECT entrycode, createdby, createdon FROM journal GROUP BY entrycode, createdby, createdon ORDER BY createdon DESC')
     data = cur.fetchall()
     con.close()
     return data
@@ -209,7 +209,7 @@ def GrabJournalEntry(entrycode):
     con, cur = EnterpriseAPI.root()
     cur.execute('SELECT * FROM View_Journal WHERE entrycode = %s',(entrycode,))
     data1 = cur.fetchall()
-    cur.execute('SELECT entrycode, createdon, createdby FROM journal WHERE entrycode = %s GROUP BY entrycode, createdon, createdby', (entrycode,))
+    cur.execute('SELECT entrycode, createdon, createdby FROM journal WHERE entrycode = %s GROUP BY entrycode, createdon, createdby order by createdon DESC', (entrycode,))
     data2 = cur.fetchone()
     con.close()
     data3 = []
