@@ -57,7 +57,7 @@
                     </tr>
                 
             {% endfor %}
-            <tr class = 'balance-total'> 
+            <tr class = 'balance-total' style = 'background-color: darkgray;'> 
                 <td>Total:</td>
                 <td>{{data2['ast']}}</td>
             </tr>
@@ -74,7 +74,7 @@
                     </tr>
               
             {% endfor %}
-            <tr class = 'balance-total'>
+            <tr class = 'balance-total' style = 'background-color: darkgray;'>
                 <td>Total:</td>
                 <td>{{data2['eqt']}}</td>
             </tr>
@@ -91,7 +91,7 @@
                     </tr>
                
             {% endfor %}
-            <tr class = 'balance-total'>
+            <tr class = 'balance-total' style = 'background-color: darkgray;'>
                 <td >Total:</td>
                 <td>{{data2['lbt']}}</td>
             </tr>
@@ -108,7 +108,7 @@
                     </tr>
                 
             {% endfor %}
-            <tr class = 'balance-total'>
+            <tr class = 'balance-total' style = 'background-color: darkgray;'>
                 <td>Total:</td>
                 <td>{{data2['rev']}}</td>
             </tr>
@@ -125,7 +125,7 @@
              </tr>
          
             {% endfor %}
-            <tr class = 'balance-total'>
+            <tr class = 'balance-total' style = 'background-color: darkgray;'>
                 <td>Total:</td>
                 <td>{{data2['exp']}}</td>
             </tr>
@@ -142,14 +142,14 @@
                     </tr>
                
             {% endfor %}
-            <tr class = 'balance-total'>
+            <tr class = 'balance-total' style = 'background-color: darkgray;'>
                 <td>Total:</td>
                 <td>{{data2['dvd']}}</td>
             </tr>
         </table>
 
         <table>
-            <tr class = 'balance-total'>
+            <tr class = 'balance-total' style = 'background-color: darkgray;'>
                 <td>Balance:</td>
                 <td>{{data2['ast']}}</td>
                 <td>{{data2['eqt']+ data2['lbt'] + data2['rev'] - data2['exp'] - data2['dvd']}}</td>

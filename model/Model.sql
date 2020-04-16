@@ -455,7 +455,7 @@ RETURNS TABLE(
 ) AS $$ 
 
 BEGIN
-	RETURN QUERY SELECT DISTINCT ON (accountname) accountname, balanceatdate, entrydate, accounttype FROM ledger WHERE entrydate <= entry AND accounttype = acttype;
+	RETURN QUERY SELECT DISTINCT ON (accountname) accountname, balanceatdate, entrydate, accounttype FROM (SELECT * FROM ledger ORDER BY entrydate DESC) AS ledger WHERE ledger.entrydate <= entry AND ledger.accounttype = acttype;
 END;
 $$ LANGUAGE plpgsql;
 

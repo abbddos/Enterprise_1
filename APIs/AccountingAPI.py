@@ -300,17 +300,17 @@ def GetBalanceSheetPDF(sess_uname, sess_pswd, date):
     data1 = {}
     data2 = {}
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute("SELECT * FROM Balance_Sheet('Assets', %s)", (date,))
+    cur.execute("SELECT * FROM Balance_Sheet('Assets', %s) ORDER BY entrdate DESC", (date,))
     data1['ast'] = cur.fetchall()
-    cur.execute("SELECT * FROM Balance_Sheet('Equities', %s)", (date,))
+    cur.execute("SELECT * FROM Balance_Sheet('Equities', %s) ORDER BY entrdate DESC", (date,))
     data1['eqt'] = cur.fetchall()
-    cur.execute("SELECT * FROM Balance_Sheet('Liabilities', %s)", (date,))
+    cur.execute("SELECT * FROM Balance_Sheet('Liabilities', %s) ORDER BY entrdate DESC", (date,))
     data1['lbt'] = cur.fetchall()
-    cur.execute("SELECT * FROM Balance_Sheet('Revenues', %s)", (date,))
+    cur.execute("SELECT * FROM Balance_Sheet('Revenues', %s) ORDER BY entrdate DESC", (date,))
     data1['rev'] = cur.fetchall()
-    cur.execute("SELECT * FROM Balance_Sheet('Expenses', %s)", (date,))
+    cur.execute("SELECT * FROM Balance_Sheet('Expenses', %s) ORDER BY entrdate DESC", (date,))
     data1['exp'] = cur.fetchall()
-    cur.execute("SELECT * FROM Balance_Sheet('Dividends', %s)", (date,))
+    cur.execute("SELECT * FROM Balance_Sheet('Dividends', %s) ORDER BY entrdate DESC", (date,))
     data1['dvd'] = cur.fetchall()
     
     cur.execute("SELECT SUM(balance) FROM Balance_Sheet('Assets', %s)", (date,))
