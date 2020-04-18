@@ -40,6 +40,7 @@
     {% endwith %}
   </div>
 </form>
+<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;' placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
       <th>ID</th>
@@ -58,7 +59,7 @@
       <th>Reset Password</th>
     </tr>
     {% for d in data %}
-      <tr>
+      <tr class = 'table-row'>
         <td class = '{{d[11]}}'>{{d[0]}}</td>
         <td class = '{{d[11]}}'>{{d[1]}}</td>
         <td class = '{{d[11]}}'>{{d[2]}}</td>

@@ -83,6 +83,7 @@
     <p id = 'message'></p>
   </div>
 </form>
+<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
     <th>Entry ID</th>
@@ -91,7 +92,7 @@
     <th>View</th>
   </tr>
   {% for j in jrns %}
-    <tr>
+    <tr class = 'table-row'>
       <td>{{j[0]}}</td>
       <td>{{j[1]}}</td>
       <td>{{j[2]}}</td>

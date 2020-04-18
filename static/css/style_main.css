@@ -172,30 +172,43 @@ input[type = text]{
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-width: 1px;
+  border-radius: 3px;
 }
 
 input[type = text]:disabled{
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(102,102,0);
+  border-width: 1px;
+  border-radius: 3px;
   color: rgb(102,102,0);
   background-color: rgb(255,255,153);
+  
 }
 
 input[type = date]{
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-width: 1px;
+  border-radius: 3px;
 }
 
 input[type = date]:disabled{
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(102,102,0);
+  border-width: 1px;
+  border-radius: 3px;
   color: rgb(102,102,0);
   background-color: rgb(255,255,153);
 }
@@ -211,21 +224,31 @@ input[type = file]{
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-width: 1px;
+  border-radius: 3px;
 }
 
 select {
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-width: 1px;
+  border-radius: 3px;
 }
+
 
 select:disabled {
   width: 75%;
   height: 30px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(102,102,0);
+  border-width: 1px;
+  border-radius: 3px;
   color: rgb(102,102,0);
   background-color: rgb(255,255,153);
 }
@@ -234,14 +257,20 @@ textarea{
   width: 75%;
   height: 100px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-width: 1px;
+  border-radius: 3px;
 }
 
 textarea:disabled{
   width: 75%;
   height: 100px;
   box-sizing: border-box;
-  border: none;
+  border: solid;
+  border-color: rgb(102,102,0);
+  border-width: 1px;
+  border-radius: 3px;
   color: rgb(102,102,0);
   background-color: rgb(255,255,153);
 }

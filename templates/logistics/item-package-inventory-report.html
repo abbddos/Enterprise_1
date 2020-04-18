@@ -34,6 +34,7 @@
         </div>
     </div>
     <div class = 'row'>
+        <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;' placeholder = 'Search' id = 'srch' />
         <table>
             <tr>
                 <th><input type = 'checkbox' id = 'itm_select_all'/> Select all:</th>
@@ -41,7 +42,7 @@
                 <th>Item Name:</th>
             </tr>
             {% for itm in itms%}
-            <tr>
+            <tr class = 'table-row'>
                 <td><input class = 'itm-check' type = 'checkbox' name = 'itm_check' value = '{{itm[0]}}'/></td>
                 <td>{{itm[0]}}</td>
                 <td>{{itm[1]}}</td>
@@ -49,6 +50,7 @@
             {% endfor %}
         </table>
     </div>
+    
     <div class = 'row'>
         <table>
             <tr>
@@ -57,7 +59,7 @@
                 <th>Package Name:</th>
             </tr>
             {% for pkg in pkgs%}
-            <tr>
+            <tr class = 'table-row'>
                 <td><input class = 'pkg-check' type = 'checkbox' name = 'pkg_check' value = '{{pkg[0]}}'/></td>
                 <td>{{pkg[0]}}</td>
                 <td>{{pkg[1]}}</td>

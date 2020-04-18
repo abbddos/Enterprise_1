@@ -59,6 +59,7 @@
     <p id = 'message'></p>
   </div>
 </form>
+<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
     <th>Entry ID</th>
@@ -67,7 +68,7 @@
     <th>View</th>
   </tr>
   {% for j in jrns %}
-    <tr>
+    <tr class = 'table-row'>
       <td>{{j[0]}}</td>
       <td>{{j[1]}}</td>
       <td>{{j[2]}}</td>
@@ -114,6 +115,12 @@
 
         $(document).on('change', '.type', function(){
             var ids = $(this).attr('id');
+            totaldebit = totaldebit - ($('#deb_' + ids).val() * ex_rate[ids]);
+            totalcredit = totalcredit - ($('#crd_' + ids).val() * ex_rate[ids]);
+            $('#deb-total').text(totaldebit);
+            $('#crd-total').text(totalcredit); 
+            $("#deb_" + ids).val("");
+            $("#crd_" + ids).val("");
             $.getJSON('/accounting/GrabCategory/' + $(this).val(), function(data){
               $('#cat_'+ids).find('option').remove();
               $('#cat_'+ids).append("<option></option>");
@@ -125,6 +132,13 @@
 
         $(document).on('change', '.category', function(){
             var ids = $(this).attr('id');
+            var ide = $(this).attr('id').replace('cat_', '');
+            totaldebit = totaldebit - ($('#deb_' + ide).val() * ex_rate[ide]);
+            totalcredit = totalcredit - ($('#crd_' + ide).val() * ex_rate[ide]);
+            $('#deb-total').text(totaldebit);
+            $('#crd-total').text(totalcredit); 
+            $("#deb_" + ide).val("");
+            $("#crd_" + ide).val("");
             $.getJSON('/accounting/GrabActName/' + $(this).val(), function(data){
               $('#act_'+ids).find('option').remove();
               $('#act_'+ids).append("<option></option>");
@@ -136,7 +150,13 @@
 
         $(document).on('change', '.account', function(){
           var ids = $(this).attr('id');
-     
+          var ide = $(this).attr('id').replace('act_cat_', '');
+          totaldebit = totaldebit - ($('#deb_' + ide).val() * ex_rate[ide]);
+            totalcredit = totalcredit - ($('#crd_' + ide).val() * ex_rate[ide]);
+            $('#deb-total').text(totaldebit);
+            $('#crd-total').text(totalcredit); 
+            $("#deb_" + ide).val("");
+            $("#crd_" + ide).val("");
           $.getJSON('/accounting/GrabCurrency/'+ $(this).val(), function(data){
             $('#cur_'+ids).find('option').remove();
             $('#cur_'+ids).append("<option></option>");
@@ -149,6 +169,8 @@
 
         $(document).on('change', '.currency', function(){
           var tt = parseInt($(this).attr('id').replace("cur_act_cat_", ""));
+          $("#deb_" + tt).val("");
+          $("#crd_" + tt).val("");
           $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
               ex_rate[tt] = data.ex;
              // alert(ex_rate);

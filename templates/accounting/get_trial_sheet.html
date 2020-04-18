@@ -34,6 +34,7 @@
                     </select>
                 </div>
             </div>
+            <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;' placeholder = 'Search' id = 'srch' />
             <table>
                 <tr>
                     <th><input type = 'checkbox' id = 'selectall'/>Select All</th>
@@ -41,7 +42,7 @@
                     <th>Account Name</th>
                 </tr>
                 {% for d in data1 %}
-                <tr>
+                <tr class = 'table-row'>
                     <td><input class = 'act-check' type = 'checkbox' name = 'act_check' value = '{{d[1]}}'/></td>
                     <td>{{d[0]}}</td>
                     <td>{{d[1]}}</td>

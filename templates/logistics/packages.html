@@ -48,6 +48,7 @@
     {% endwith %}
   </div>
 </form>
+<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
     <th>Code:</th>
@@ -55,7 +56,7 @@
     <th>Edit:</th>
   </tr>
   {% for p in pkg %}
-  <tr>
+  <tr class = 'table-row'>
     <td>{{p[0]}}</td>
     <td>{{p[1]}}</td>
     <td><a href = "{{url_for('logistics.edit_package', pkg = p[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>

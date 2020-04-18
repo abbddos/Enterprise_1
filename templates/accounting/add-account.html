@@ -32,6 +32,7 @@
         {% endwith %}
     </form>
 
+    <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
 <table>
     <tr>
         <th>Account Code:</th>
@@ -43,7 +44,7 @@
         <th>View Ledger:</th>
     </tr>
     {% for acc in accounts %}
-        <tr>
+        <tr class = 'table-row'>
             <td>{{acc[0]}}</td>
             <td>{{acc[1]}}</td>
             <td>{{acc[2]}}</td>

@@ -18,6 +18,7 @@
         </div>
     </div>
     <div class = 'row'>
+        <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;' placeholder = 'Search' id = 'srch' />
         <table>
             <tr>
                 <th><input type = 'checkbox' id = 'select_all'/> Select all:</th>
@@ -25,7 +26,7 @@
                 <th>Warehouse Name:</th>
             </tr>
             {% for w in wh%}
-            <tr>
+            <tr class = 'table-row'>
                 <td><input class = 'wh-check' type = 'checkbox' name = 'wh_check' value = '{{w[0]}}'/></td>
                 <td>{{w[0]}}</td>
                 <td>{{w[1]}}</td>
