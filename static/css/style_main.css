@@ -218,6 +218,10 @@ input[type = password]{
   height: 30px;
   box-sizing: border-box;
   border: none;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-width: 1px;
+  border-radius: 3px;
 }
 
 input[type = file]{
