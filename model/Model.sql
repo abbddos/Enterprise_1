@@ -463,7 +463,7 @@ $$ LANGUAGE plpgsql;
 
 -- Views...
 
-CREATE OR REPLACE VIEW Bins_view AS
+CREATE OR REPLACE VIEW Bins_view AS	
 SELECT bins.warehouse, bins.code, bins.status, inventory.itemcode, inventory.itemname, inventory.unit, inventory.quantity FROM bins LEFT OUTER JOIN inventory ON inventory.bin = bins.code;
 
 --===============================================================================================================================================================
