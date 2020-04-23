@@ -8,6 +8,7 @@ from views import profile
 from views import users
 from views import logistics
 from views import accounting
+from views import invoices
 
 app = Flask(__name__)
 sk = str(random.randint(1, 101))
@@ -109,6 +110,7 @@ app.register_blueprint(profile.mod)
 app.register_blueprint(users.mod)
 app.register_blueprint(logistics.mod)
 app.register_blueprint(accounting.mod)
+app.register_blueprint(invoices.mod)
 
 #if __name__ == '__main__':
 #    app.run(debug = True)

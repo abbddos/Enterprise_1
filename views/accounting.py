@@ -41,6 +41,7 @@ def edit_category(category, account):
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
+                account = request.form['CategoryName']
                 AccountingAPI.EditCategory(session['username'], session['password'],
                 cats[0],
                 request.form['CategoryName'],
@@ -88,6 +89,7 @@ def edit_account(type, category, account):
             try:
                 AccountingAPI.UpdateAccount(session['username'], session['password'],
                 type, category, account, 
+                request.form['AccountCode'],
                 request.form['AccountName'],
                 request.form['Currency'],
                 request.form['OpenBalance'],

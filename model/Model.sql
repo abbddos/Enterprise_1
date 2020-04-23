@@ -217,6 +217,20 @@ ExchangeRate REAL,
 FunctionalCurrency VARCHAR(3)
 );
 
+-- Invoices & bills module utilizes the same tables in Logistics module...
+-- in addition to the following tables:
+
+CREATE TABLE customers(
+	id SERIAL NOT NULL PRIMARY KEY,
+	name VARCHAR(50) UNIQUE,
+	address VARCHAR(50),
+	phone_1 VARCHAR(20),
+	phone_2 VARCHAR(20),
+	email VARCHAR(50),
+	pobox VARCHAR(10),
+	description varchar(2000)
+);
+
 -- Adding Default Currencies...
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('US Dollars', 'USD');
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Euro', 'EUR');
@@ -245,14 +259,16 @@ ALTER TABLE items ADD FOREIGN KEY(secondaryunit) REFERENCES SecondaryUnits(code)
 --Creation of accounting tables foreign keys...
 
 ALTER TABLE Journal ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
-ALTER TABLE Journal ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
+ALTER TABLE Journal ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName) ON UPDATE CASCADE;
 ALTER TABLE Journal ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);
 ALTER TABLE Journal ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
 ALTER TABLE Journal ADD FOREIGN KEY(AdjustedBy) REFERENCES users(username);
 ALTER TABLE CashAccount ADD FOREIGN KEY(CreatedBy) REFERENCES users(username);
-ALTER TABLE Ledger ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName);
---ALTER TABLE Ledger ADD FOREIGN KEY(AccountType) REFERENCES Accounts(AccountType);
-ALTER TABLE Ledger ADD FOREIGN KEY(AccountName) REFERENCES Accounts(AccountName);
+ALTER TABLE Ledger ADD FOREIGN KEY(AccountCategory) REFERENCES Categories(CategoryName) ON UPDATE CASCADE
+ALTER TABLE accounts ADD FOREIGN KEY(accountcategory) REFERENCES categories(categoryname) ON UPDATE CASCADE;
+ALTER TABLE ledger ADD FOREIGN KEY(accountname) REFERENCES accounts(accountname) ON UPDATE CASCADE;
+ALTER TABLE journal ADD FOREIGN KEY(accountname) REFERENCES accounts(accountname) ON UPDATE CASCADE;
+
 
 -- Creation of Admin user with superuser role, login and password 'admin'
 INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
@@ -426,14 +442,14 @@ $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
 
-CREATE OR REPLACE FUNCTION UpdateAccount(account VARCHAR, category VARCHAR, code VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments_ TEXT)
+CREATE OR REPLACE FUNCTION UpdateAccount(account VARCHAR, category VARCHAR, code VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments_ TEXT, newcode VARCHAR)
 RETURNS void AS $$
 DECLARE
 	ex_rate REAL;
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
 	IF NOT EXISTS(SELECT * FROM ledger WHERE accountname = name AND entrydate = current_date) THEN
-		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, AccountCode = newcode, AccountName = name, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
 		INSERT INTO ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date, account, category, name, CBalance * ex_rate);
 	END IF;
 	IF EXISTS(SELECT * FROM ledger WHERE accountname = name AND entrydate = current_date) THEN
@@ -460,7 +476,29 @@ END;
 $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
+CREATE OR REPLACE FUNCTION CreateItem(code_ VARCHAR, item_ VARCHAR, brand_ VARCHAR, provider_ VARCHAR, unit_ VARCHAR, unitprice_ REAL, description_ TEXT, size_ VARCHAR, color_ VARCHAR, sku_ VARCHAR, part_number_ VARCHAR, ieme_ VARCHAR, length_ REAL, width_ REAL, height_ REAL, diameter_ REAL, l_unit_ VARCHAR, w_unit_ VARCHAR, h_unit_ VARCHAR, d_unit_ VARCHAR, grp_ VARCHAR, category_ VARCHAR, secondaryunit_ VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+   Cur VARCHAR;
+BEGIN
+	INSERT INTO items(code, item, brand, provider, unit, unit_price, description, size, color, sku, part_number, ieme, lengh, width, height, diameter, l_unit, w_unit, h_unit, d_unit, grp, category, secondaryunit) VALUES(code_, item_, brand_, provider_, unit_, unitprice_, description_, size_, color_, sku_, part_number_, ieme_, length_, width_, height_, diameter_, l_unit_, w_unit_, h_unit_, d_unit_, grp_, category_, secondaryunit_);
+	SELECT currencycode INTO Cur FROM Currency WHERE FunctionalCurrency = 'Yes';
+	-- When item is identified as Asset, create category 'inventory' under Assets if it does not exist and create item as asset account.
+	IF category_ = 'Asset' THEN
+		INSERT INTO categories(categoryname, categorytype) select 'Inventory','Assets' where not exists(select categoryname from categories where categoryname = 'Inventory');
+		PERFORM CreateAccount('Assets','Inventory','Custom_Code' ,item_, Cur, 0,0, '');
 
+	END IF;
+
+	-- When item is not identified as asset, create category 'Supplies' under Expenses if it does not exist and create item as expense account.
+	IF category_ = 'Non-Asset' THEN
+		INSERT INTO categories(categoryname, categorytype) select 'Supplies','Expenses' where not exists(select categoryname from categories where categoryname = 'Supplies');
+		PERFORM CreateAccount('Expenses','Supplies','Custom_Code' ,item_, Cur, 0,0, '');
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
 -- Views...
 
 CREATE OR REPLACE VIEW Bins_view AS	
@@ -477,4 +515,5 @@ SELECT accounts.accountid, accounts.accounttype, accounts.accountcategory, accou
 
 --===============================================================================================================================================================
 
-
+-- This is to be used while modifying the items, providers and customers insertion API...
+-- INSERT INTO categories(categoryname, categorytype) select 'namevalue' 'typevalue' where not exists(select categoryname from category where categoryname = 'namevalue');

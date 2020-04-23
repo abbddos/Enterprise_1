@@ -1,0 +1,71 @@
+{% extends 'invoices/invoices.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block invoicespage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Edit Customer</h3>
+  <div class = 'fields'>
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>ID:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'id' value = '{{data1[0]}}' disabled />
+      </div>
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {{ render_field(form.name, value = data1[1]) }}
+    {{ render_field(form.address, value = data1[2]) }}
+    {{ render_field(form.phone1, value = data1[3])}}
+    {{ render_field(form.phone2, value = data1[4])}}
+    {{ render_field(form.email, value = data1[5])}}
+    {{ render_field(form.pobox, value = data1[6])}}
+    <div class = 'row'>
+    <div class = 'col-a'>
+      <label>Description:</label>
+    </div>
+    <div class = 'col-b'>
+      <textarea name = 'description'>{{data1[7]}}</textarea>
+    </div>
+    </div>
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+<table>
+  <tr>
+      <th>ID:</th>
+      <th>Name:</th>
+      <th>Address:</th>
+      <th>Phone #1:</th>
+      <th>Phone #2:</th>
+      <th>email:</th>
+      <th>PO-BOX:</th>
+      <th>Edit:</th>
+    </tr>
+    {% for d in data %}
+      <tr class = 'table-row'>
+        <td>{{d[0]}}</td>
+        <td>{{d[1]}}</td>
+        <td>{{d[2]}}</td>
+        <td>{{d[3]}}</td>
+        <td>{{d[4]}}</td>
+        <td>{{d[5]}}</td>
+        <td>{{d[6]}}</td>
+        <td><a href = "{{url_for('invoices.edit_customer', cst = d[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

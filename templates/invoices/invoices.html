@@ -1,0 +1,30 @@
+{% extends 'layout.html'%}
+{% block content%}
+<div class="vertical-menu">
+  <h3>Invoices</h3>
+ <a href = "{{url_for('invoices.Providers')}}">Providers</a>
+ <a href = "{{url_for('invoices.Customers')}}">Customers</a>
+ <a href = "{{url_for('invoices.groups')}}">Groups</a>
+ <a href = "{{url_for('invoices.items')}}">Items</a>
+ <a href = "{{url_for('invoices.packages')}}">Packages</a>
+ <a href = "{{url_for('invoices.SecondaryUnits')}}">Secondary Units</a>
+ <ul class = 'warehouse' id = 'warehouse'><a href = "#">Invoices</a>
+    <li class = 'warehousecontent'><a href = "#" id = 'toggler'>- Sales Invoice</a></li>
+    <li class = 'warehousecontent'><a href = "#">- Procurement Invoice</a></li>
+ </ul>
+ <ul class = 'warehouse' id = 'records'><a href = "#">Bills</a>
+    <li class = 'warehousecontent'><a href = "#" id = 'toggler'>- Payment Bill</a></li>
+    <li class = 'warehousecontent'><a href = "#">- Reception Bill</a></li>
+ </ul>
+
+ 
+ <ul class = 'reports' id = 'reports'><a href = "#">Reports</a>
+  <li class = 'warehousecontent'><a href = "#">Warehouses inventory report:</a></li>
+  <li class = 'warehousecontent'><a href = "#">Items/Packages inventory report:</a></li>
+  <li class = 'warehousecontent'><a href = "#">Current Bins statuses report:</a></li>
+  <li class = 'warehousecontent'><a href = "#">Transactions report:</a></li>
+ </ul>
+ </div>
+{% block invoicespage%}
+{% endblock %}
+{% endblock %}

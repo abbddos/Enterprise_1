@@ -157,10 +157,10 @@ def GetAccountData(sess_uname, sess_pswd, type, category, account):
     con.close()
     return data
 
-def UpdateAccount(sess_uname, sess_pswd, type, category, account, name, currency, openbalance, currentbalance, comments):
+def UpdateAccount(sess_uname, sess_pswd, type, category, account, newcode, name, currency, openbalance, currentbalance, comments):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT UpdateAccount(%s, %s, %s, %s, %s, %s, %s, %s)',
-    (type, category, account, name, currency, openbalance, currentbalance, comments))
+    cur.execute('SELECT UpdateAccount(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    (type, category, account, name, currency, openbalance, currentbalance, comments, newcode))
     con.commit()
     con.close()
 

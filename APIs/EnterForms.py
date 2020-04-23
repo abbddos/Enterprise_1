@@ -133,3 +133,11 @@ class BinsForm(Form):
     status = SelectField('Status: ', choices = [('Open','Open'),('Locked','Locked')])
     description = TextAreaField('Description: ')
 
+class CustomersForm(Form):
+    name = StringField('Name: ', validators = [DataRequired()])
+    address = StringField('Address: ')
+    phone1 = StringField('Phone #1: ')
+    phone2 = StringField('Phone #2: ')
+    email = StringField('Email: ')
+    pobox = StringField('PO-BOX: ')
+    description = TextAreaField('Description: ')

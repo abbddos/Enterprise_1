@@ -235,8 +235,8 @@ def UpdateGroup(sess_uname, sess_pswd, id, name, description):
 def CreateItem(sess_uname, sess_pswd, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
     code = random.randint(100000000000,999999999999)
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('INSERT INTO Items(Code, Item, Brand, Provider, Unit, Unit_Price, Description, Size, Color, sku, part_number, ieme, lengh, width, height, diameter, l_unit, w_unit, h_unit, d_unit, grp, category, secondaryunit) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-    (code, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
+    cur.execute('SELECT CreateItem(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    (str(code), itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
     con.commit()
     con.close()
 

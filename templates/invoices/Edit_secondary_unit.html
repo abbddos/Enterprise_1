@@ -1,0 +1,102 @@
+{% extends 'invoices/invoices.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block invoicespage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+  <h3>Secondary Units</h3>
+  <div class = 'fields'>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Name:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'secuntname' value = "{{data1[0]}}"/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Code:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'secuntcode' value = "{{data1[1]}}" disabled/>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+             <label>Unit:</label>
+        </div>
+        <div class = 'col-b'>
+            <select name = 'unit'>
+                <option value = "{{data1[2]}}" selected hidden>{{data1[2]}}</option>
+                <option value="mm">mm</option>
+                <option value="cm">cm</option>
+                <option value="foot">foot</option>
+                <option value="yard">yard</option>
+                <option value="meter">meter</option>
+                <option value="Km">Km</option>
+                <option value="mile">mile</option>
+                <option value="Gram">Gram</option>
+                <option value="Ounce">Ounce</option>
+                <option value="Lbs">Lbs</option>
+                <option value="Kg">Kg</option>
+                <option value="Ton">Ton</option>
+                <option value="cc">cc</option>
+                <option value="Liter">Liter</option>
+                <option value="Us-Gal">US-Gal</option>
+                <option value="UK-Gal">UK-Gal</option>
+                <option value="Tank(20l)">Tank(20l)</option>
+                <option value="Piece">Piece</option>
+            </select>
+        </div>
+    </div>
+    <div class = 'row'>
+        <div class = 'col-a'>
+            <label>Measure:</label>
+        </div>
+        <div class = 'col-b'>
+            <input type = 'text' name = 'secuntmeasure' value = "{{data1[3]}}"/>
+        </div>
+    </div>
+  </div>
+  
+  
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+</form>
+<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;' placeholder = 'Search' id = 'srch' />
+<table>
+  <tr>
+    <th>Unit Name:</th>
+    <th>Unit Code:</th>
+    <th>Primary Unit:</th>
+    <th>Measure:</th>
+    <th>Edit:</th>
+  </tr>
+  {%for i in data%}
+  <tr class = 'table-row'>
+    <td>{{i[0]}}</td>
+    <td>{{i[1]}}</td>
+    <td>{{i[2]}}</td>
+    <td>{{i[3]}}</td>
+    <td><a href = "{{url_for('invoices.EditSecondaryUnit', code = i[1])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
+  </tr>
+  {% endfor %}
+  </table>
+</div>
+<script>
+$(document).ready(function(){
+  $("#mytabs").tabs();
+});
+</script>
+{% endblock %}

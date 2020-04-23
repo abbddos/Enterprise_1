@@ -112,8 +112,8 @@ def items():
     form.Provider.choices = EnterpriseAPI.ProvidersList()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit' and form.validate():
-            try:
-                EnterpriseAPI.CreateItem(session['username'], session['password'],
+            #try:
+            EnterpriseAPI.CreateItem(session['username'], session['password'],
                 request.form['ItemName'],
                 request.form['Brand'],
                 request.form['Provider'],
@@ -136,11 +136,11 @@ def items():
                 request.form['Group'],
                 request.form['Category'],
                 request.form['SecondaryUnit'])
-                flash('Item added successfully', category = 'success')
-                return redirect(url_for('logistics.items'))
-            except Exception as e:
-                flash(str(e), category = 'fail')
-                return redirect(url_for('logistics.items'))
+            flash('Item added successfully', category = 'success')
+            return redirect(url_for('logistics.items'))
+            #except Exception as e:
+            #    flash(str(e), category = 'fail')
+            #    return redirect(url_for('logistics.items'))
     return render_template('logistics/items.html', username = session['username'], form = form, data = data, wh = wh)
 
 @mod.route('/edit_item/<itm>/', methods = ['GET','POST'])

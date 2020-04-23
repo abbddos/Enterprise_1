@@ -7,6 +7,10 @@ $(document).ready(function(){
     $(this).children('li').slideToggle();
   });
 
+  $('#records').click(function(){
+    $(this).children('li').slideToggle();
+  });
+
   $('#assets').click(function(){
     $(this).children('li').slideToggle();
   });
