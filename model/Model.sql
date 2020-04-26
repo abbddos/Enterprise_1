@@ -499,6 +499,54 @@ END;
 $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION UpdateItem(itm INT, itemname VARCHAR, brand_ VARCHAR, provider_ VARCHAR, unit_ VARCHAR, uprice REAL, description_ TEXT, size_ VARCHAR, color_ VARCHAR, sku_ VARCHAR, partnum VARCHAR, ieme_ VARCHAR, length_ REAL, width_ REAL, height_ REAL, diameter_ REAL, lunit VARCHAR, wunit VARCHAR, hunit VARCHAR, dunit VARCHAR, grp_ VARCHAR, category_ VARCHAR, secondaryunit_ VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+	X VARCHAR;
+BEGIN
+	SELECT item INTO X FROM items WHERE id = itm;
+	UPDATE items SET Item = itemname, Brand = brand_, Provider = provider_, Unit = unit_, Unit_Price = uprice, Description = description_ , Size = size_, Color = color_, sku = sku_, part_number = partnum, ieme = ieme_, lengh = length_, width = width_ , height = height_, diameter = diameter_, l_unit = lunit, w_unit = wunit, h_unit = hunit, d_unit = dunit, grp = grp_, category = category_ , secondaryunit = secondaryunit_ WHERE id = itm;
+	IF category_ = 'Asset' THEN
+		UPDATE Accounts SET Accounttype = 'Assets', AccountCategory = 'Inventory', AccountCode = 'Custom_Code' WHERE AccountName = X;
+		UPDATE ledger SET Accounttype = 'Assets', AccountCategory = 'Inventory' WHERE AccountName = X;
+	END IF;
+	IF category_ = 'Non-Asset' THEN
+		UPDATE Accounts SET Accounttype = 'Expenses', AccountCategory = 'Supplies', AccountCode = 'Custom_Code' WHERE AccountName = X;
+		UPDATE ledger SET Accounttype = 'Expenses', AccountCategory = 'Supplies' WHERE AccountName = X;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION CreateProvider(name_ VARCHAR, address_ VARCHAR, phone1_ VARCHAR, phone2_ VARCHAR, email_ VARCHAR, pobox_ VARCHAR, description_ VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+   Cur VARCHAR;
+BEGIN
+	SELECT currencycode INTO Cur FROM Currency WHERE FunctionalCurrency = 'Yes';
+	INSERT INTO providers(name, address, phone_1, phone_2, email, pobox, description) VALUES(name_, address_, phone1_, phone2_, email_, pobox_, description_);
+	INSERT INTO categories(categoryname, categorytype) select 'Accounts Payable','Liabilities' where not exists(select categoryname from categories where categoryname = 'Accounts Payable');
+	PERFORM CreateAccount('Liabilities','Accounts Payable','Custom_Code' ,name_, Cur, 0,0, '');
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION CreateCustomer(name_ VARCHAR, address_ VARCHAR, phone1_ VARCHAR, phone2_ VARCHAR, email_ VARCHAR, pobox_ VARCHAR, description_ VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+   Cur VARCHAR;
+BEGIN
+	SELECT currencycode INTO Cur FROM Currency WHERE FunctionalCurrency = 'Yes';
+	INSERT INTO customers(name, address, phone_1, phone_2, email, pobox, description) VALUES(name_, address_, phone1_, phone2_, email_, pobox_, description_);
+	INSERT INTO categories(categoryname, categorytype) select 'Accounts Receivable','Assets' where not exists(select categoryname from categories where categoryname = 'Accounts Receivable');
+	PERFORM CreateAccount('Assets','Accounts Receivable','Custom_Code' ,name_, Cur, 0,0, '');
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
 -- Views...
 
 CREATE OR REPLACE VIEW Bins_view AS	

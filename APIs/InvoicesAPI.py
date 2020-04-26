@@ -7,7 +7,7 @@ import json
 
 def CreateCustomer(sess_uname, sess_pswd, name, address, phone1, phone2, email, pobox, description):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('INSERT INTO customers(name, address, phone_1, phone_2, email, pobox, description) values(%s, %s, %s, %s, %s, %s, %s)',
+    cur.execute('SELECT CreateCustomer(%s, %s, %s, %s, %s, %s, %s)',
     (name, address, phone1, phone2, email, pobox, description))
     con.commit()
     con.close()

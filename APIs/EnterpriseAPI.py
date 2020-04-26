@@ -167,7 +167,7 @@ def GetProviders():
 
 def CreateProvider(sess_uname, sess_pswd, name, address, phone1, phone2, email, pobox, description):
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('INSERT INTO providers(name, address, phone_1, phone_2, email, pobox, description) values(%s, %s, %s, %s, %s, %s, %s)',
+    cur.execute('SELECT CreateProvider(%s, %s, %s, %s, %s, %s, %s)',
     (name, address, phone1, phone2, email, pobox, description))
     con.commit()
     con.close()
@@ -242,8 +242,8 @@ def CreateItem(sess_uname, sess_pswd, itemname, brand, provider, unit, uprice, d
 
 def UpdateItem(sess_uname, sess_pswd, itm, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('UPDATE items SET Item = %s, Brand = %s, Provider = %s, Unit = %s, Unit_Price = %s, Description = %s, Size = %s, Color = %s, sku = %s, part_number = %s, ieme = %s, lengh = %s, width = %s, height = %s, diameter = %s, l_unit = %s, w_unit = %s, h_unit = %s, d_unit = %s, grp = %s, category = %s , secondaryunit = %s WHERE id = %s',
-    (itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit, itm))
+    cur.execute('SELECT UpdateItem(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    (itm, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
     con.commit()
     con.close()
 

@@ -112,35 +112,35 @@ def items():
     form.Provider.choices = EnterpriseAPI.ProvidersList()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit' and form.validate():
-            #try:
-            EnterpriseAPI.CreateItem(session['username'], session['password'],
-                request.form['ItemName'],
-                request.form['Brand'],
-                request.form['Provider'],
-                request.form['Unit'],
-                request.form['UnitPrice'],
-                request.form['Description'],
-                request.form['Size'],
-                request.form['Color'],
-                request.form['SKU'],
-                request.form['PartNumber'],
-                request.form['IEME'],
-                request.form['Length'],
-                request.form['Width'],
-                request.form['Height'],
-                request.form['Diameter'],
-                request.form['LengthUnit'],
-                request.form['WidthUnit'],
-                request.form['HeightUnit'],
-                request.form['DiamaterUnit'],
-                request.form['Group'],
-                request.form['Category'],
-                request.form['SecondaryUnit'])
-            flash('Item added successfully', category = 'success')
-            return redirect(url_for('logistics.items'))
-            #except Exception as e:
-            #    flash(str(e), category = 'fail')
-            #    return redirect(url_for('logistics.items'))
+            try:
+                EnterpriseAPI.CreateItem(session['username'], session['password'],
+                    request.form['ItemName'],
+                    request.form['Brand'],
+                    request.form['Provider'],
+                    request.form['Unit'],
+                    request.form['UnitPrice'],
+                    request.form['Description'],
+                    request.form['Size'],
+                    request.form['Color'],
+                    request.form['SKU'],
+                    request.form['PartNumber'],
+                    request.form['IEME'],
+                    request.form['Length'],
+                    request.form['Width'],
+                    request.form['Height'],
+                    request.form['Diameter'],
+                    request.form['LengthUnit'],
+                    request.form['WidthUnit'],
+                    request.form['HeightUnit'],
+                    request.form['DiamaterUnit'],
+                    request.form['Group'],
+                    request.form['Category'],
+                    request.form['SecondaryUnit'])
+                flash('Item added successfully', category = 'success')
+                return redirect(url_for('logistics.items'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('logistics.items'))
     return render_template('logistics/items.html', username = session['username'], form = form, data = data, wh = wh)
 
 @mod.route('/edit_item/<itm>/', methods = ['GET','POST'])
@@ -153,8 +153,8 @@ def edit_item(itm):
     wh = EnterpriseAPI.GetWareHouses()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
-            try:
-                EnterpriseAPI.UpdateItem(session['username'], session['password'], itm,
+            #try:
+            EnterpriseAPI.UpdateItem(session['username'], session['password'], itm,
                 request.form['ItemName'],
                 request.form['Brand'],
                 request.form['Provider'],
@@ -177,11 +177,11 @@ def edit_item(itm):
                 request.form['Group'],
                 request.form['Category'],
                 request.form['SecondaryUnit'])
-                flash('Item updated successfully', category = 'success')
-                return redirect(url_for('logistics.items'))
-            except Exception as e:
-                flash(str(e), category = 'fail')
-                return redirect(url_for('logistics.items'))
+            flash('Item updated successfully', category = 'success')
+            return redirect(url_for('logistics.items'))
+            #except Exception as e:
+            #    flash(str(e), category = 'fail')
+            #    return redirect(url_for('logistics.items'))
     return render_template('logistics/edit_item.html', username = session['username'], data = data, data1 = data1, provs = provs, grp = grp, wh = wh, secunit = secunit)
 
 @mod.route('/packages/', methods = ['GET','POST'])
