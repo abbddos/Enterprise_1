@@ -1,0 +1,420 @@
+{% extends 'invoices/invoices.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block invoicespage%}
+<div class = 'actionpage'>
+    <form method = 'post' style = 'margin-left: -35px; width: 98%;'>
+        <h3>Create Sales Invoice</h3>
+        <div class = 'fields'>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Customer:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'Customer'>
+                        <option value = '1' selected></option>
+                        {% for c in customers%}
+                        <option value = '{{c[1]}}'>{{c[1]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Invoice Date:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'date' name = 'SheetDate' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Currency:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'currency' id = 'currency'>
+                        <option value = '1' selected>------</option>
+                        {% for c in currencies%}
+                        <option value = '{{c[2]}}'>{{c[2]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Terms:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'terms'>
+                        <option value = ''>Immediate payment</option>
+                        <option value = ''>Later payment</option>
+                    </select>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px; color: rgba(0,0,100);" id = 'add-line'>Add...</a>
+                </div>
+            </div>
+            <div class = 'select-what'>
+                <ul>
+                    <li id = 'PickItem'>Item</li>
+                    <li id = 'PickPackage'>Package</li>
+                    <li id = 'other'>Other</li>
+                </ul>
+            </div>
+            <table style = 'width: 100%;'>
+                <thead>
+                    <tr>
+                        <th>Description</th>
+                        <th>Unit Price</th>
+                        <th>Quantity</th>
+                        <th>Amount</th>
+                        <th>Remove</th>
+                    </tr>
+                </thead>
+                <tbody id = 'entry-table'></tbody>
+                <tfoot>
+                    <tr>
+                        <td>Total Amount</td>
+                        <td></td>
+                        <td></td>
+                        <td><input type = 'text' name = 'totalamount' id = 'totalamount' style = 'width:100%'></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td></td>
+                        <td></td>
+                        <td><input type = 'text' name = 'discount' id = 'discount' style = 'width:100%'></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Tax</td>
+                        <td></td>
+                        <td></td>
+                        <td><input type = 'text' name = 'tax' id = 'tax' style = 'width:100%'></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Invoice Amount</td>
+                        <td></td>
+                        <td></td>
+                        <td><input type = 'text' name = 'invamount' id = 'invamount' style = 'width:100%'></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Payment method:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'pay_method' id = 'pay_method'>
+                        <option value = ''>------</option>
+                        <option value = 'Cash'>Cash</option>
+                        <option value = 'Bank transfer'>Bank transfer</option>
+                    </select>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Billing account:</label>
+                </div>
+                <div class = 'col-b'>
+                    <select name = 'billing_account' id = 'billing_account'>
+                        <option value = ''>------</option>
+                    </select>
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Comments:</label>
+                </div>
+                <div class = 'col-b'>
+                    <textarea name = 'comments'></textarea>
+                </div>
+            </div>
+        </div>
+        <div class = 'submission'>
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  {% for category, message in messages %}
+                    <div class = "{{category}}">
+                    <p>{{ message }}</p>
+                    </div>
+                  {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <p id = 'message'></p>
+          </div>
+    </form>
+</div>
+<div id="myModal" class="modal">
+    <div class="modal-content">
+      
+      <h3>Pick Item <span class="close">&times;</span></h3>
+      <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
+      <div class = 'items' stye = 'overflow: scroll;'>
+        <table>
+          <tr>
+            <th>Item Code:</th>
+            <th>Item Name: </th>
+            <th>Provider: </th>
+            <th>Unit: </th>
+          </tr>
+          {% for t in itms %}
+            <tr>
+              <td><a class = 'itm' href = '#'>{{t[0]}}</a></td>
+              <td>{{t[1]}}</td>
+              <td>{{t[2]}}</td>
+              <td>{{t[3]}}</td>
+            </tr>
+          {% endfor %}
+        </table>
+      </div>
+    </div>
+    </div>
+
+    <div id="myModal1" class="modal">
+        <div class="modal-content">
+          
+          <h3>Pick Package <span class="close">&times;</span></h3>
+          <h5 style = 'color: green;'> Pick an Pakcage from the table below to add it to package</h5>
+          <div class = 'items' stye = 'overflow: scroll;'>
+            <table>
+              <tr>
+                <th>Package Code:</th>
+                <th>Package Name: </th>
+              </tr>
+              {% for p in pkgs %}
+                <tr>
+                  <td><a class = 'pkg' href = '#'>{{p[0]}}</a></td>
+                  <td>{{p[1]}}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+        </div>
+
+<script>
+    $(document).ready(function(){
+        
+        var i = 0;
+        var ex_rate = 0;
+        var uniprice = [0];
+        var currentamount = 0;
+        var totalamount = 0;
+
+        $(document).mouseup(function(e){
+            var container = $('.select-what');
+            if(!container.is(e.target) && container.has(e.target).length === 0){
+                container.slideUp();
+            }
+        });
+
+        $(document).on('change', '#currency', function(){
+          $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
+            totalamount  = totalamount * ex_rate;  
+            ex_rate = data.ex;
+            totalamount = (totalamount / ex_rate);
+              $.each(uniprice, function(index, value){
+                $('#unitprice_' + index).val(value / ex_rate);
+                $('#amnt_' + index).val((($('#qty_'+index).val() * value) / ex_rate).toFixed(2));
+                $('#totalamount').val(totalamount.toFixed(2));
+                var discount = $('#discount').val();
+                var tax = $('#tax').val();
+                if(Number.isNaN(discount)){
+                    discount = 0;
+                }
+                else{
+                    discount = ($('#discount').val() / 100) * $('#totalamount').val();
+                }
+                if(Number.isNaN(tax)){
+                    tax = 0;
+                }
+                else{
+                    tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+                }
+                var invamount = totalamount - discount + tax;
+                $('#invamount').val(invamount.toFixed(2));
+                
+              });
+            });
+        });
+        $('#add-line').click(function(){
+            $('.select-what').slideToggle();
+        });
+
+        $('#other').click(function(){
+            i++;
+            $('.select-what').slideToggle();
+            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' style = 'width:100%;'/></td><td><input type = 'text' name = 'unitprice' class = 'unitprice' id = 'unitprice_"+i+"' style = 'width:100%;'/></td><td><input type = 'text'  class = 'quantity' name = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
+        });
+
+        $(document).on('click','.rmv', function(){
+            var ids = $(this).attr('id');
+            var j = Number.parseInt(ids);
+            var discount = $('#discount').val();
+            var tax = $('#tax').val();
+            var value_to_remove = Number($('#amnt_'+ ids).val());
+            totalamount = Number($('#totalamount').val()) - value_to_remove
+            $('#totalamount').val(totalamount);
+            if(Number.isNaN(discount)){
+                discount = 0;
+            }
+            else{
+                discount = ($('#discount').val() / 100) * $('#totalamount').val();
+            }
+            if(Number.isNaN(tax)){
+                tax = 0;
+            }
+            else{
+                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+            }
+            $('#tr_' + ids).remove();
+            var newinvamount = $('#totalamount').val() - discount + tax;
+            delete uniprice[j];
+            $('#invamount').val(newinvamount.toFixed(2));
+        });
+
+        $('.itm').click(function(){
+            $('.select-what').hide();
+        i++
+        $.getJSON('/GrabItems', {
+            ItCode: $(this).text(),
+        }, function(data){
+            if(data.msg == 'success'){
+                uniprice[i] = data.unitprice;
+                $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+data.unitprice / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+            }
+            else{
+            $('.msg').val('Item not found');
+            }
+        });
+        $('#myModal').hide();
+        return false;
+        });
+
+        $('.pkg').click(function(){
+            $('.select-what').hide();
+            $.getJSON('/invoices/Get-Pack/' + $(this).text(), function(data){
+                $.each(data, function(key, val){
+                    i++;
+                    var amnt = val.quantity * (val.unit_price / ex_rate);
+                    uniprice[i] = val.unit_price;
+                    $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+val.unit_price / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                    totalamount = totalamount + amnt;
+                    $('#totalamount').val(totalamount);
+                });
+            });
+            $('#myModal1').hide();
+        });
+
+        $(document).on('focus', '.quantity', function(){
+            var ids = $(this).attr('id').replace('qty_', '');
+            currentamount = Number($('#amnt_' + ids).val());          
+        });
+
+        $(document).on('change', '.quantity', function(){
+            var ids = $(this).attr('id').replace('qty_','');
+            var amnt = Number($(this).val()) * Number($('#unitprice_' + ids).val());
+            totalamount = totalamount - currentamount + amnt;
+            $('#amnt_' + ids).val(amnt.toFixed(2));
+            $('#totalamount').val(totalamount.toFixed(2));
+            var discount = $('#discount').val();
+            var tax = $('#tax').val();
+            if(Number.isNaN(discount)){
+                discount = 0;
+            }
+            else{
+                discount = ($('#discount').val() / 100) * $('#totalamount').val();
+            }
+            if(Number.isNaN(tax)){
+                tax = 0;
+            }
+            else{
+                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+            }
+            var invamount = totalamount - (discount) + tax;
+            $('#invamount').val(invamount.toFixed(2));
+        });
+
+        $(document).on('change','#discount', function(){
+            var amount = $('#totalamount').val();
+            var discount = $('#discount').val();
+            var tax = $('#tax').val();
+            if(Number.isNaN(discount)){
+                discount = 0;
+            }
+            else{
+                discount = ($('#discount').val() / 100) * $('#totalamount').val();
+            }
+            if(Number.isNaN(tax)){
+                tax = 0;
+            }
+            else{
+                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+            }
+            $('#invamount').val((totalamount - discount + tax).toFixed(2));
+        });
+
+        $(document).on('change','#tax', function(){
+            var amount = $('#totalamount').val();
+            var discount = $('#discount').val();
+            var tax = $('#tax').val();
+            if(Number.isNaN(discount)){
+                discount = 0;
+            }
+            else{
+                discount = ($('#discount').val() / 100) * $('#totalamount').val();
+            }
+            if(Number.isNaN(tax)){
+                tax = 0;
+            }
+            else{
+                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+            }
+            $('#invamount').val((totalamount - discount + tax).toFixed(2));
+        });
+
+        $(document).on('change','#pay_method', function(){
+            $.getJSON('/invoices/Get-Accounts/' + $(this).val(), function(data){
+                $('#billing_account').find('option').remove();
+                $('#billing_account').append("<option value = ''>------</option>");
+                $.each(data.accountname, function(key, val){
+                    $('#billing_account').append("<option value = '"+val+"'>"+val+"</option>");
+                });
+            });
+        });
+
+    });
+</script>
+<style>
+    #PickItem{
+        color: white;
+        font-weight: bold;
+    }
+    
+    #PickItem:hover{
+        background-color: white;
+        color: rgb(0,0,100);
+    }
+
+    #PickPackage{
+        color: white;
+        font-weight: bold;
+    }
+    
+    #PickPackage:hover{
+        background-color: white;
+        color: rgb(0,0,100);
+    }
+</style>
+{% endblock %}

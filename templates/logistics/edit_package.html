@@ -39,6 +39,7 @@
         <th>Item Code:</th>
         <th>Item Name:</th>
         <th>Unit:</th>
+        <th>Unit Price:</th>
         <th>Quantity:</th>
         <th>Remove:</th>
       </tr>
@@ -47,7 +48,8 @@
           <td><input type = 'text' name = 'code' value = '{{i[0]}}' style = 'width: 100%' /></td>
           <td><input type = 'text' name = 'Name' value = '{{i[1]}}' style = 'width: 100%'/></td>
           <td><input type = 'text' name = 'unit' value = '{{i[2]}}' style = 'width: 100%' /></td>
-          <td><input type = 'text' name = 'quantity' value = '{{i[3]}}' style = 'width: 100%'/></td>
+          <td><input type = 'text' name = 'unitprice' value = '{{i[3]}}' style = 'width: 100%;'/></td>
+          <td><input type = 'text' name = 'quantity' value = '{{i[4]}}' style = 'width: 100%'/></td>
           <td><a href = '#' class = 'rmv' id = '{{i[0]}}'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td>
         </tr>
       {% endfor %}
@@ -116,7 +118,7 @@
         ItCode: $(this).text(),
       }, function(data){
         if(data.msg == 'success'){
-          $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.itemcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = '"+data.itemunit+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+          $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.itemcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = '"+data.itemunit+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'unitprice' value = '"+data.unitprice+"' style = 'width: 100%;' /></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
         }
         else{
           $('.msg').val('Item not found');

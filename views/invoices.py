@@ -299,3 +299,31 @@ def EditSecondaryUnit(code):
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SecondaryUnits'))
     return render_template('invoices/Edit_secondary_unit.html', username = session['username'], data = data, data1 = data1)
+
+@mod.route('sales_invoice', methods = ['GET','POST'])
+def SalesInvoice():
+    customers = InvoicesAPI.GetAllCustomers()
+    currencies = AccountingAPI.GetAllCurrencies()
+    itms = EnterpriseAPI.ItemPicker()
+    pkgs = EnterpriseAPI.PackagePicker()
+    return render_template('invoices/sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies)
+
+@mod.route('procurement_invoice', methods = ['GET','POST'])
+def ProcurementInvoice():
+    providers = EnterpriseAPI.GetProviders()
+    currencies = AccountingAPI.GetAllCurrencies()
+    itms = EnterpriseAPI.ItemPicker()
+    pkgs = EnterpriseAPI.PackagePicker()
+    return render_template('invoices/procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies)
+
+
+# REST Routes
+@mod.route('/Get-Accounts/<acc>')
+def GetAccount(acc):
+    Accounts = InvoicesAPI.GetAccount(acc)
+    return jsonify(Accounts)
+
+@mod.route('/Get-Pack/<code>')
+def GetPack(code):
+    Packs = InvoicesAPI.GetPack(code)
+    return jsonify(Packs)

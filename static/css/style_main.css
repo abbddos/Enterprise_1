@@ -522,6 +522,34 @@ ul.warehouse{
   color: red;
   text-align: left;
 }
+
+.select-what{
+  float: left;
+  background-color: rgb(0,0,100);
+  color: white;
+  font-weight: bold;
+  border: solid;
+  border-color: rgb(0,0,100);
+  border-radius: 3px;
+  box-shadow: 5px 10px 20px rgb(39, 39, 39);
+  display: none;
+}
+
+.select-what ul{
+  list-style-type: circle; padding: 5px;
+}
+
+.select-what li{
+  float:left; 
+  width: 100%; 
+  text-align: left;
+  padding: 3px;
+}
+
+.select-what li:hover{
+  background-color: white;
+  color: rgb(0,0,100);
+}
 @media screen and (max-width: 600px) {
   ul  li.dropdown,
   ul  li {float: none;}

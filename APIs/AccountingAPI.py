@@ -267,7 +267,7 @@ def AddCurrency(sess_uname, sess_pswd, name, code, ex_rate, func):
 def UpdateCurrency(sess_uname, sess_pswd, id, name, code, ex_rate, func):
     funcur = False
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT functionalcurrency from currency')
+    cur.execute('SELECT functionalcurrency from currency WHERE functionalcurrency = %s', ('Yes',))
     data = cur.fetchall()
     for d in data:
         if func in d:

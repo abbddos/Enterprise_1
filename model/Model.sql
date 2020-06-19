@@ -92,7 +92,8 @@ CREATE TABLE packages(
   itemname VARCHAR(50),
   unit VARCHAR(10),
   quantity REAL,
-  description TEXT
+  description TEXT, 
+  unit_price REAL
 );
 
 CREATE TABLE warehouses(
@@ -229,6 +230,26 @@ CREATE TABLE customers(
 	email VARCHAR(50),
 	pobox VARCHAR(10),
 	description varchar(2000)
+);
+
+CREATE TABLE Invoices(
+	invoiceid SERIAL NOT NULL PRIMARY KEY,
+	invoicetype VARCHAR(20),
+	sentto VARCHAR(50),
+	invoicedate DATE,
+	description VARCHAR(50),
+	unitprice REAL,
+	quantity REAL,
+	lineamount REAL,
+	ammountsum REAL,
+	discount REAL,
+	tax REAL,
+	totalamount REAL,
+	currency VARCHAR(5),
+	comments TEXT,
+	terms VARCHAR(2000),
+	paymentmethod VARCHAR(20),
+	paymentaccount VARCHAR(100)
 );
 
 -- Adding Default Currencies...

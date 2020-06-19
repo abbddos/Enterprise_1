@@ -197,6 +197,7 @@ def packages():
                 request.form.getlist('code'),
                 request.form.getlist('Name'),
                 request.form.getlist('unit'),
+                request.form.getlist('unitprice'),
                 request.form.getlist('quantity'),
                 request.form['description'])
                 flash('Package Created Successcully', category = 'success')
@@ -222,6 +223,7 @@ def edit_package(pkg):
                 request.form.getlist('code'),
                 request.form.getlist('Name'),
                 request.form.getlist('unit'),
+                request.form.getlist('unitprice'),
                 request.form.getlist('quantity'),
                 request.form['description'])
                 flash('Package Updated Successfully', category = 'success')
