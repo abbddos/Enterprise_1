@@ -264,7 +264,7 @@
             var discount = $('#discount').val();
             var tax = $('#tax').val();
             var value_to_remove = Number($('#amnt_'+ ids).val());
-            totalamount = Number($('#totalamount').val()) - value_to_remove
+            totalamount = (Number($('#totalamount').val()) - value_to_remove).toFixed(2)
             $('#totalamount').val(totalamount);
             if(Number.isNaN(discount)){
                 discount = 0;
@@ -312,6 +312,7 @@
                     $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+val.unit_price / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
                     totalamount = totalamount + amnt;
                     $('#totalamount').val(totalamount);
+                    $('#invamount').val(totalamount);
                 });
             });
             $('#myModal1').hide();

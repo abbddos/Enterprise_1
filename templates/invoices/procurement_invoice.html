@@ -203,199 +203,200 @@
         </div>
         </div>
 
-<script>
-    $(document).ready(function(){
-        
-        var i = 0;
-        var ex_rate = 0;
-        var uniprice = [0];
-        var currentamount = 0;
-        var totalamount = 0;
-
-        $(document).mouseup(function(e){
-            var container = $('.select-what');
-            if(!container.is(e.target) && container.has(e.target).length === 0){
-                container.slideUp();
-            }
-        });
-
-        $(document).on('change', '#currency', function(){
-          $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
-            totalamount  = totalamount * ex_rate;  
-            ex_rate = data.ex;
-            totalamount = (totalamount / ex_rate);
-              $.each(uniprice, function(index, value){
-                $('#unitprice_' + index).val(value / ex_rate);
-                $('#amnt_' + index).val((($('#qty_'+index).val() * value) / ex_rate).toFixed(2));
-                $('#totalamount').val(totalamount.toFixed(2));
-                var discount = $('#discount').val();
-                var tax = $('#tax').val();
-                if(Number.isNaN(discount)){
-                    discount = 0;
-                }
-                else{
-                    discount = ($('#discount').val() / 100) * $('#totalamount').val();
-                }
-                if(Number.isNaN(tax)){
-                    tax = 0;
-                }
-                else{
-                    tax = ($('#tax').val() / 100) * $('#totalamount').val();;
-                }
-                var invamount = totalamount - discount + tax;
-                $('#invamount').val(invamount.toFixed(2));
+        <script>
+            $(document).ready(function(){
                 
-              });
-            });
-        });
-        $('#add-line').click(function(){
-            $('.select-what').slideToggle();
-        });
-
-        $('#other').click(function(){
-            i++;
-            $('.select-what').slideToggle();
-            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' style = 'width:100%;'/></td><td><input type = 'text' name = 'unitprice' class = 'unitprice' id = 'unitprice_"+i+"' style = 'width:100%;'/></td><td><input type = 'text'  class = 'quantity' name = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
-        });
-
-        $(document).on('click','.rmv', function(){
-            var ids = $(this).attr('id');
-            var j = Number.parseInt(ids);
-            var discount = $('#discount').val();
-            var tax = $('#tax').val();
-            var value_to_remove = Number($('#amnt_'+ ids).val());
-            totalamount = Number($('#totalamount').val()) - value_to_remove
-            $('#totalamount').val(totalamount);
-            if(Number.isNaN(discount)){
-                discount = 0;
-            }
-            else{
-                discount = ($('#discount').val() / 100) * $('#totalamount').val();
-            }
-            if(Number.isNaN(tax)){
-                tax = 0;
-            }
-            else{
-                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
-            }
-            $('#tr_' + ids).remove();
-            var newinvamount = $('#totalamount').val() - discount + tax;
-            delete uniprice[j];
-            $('#invamount').val(newinvamount.toFixed(2));
-        });
-
-        $('.itm').click(function(){
-            $('.select-what').hide();
-        i++
-        $.getJSON('/GrabItems', {
-            ItCode: $(this).text(),
-        }, function(data){
-            if(data.msg == 'success'){
-                uniprice[i] = data.unitprice;
-                $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+data.unitprice / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
-            }
-            else{
-            $('.msg').val('Item not found');
-            }
-        });
-        $('#myModal').hide();
-        return false;
-        });
-
-        $('.pkg').click(function(){
-            $('.select-what').hide();
-            $.getJSON('/invoices/Get-Pack/' + $(this).text(), function(data){
-                $.each(data, function(key, val){
+                var i = 0;
+                var ex_rate = 0;
+                var uniprice = [0];
+                var currentamount = 0;
+                var totalamount = 0;
+        
+                $(document).mouseup(function(e){
+                    var container = $('.select-what');
+                    if(!container.is(e.target) && container.has(e.target).length === 0){
+                        container.slideUp();
+                    }
+                });
+        
+                $(document).on('change', '#currency', function(){
+                  $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
+                    totalamount  = totalamount * ex_rate;  
+                    ex_rate = data.ex;
+                    totalamount = (totalamount / ex_rate);
+                      $.each(uniprice, function(index, value){
+                        $('#unitprice_' + index).val(value / ex_rate);
+                        $('#amnt_' + index).val((($('#qty_'+index).val() * value) / ex_rate).toFixed(2));
+                        $('#totalamount').val(totalamount.toFixed(2));
+                        var discount = $('#discount').val();
+                        var tax = $('#tax').val();
+                        if(Number.isNaN(discount)){
+                            discount = 0;
+                        }
+                        else{
+                            discount = ($('#discount').val() / 100) * $('#totalamount').val();
+                        }
+                        if(Number.isNaN(tax)){
+                            tax = 0;
+                        }
+                        else{
+                            tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+                        }
+                        var invamount = totalamount - discount + tax;
+                        $('#invamount').val(invamount.toFixed(2));
+                        
+                      });
+                    });
+                });
+                $('#add-line').click(function(){
+                    $('.select-what').slideToggle();
+                });
+        
+                $('#other').click(function(){
                     i++;
-                    var amnt = val.quantity * (val.unit_price / ex_rate);
-                    uniprice[i] = val.unit_price;
-                    $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+val.unit_price / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
-                    totalamount = totalamount + amnt;
+                    $('.select-what').slideToggle();
+                    $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' style = 'width:100%;'/></td><td><input type = 'text' name = 'unitprice' class = 'unitprice' id = 'unitprice_"+i+"' style = 'width:100%;'/></td><td><input type = 'text'  class = 'quantity' name = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
+                });
+        
+                $(document).on('click','.rmv', function(){
+                    var ids = $(this).attr('id');
+                    var j = Number.parseInt(ids);
+                    var discount = $('#discount').val();
+                    var tax = $('#tax').val();
+                    var value_to_remove = Number($('#amnt_'+ ids).val());
+                    totalamount = (Number($('#totalamount').val()) - value_to_remove).toFixed(2)
                     $('#totalamount').val(totalamount);
+                    if(Number.isNaN(discount)){
+                        discount = 0;
+                    }
+                    else{
+                        discount = ($('#discount').val() / 100) * $('#totalamount').val();
+                    }
+                    if(Number.isNaN(tax)){
+                        tax = 0;
+                    }
+                    else{
+                        tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+                    }
+                    $('#tr_' + ids).remove();
+                    var newinvamount = $('#totalamount').val() - discount + tax;
+                    delete uniprice[j];
+                    $('#invamount').val(newinvamount.toFixed(2));
                 });
-            });
-            $('#myModal1').hide();
-        });
-
-        $(document).on('focus', '.quantity', function(){
-            var ids = $(this).attr('id').replace('qty_', '');
-            currentamount = Number($('#amnt_' + ids).val());          
-        });
-
-        $(document).on('change', '.quantity', function(){
-            var ids = $(this).attr('id').replace('qty_','');
-            var amnt = Number($(this).val()) * Number($('#unitprice_' + ids).val());
-            totalamount = totalamount - currentamount + amnt;
-            $('#amnt_' + ids).val(amnt.toFixed(2));
-            $('#totalamount').val(totalamount.toFixed(2));
-            var discount = $('#discount').val();
-            var tax = $('#tax').val();
-            if(Number.isNaN(discount)){
-                discount = 0;
-            }
-            else{
-                discount = ($('#discount').val() / 100) * $('#totalamount').val();
-            }
-            if(Number.isNaN(tax)){
-                tax = 0;
-            }
-            else{
-                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
-            }
-            var invamount = totalamount - (discount) + tax;
-            $('#invamount').val(invamount.toFixed(2));
-        });
-
-        $(document).on('change','#discount', function(){
-            var amount = $('#totalamount').val();
-            var discount = $('#discount').val();
-            var tax = $('#tax').val();
-            if(Number.isNaN(discount)){
-                discount = 0;
-            }
-            else{
-                discount = ($('#discount').val() / 100) * $('#totalamount').val();
-            }
-            if(Number.isNaN(tax)){
-                tax = 0;
-            }
-            else{
-                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
-            }
-            $('#invamount').val((totalamount - discount + tax).toFixed(2));
-        });
-
-        $(document).on('change','#tax', function(){
-            var amount = $('#totalamount').val();
-            var discount = $('#discount').val();
-            var tax = $('#tax').val();
-            if(Number.isNaN(discount)){
-                discount = 0;
-            }
-            else{
-                discount = ($('#discount').val() / 100) * $('#totalamount').val();
-            }
-            if(Number.isNaN(tax)){
-                tax = 0;
-            }
-            else{
-                tax = ($('#tax').val() / 100) * $('#totalamount').val();;
-            }
-            $('#invamount').val((totalamount - discount + tax).toFixed(2));
-        });
-
-        $(document).on('change','#pay_method', function(){
-            $.getJSON('/invoices/Get-Accounts/' + $(this).val(), function(data){
-                $('#billing_account').find('option').remove();
-                $('#billing_account').append("<option value = ''>------</option>");
-                $.each(data.accountname, function(key, val){
-                    $('#billing_account').append("<option value = '"+val+"'>"+val+"</option>");
+        
+                $('.itm').click(function(){
+                    $('.select-what').hide();
+                i++
+                $.getJSON('/GrabItems', {
+                    ItCode: $(this).text(),
+                }, function(data){
+                    if(data.msg == 'success'){
+                        uniprice[i] = data.unitprice;
+                        $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+data.unitprice / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                    }
+                    else{
+                    $('.msg').val('Item not found');
+                    }
                 });
+                $('#myModal').hide();
+                return false;
+                });
+        
+                $('.pkg').click(function(){
+                    $('.select-what').hide();
+                    $.getJSON('/invoices/Get-Pack/' + $(this).text(), function(data){
+                        $.each(data, function(key, val){
+                            i++;
+                            var amnt = val.quantity * (val.unit_price / ex_rate);
+                            uniprice[i] = val.unit_price;
+                            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+val.unit_price / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                            totalamount = totalamount + amnt;
+                            $('#totalamount').val(totalamount);
+                            $('#invamount').val(totalamount);
+                        });
+                    });
+                    $('#myModal1').hide();
+                });
+        
+                $(document).on('focus', '.quantity', function(){
+                    var ids = $(this).attr('id').replace('qty_', '');
+                    currentamount = Number($('#amnt_' + ids).val());          
+                });
+        
+                $(document).on('change', '.quantity', function(){
+                    var ids = $(this).attr('id').replace('qty_','');
+                    var amnt = Number($(this).val()) * Number($('#unitprice_' + ids).val());
+                    totalamount = totalamount - currentamount + amnt;
+                    $('#amnt_' + ids).val(amnt.toFixed(2));
+                    $('#totalamount').val(totalamount.toFixed(2));
+                    var discount = $('#discount').val();
+                    var tax = $('#tax').val();
+                    if(Number.isNaN(discount)){
+                        discount = 0;
+                    }
+                    else{
+                        discount = ($('#discount').val() / 100) * $('#totalamount').val();
+                    }
+                    if(Number.isNaN(tax)){
+                        tax = 0;
+                    }
+                    else{
+                        tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+                    }
+                    var invamount = totalamount - (discount) + tax;
+                    $('#invamount').val(invamount.toFixed(2));
+                });
+        
+                $(document).on('change','#discount', function(){
+                    var amount = $('#totalamount').val();
+                    var discount = $('#discount').val();
+                    var tax = $('#tax').val();
+                    if(Number.isNaN(discount)){
+                        discount = 0;
+                    }
+                    else{
+                        discount = ($('#discount').val() / 100) * $('#totalamount').val();
+                    }
+                    if(Number.isNaN(tax)){
+                        tax = 0;
+                    }
+                    else{
+                        tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+                    }
+                    $('#invamount').val((totalamount - discount + tax).toFixed(2));
+                });
+        
+                $(document).on('change','#tax', function(){
+                    var amount = $('#totalamount').val();
+                    var discount = $('#discount').val();
+                    var tax = $('#tax').val();
+                    if(Number.isNaN(discount)){
+                        discount = 0;
+                    }
+                    else{
+                        discount = ($('#discount').val() / 100) * $('#totalamount').val();
+                    }
+                    if(Number.isNaN(tax)){
+                        tax = 0;
+                    }
+                    else{
+                        tax = ($('#tax').val() / 100) * $('#totalamount').val();;
+                    }
+                    $('#invamount').val((totalamount - discount + tax).toFixed(2));
+                });
+        
+                $(document).on('change','#pay_method', function(){
+                    $.getJSON('/invoices/Get-Accounts/' + $(this).val(), function(data){
+                        $('#billing_account').find('option').remove();
+                        $('#billing_account').append("<option value = ''>------</option>");
+                        $.each(data.accountname, function(key, val){
+                            $('#billing_account').append("<option value = '"+val+"'>"+val+"</option>");
+                        });
+                    });
+                });
+        
             });
-        });
-
-    });
-</script>
+        </script>
 <style>
     #PickItem{
         color: white;

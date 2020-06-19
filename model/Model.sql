@@ -363,9 +363,9 @@ $$ LANGUAGE plpgsql;
 
 --=====================================================================================================================================
 
-CREATE OR REPLACE FUNCTION updatetransaction(transid_ character varying, updateby character varying, newstatus character varying)
+CREATE OR REPLACE FUNCTION updatetransaction(transid_ VARCHAR, updateby VARCHAR, newstatus VARCHAR)
 RETURNS void AS $$
-LANGUAGE plpgsql
+
 DECLARE
 	rec RECORD;
 	unitprice_ REAL;
