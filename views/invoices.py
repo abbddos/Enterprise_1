@@ -306,7 +306,34 @@ def SalesInvoice():
     currencies = AccountingAPI.GetAllCurrencies()
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
-    return render_template('invoices/sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies)
+    invs = InvoicesAPI.GetInvoices('sales')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            #try:
+            invcode = InvoicesAPI.AddInvoice(session['username'], session['password'], 'sales',
+                request.form['Customer'],
+                request.form['SheetDate'],
+                request.form['currency'],
+                request.form['terms'],
+                request.form.getlist('description'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('quantity'),
+                request.form.getlist('amount'),
+                request.form['totalamount'],
+                request.form['discount'],
+                request.form['tax'],
+                request.form['invamount'],
+                request.form['pay_method'],
+                request.form['billing_account'],
+                request.form['comments']
+                )
+            InvoicesAPI.RegisterInvoice(invcode, session['username'], session['password'])
+            flash('Invoices created successfully', category = 'success')
+            return redirect(url_for('invoices.SalesInvoice'))
+            #except Exception as e:
+            #   flash(str(e), category = 'fail')
+            #    return redirect(url_for('invoices.SalesInvoice'))
+    return render_template('invoices/sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
 
 @mod.route('procurement_invoice', methods = ['GET','POST'])
 def ProcurementInvoice():
@@ -314,7 +341,34 @@ def ProcurementInvoice():
     currencies = AccountingAPI.GetAllCurrencies()
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
-    return render_template('invoices/procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies)
+    invs = InvoicesAPI.GetInvoices('procurement')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            #try:
+            invcode = InvoicesAPI.AddInvoice(session['username'], session['password'], 'procurement',
+                request.form['Customer'],
+                request.form['SheetDate'],
+                request.form['currency'],
+                request.form['terms'],
+                request.form.getlist('description'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('quantity'),
+                request.form.getlist('amount'),
+                request.form['totalamount'],
+                request.form['discount'],
+                request.form['tax'],
+                request.form['invamount'],
+                request.form['pay_method'],
+                request.form['billing_account'],
+                request.form['comments']
+                )
+            InvoicesAPI.RegisterInvoice(invcode, session['username'], session['password'])
+            flash('Invoices created successfully', category = 'success')
+            return redirect(url_for('invoices.ProcurementInvoice'))
+            #except Exception as e:
+            #    flash(str(e), category = 'fail')
+            #    return redirect(url_for('invoices.ProcurementInvoice'))
+    return render_template('invoices/procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
 
 
 # REST Routes

@@ -50,3 +50,32 @@ def GetPack(code):
     data = df.transpose().to_dict()
     con.close()
     return data
+
+def AddInvoice(sess_uname, sess_pswd, type, sentto, invdate, currency, term, desc, uniprice, qty, amnt, amnt_sum, discount, tax, total, pay_method, pay_acct, comments):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    code = ""
+    if type == 'sales':
+        code = 'SALE_' + str(invdate) + '_' +  str(random.randint(100000,999999))
+    elif type == 'procurement':
+        code = 'PROC_' + str(invdate) + '_' +  str(random.randint(100000,999999))
+
+    for i in range(len(desc)):
+        cur.execute("INSERT INTO INVOICES(invoicetype, invoicecode, created_by, sentto, invoicedate, currency, terms, description, unitprice, quantity, lineamount, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (type, code, sess_uname, sentto, invdate, currency, term, desc[i], uniprice[i], qty[i], amnt[i], amnt_sum, discount, tax, total, pay_method, pay_acct, comments))
+    con.commit()
+    con.close()
+    return code
+
+def GetInvoices(tp):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT invoicecode, invoicedate, created_by, terms FROM invoices WHERE invoicetype = %s GROUP BY invoicecode, invoicedate, created_by, terms', (tp,))
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def RegisterInvoice(invcode, sess_uname, sess_pswd):
+    JournalCode = 'JRN_' + str(date.today()) + '-' + str(random.randint(100000,999999))
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT RegisterInvoice(%s, %s, %s)', (JournalCode, invcode, sess_uname))
+    con.commit()
+    con.close()

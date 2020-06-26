@@ -46,8 +46,8 @@
                 </div>
                 <div class = 'col-b'>
                     <select name = 'terms'>
-                        <option value = ''>Immediate payment</option>
-                        <option value = ''>Later payment</option>
+                        <option value = 'Immediate payment'>Immediate payment</option>
+                        <option value = 'Later payment'>Later payment</option>
                     </select>
                 </div>
             </div>
@@ -84,19 +84,19 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td>Discount</td>
+                        <td>Discount %</td>
                         <td></td>
                         <td></td>
                         <td><input type = 'text' name = 'discount' id = 'discount' style = 'width:100%'></td>
-                        <td></td>
+                        <td>%</td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td>Tax</td>
+                        <td>Tax %</td>
                         <td></td>
                         <td></td>
                         <td><input type = 'text' name = 'tax' id = 'tax' style = 'width:100%'></td>
-                        <td></td>
+                        <td>%</td>
                         <td></td>
                     </tr>
                     <tr>
@@ -154,6 +154,27 @@
             <p id = 'message'></p>
           </div>
     </form>
+    <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+    <table>
+        <tr>
+            <th>Invoice Code</th>
+            <th>Invoice date</th>
+            <th>Created by</th>
+            <th>Inovice terms</th>
+            <th>View</th>
+            <th>Print</th>
+        </tr>
+        {% for inv in invs%}
+            <tr class = 'table-row'>
+                <td>{{inv[0]}}</td>
+                <td>{{inv[1]}}</td>
+                <td>{{inv[2]}}</td>
+                <td>{{inv[3]}}</td>
+                <td><a href = "#"><img src = "{{url_for('static', filename = 'images/view.png')}}" style = "width: 25px; height: 25px;"></a></td>
+                <td><a href = "#"><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = "width: 25px; height: 25px;" /></a></td>
+            </tr>
+        {% endfor %}
+    </table>
 </div>
 <div id="myModal" class="modal">
     <div class="modal-content">
@@ -225,7 +246,7 @@
                     ex_rate = data.ex;
                     totalamount = (totalamount / ex_rate);
                       $.each(uniprice, function(index, value){
-                        $('#unitprice_' + index).val(value / ex_rate);
+                        $('#unitprice_' + index).val((value / ex_rate).toFixed(2));
                         $('#amnt_' + index).val((($('#qty_'+index).val() * value) / ex_rate).toFixed(2));
                         $('#totalamount').val(totalamount.toFixed(2));
                         var discount = $('#discount').val();
@@ -292,7 +313,7 @@
                 }, function(data){
                     if(data.msg == 'success'){
                         uniprice[i] = data.unitprice;
-                        $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+data.unitprice / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                        $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+ (data.unitprice / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
                     }
                     else{
                     $('.msg').val('Item not found');
@@ -309,7 +330,7 @@
                             i++;
                             var amnt = val.quantity * (val.unit_price / ex_rate);
                             uniprice[i] = val.unit_price;
-                            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+val.unit_price / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+ (val.unit_price / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
                             totalamount = totalamount + amnt;
                             $('#totalamount').val(totalamount);
                             $('#invamount').val(totalamount);

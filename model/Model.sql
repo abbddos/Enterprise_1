@@ -233,11 +233,15 @@ CREATE TABLE customers(
 );
 
 CREATE TABLE Invoices(
-	invoiceid SERIAL NOT NULL PRIMARY KEY,
-	invoicetype VARCHAR(20),
-	sentto VARCHAR(50),
+    invoiceid SERIAL NOT NULL PRIMARY KEY,
+    invoicetype VARCHAR(20),
+	invoicecode VARCHAR(50),
+	created_by VARCHAR(50),
+    sentto VARCHAR(50),
 	invoicedate DATE,
-	description VARCHAR(50),
+    currency VARCHAR(5),
+    terms VARCHAR(2000),
+    description VARCHAR(50),
 	unitprice REAL,
 	quantity REAL,
 	lineamount REAL,
@@ -245,11 +249,9 @@ CREATE TABLE Invoices(
 	discount REAL,
 	tax REAL,
 	totalamount REAL,
-	currency VARCHAR(5),
-	comments TEXT,
-	terms VARCHAR(2000),
-	paymentmethod VARCHAR(20),
-	paymentaccount VARCHAR(100)
+    paymentmethod VARCHAR(20),
+	paymentaccount VARCHAR(100),
+    comments TEXT
 );
 
 -- Adding Default Currencies...
@@ -566,7 +568,81 @@ BEGIN
 	PERFORM CreateAccount('Assets','Accounts Receivable','Custom_Code' ,name_, Cur, 0,0, '');
 END;
 $$ LANGUAGE plpgsql;
+--===============================================================================================================================================================
 
+CREATE OR REPLACE FUNCTION RegisterInvoice(jrncode VARCHAR, code VARCHAR, created_by VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+	term VARCHAR;
+	invtype VARCHAR;
+	sent_name VARCHAR;
+	sent_type VARCHAR;
+	sent_cat VARCHAR;
+	bill_type VARCHAR;
+	bill_cat VARCHAR;
+	bill_name VARCHAR;
+	bill_amnt REAL;
+	crn VARCHAR;
+	acct VARCHAR;
+	cat VARCHAR;
+	rec RECORD;
+	amnt REAL;
+	amnt_ REAL;
+	ex_rate REAL;
+	crn_ VARCHAR;
+	
+BEGIN
+	
+	
+	SELECT invoicetype, sentto, terms, paymentaccount, totalamount, currency INTO invtype, sent_name, term, bill_name, bill_amnt, crn FROM invoices WHERE invoicecode = code GROUP BY invoicetype, sentto, terms, paymentaccount, totalamount, currency;
+	SELECT accounttype, accountcategory INTO sent_type, sent_cat FROM accounts WHERE accountname = sent_name;
+	SELECT accounttype, accountcategory INTO bill_type, bill_cat FROM accounts WHERE accountname = bill_name;
+	SELECT ExchangeRate INTO ex_rate FROM currency WHERE currencycode = crn;
+	
+
+	IF 	invtype = 'sales' THEN
+		IF term = 'Immediate payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, amnt_, created_by, rec.comments);				
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, bill_amnt, 0,  created_by, '--');
+		END IF;
+		IF term = 'Later payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, amnt_, created_by, rec.comments);				
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, bill_amnt, 0,  created_by, '--');
+		END IF;
+	END IF;
+	IF invtype = 'procurement' THEN
+		IF term = 'Immediate payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, amnt_, 0, created_by, rec.comments);				
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, 0, bill_amnt, created_by, '--');
+		END IF;
+		IF term = 'Later payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, amnt_, 0, created_by, rec.comments);				
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, 0, bill_amnt, created_by, '--');
+		END IF;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+	
 --===============================================================================================================================================================
 -- Views...
 
