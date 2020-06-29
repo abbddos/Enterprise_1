@@ -251,6 +251,7 @@ CREATE TABLE Invoices(
 	totalamount REAL,
     paymentmethod VARCHAR(20),
 	paymentaccount VARCHAR(100),
+	invstatus VARCHAR(10) DEFAULT 'pending',
     comments TEXT
 );
 
@@ -600,7 +601,7 @@ BEGIN
 	SELECT ExchangeRate INTO ex_rate FROM currency WHERE currencycode = crn;
 	
 
-	IF 	invtype = 'sales' THEN
+	IF 	invtype = 'sales' OR invtype = 'return' THEN
 		IF term = 'Immediate payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
@@ -620,7 +621,7 @@ BEGIN
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, bill_amnt, 0,  created_by, '--');
 		END IF;
 	END IF;
-	IF invtype = 'procurement' THEN
+	IF invtype = 'procurement' OR invtype = 'refund' THEN
 		IF term = 'Immediate payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;

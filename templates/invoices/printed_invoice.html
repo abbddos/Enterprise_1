@@ -1,0 +1,116 @@
+<html>
+    <head>
+        <style>
+            body{font-family: "Arial Black", Gadget, sans-serif;}
+
+            p{white-space: pre-wrap;}
+
+            h1{
+                color: white;
+                background-color: rgb(0,0,100);}
+                
+            table{
+                width: 95%;
+                border: solid;
+                border-width: 1px;
+                border-color: #eee;
+                margin-bottom: 25px;
+                font-size: 8px;}
+
+            th{
+                width: auto;
+                background-color: rgb(0,0,100);
+                color: white;
+                text-align: left;
+                padding: 5px;
+                border-bottom: solid;
+                font-size: 8px;}
+
+            tr{
+                border-bottom: solid;
+                border-width: 1px;
+                border-color: black;
+                background-color: white;
+                font-size: 8px;}
+
+            tr:nth-child(even){background-color: #eee;}
+
+            .customer{
+                font-size: 12px;
+                margin-bottom: 100px;
+            }
+
+            .customer p{
+                padding: 2px;
+                margin: 2px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Enterprise Invoice</h1>
+
+        <table>
+            <tr>
+                <td>Invoice code:</td>
+                <td>{{InvoiceData[1]}}</td>
+                <td>Created on:</td>
+                <td>{{InvoiceData[4]}}</td>
+            </tr>
+            <tr>
+                <td>Invoice Type</td>
+                <td>{{InvoiceData[0]}}</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+        
+            <div class = 'customer'>
+                <p>{{SentData[1]}}</p>
+                <p>{{SentData[2]}}</p>
+                <p>{{SentData[3]}}</p>
+                <p>{{SentData[5]}}</p>
+            </div>
+        
+        <table>
+            <tr>
+                <th>Description:</th>
+                <th>Unit price:</th>
+                <th>Quantity:</th>
+                <th>Amount:</th>
+                <th>Currency:</th>
+            </tr>
+            {% for d in ItmData %}
+            <tr>
+                <td>{{d[0]}}</td>
+                <td>{{d[1]}}</td>
+                <td>{{d[2]}}</td>
+                <td>{{d[3]}}</td>
+                <td>{{d[4]}}</td>
+            </tr>
+            {% endfor%}
+            <tr style = 'font-weight: bold;'>
+                <td>Total amount:</td>
+                <td></td>
+                <td></td>
+                <td>{{InvoiceData[5]}}</td>
+                <td></td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>Discount %</td>
+                <td>{{InvoiceData[6]}}</td>
+            </tr>
+            <tr>
+                <td>Tax %</td>
+                <td>{{InvoiceData[7]}}</td>
+            </tr>
+            <tr style = 'font-weight: bold;'>
+                <td>Invoice Amount:</td>
+                <td>{{InvoiceData[8]}}</td>
+            </tr>
+        </table>
+        <h3><b>Comments: </b></h3>
+        <p>{{InvoiceData[9]}}</p>
+    </body>
+</html>

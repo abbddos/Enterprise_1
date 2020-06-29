@@ -58,7 +58,11 @@ def AddInvoice(sess_uname, sess_pswd, type, sentto, invdate, currency, term, des
         code = 'SALE_' + str(invdate) + '_' +  str(random.randint(100000,999999))
     elif type == 'procurement':
         code = 'PROC_' + str(invdate) + '_' +  str(random.randint(100000,999999))
-
+    elif type == 'return':
+        code = 'RET_' + str(invdate) + '_' +  str(random.randint(100000,999999))
+    elif type == 'refund':
+        code = 'REF_' + str(invdate) + '_' +  str(random.randint(100000,999999))
+        
     for i in range(len(desc)):
         cur.execute("INSERT INTO INVOICES(invoicetype, invoicecode, created_by, sentto, invoicedate, currency, terms, description, unitprice, quantity, lineamount, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (type, code, sess_uname, sentto, invdate, currency, term, desc[i], uniprice[i], qty[i], amnt[i], amnt_sum, discount, tax, total, pay_method, pay_acct, comments))
@@ -68,7 +72,7 @@ def AddInvoice(sess_uname, sess_pswd, type, sentto, invdate, currency, term, des
 
 def GetInvoices(tp):
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT invoicecode, invoicedate, created_by, terms FROM invoices WHERE invoicetype = %s GROUP BY invoicecode, invoicedate, created_by, terms', (tp,))
+    cur.execute('SELECT invoicecode, invoicedate, created_by, terms, invstatus FROM invoices WHERE invoicetype = %s GROUP BY invoicecode, invoicedate, created_by, terms, invstatus', (tp,))
     data = cur.fetchall()
     con.close()
     return data
@@ -79,3 +83,21 @@ def RegisterInvoice(invcode, sess_uname, sess_pswd):
     cur.execute('SELECT RegisterInvoice(%s, %s, %s)', (JournalCode, invcode, sess_uname))
     con.commit()
     con.close()
+
+def GetPrintedInvoice(code):
+    SentData = (None,)
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT invoicetype, invoicecode, created_by, sentto, invoicedate, ammountsum, discount, tax, totalamount, comments FROM invoices WHERE invoicecode = %s GROUP BY invoicetype, invoicecode, created_by, sentto, invoicedate, ammountsum, discount, tax, totalamount, comments', (code,))
+    InvoiceData = cur.fetchone()
+
+    if InvoiceData[0] == 'sales' or InvoiceData[0] == 'refund':
+        cur.execute('SELECT * FROM customers WHERE name = %s', (InvoiceData[3],))
+        SentData = cur.fetchone()
+    elif InvoiceData[0] == 'procurement' or InvoiceData[0] == 'return':
+        cur.execute('SELECT * FROM providers WHERE name = %s', (InvoiceData[3],))
+        SentData = cur.fetchone()
+
+    cur.execute('SELECT description, unitprice, quantity, lineamount, currency FROM invoices WHERE invoicecode = %s', (code,))
+    ItmData = cur.fetchall()
+    con.close()
+    return SentData, InvoiceData, ItmData
