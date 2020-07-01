@@ -224,7 +224,7 @@ def GrabJournalEntry(entrycode):
 
 def GrabAccountEntries(AccountName):
     con, cur = EnterpriseAPI.root()
-    cur.execute('select entrydate, dbt, cdt, comments, forex from view_journal where accountname = %s', (AccountName,))
+    cur.execute('select entrydate, dbt, cdt, comments, forex from view_journal where accountname = %s ORDER BY entrydate', (AccountName,))
     data1 = cur.fetchall()
     cur.execute('select sum(dbt) as Debit, sum(cdt) as Credit, forex from view_journal where accountname  = %s group by accountname, forex', (AccountName,))
     data2 = cur.fetchone()
