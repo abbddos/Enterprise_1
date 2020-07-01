@@ -84,6 +84,19 @@ def RegisterInvoice(invcode, sess_uname, sess_pswd):
     con.commit()
     con.close()
 
+def UpdateInvoice(sess_uname, sess_pswd, code, status):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    if status == 'Approved':
+        cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
+        con.commit()
+        con.close()
+        RegisterInvoice(code, sess_uname, sess_pswd)
+    elif status == 'Canceled':
+        cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
+        con.commit()
+        con.close()
+    
+
 def GetPrintedInvoice(code):
     SentData = (None,)
     con, cur = EnterpriseAPI.root()

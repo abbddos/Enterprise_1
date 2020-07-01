@@ -327,7 +327,7 @@ def SalesInvoice():
                 request.form['billing_account'],
                 request.form['comments']
                 )
-                InvoicesAPI.RegisterInvoice(invcode, session['username'], session['password'])
+                
                 flash('Invoices created successfully', category = 'success')
                 return redirect(url_for('invoices.SalesInvoice'))
             except Exception as e:
@@ -362,7 +362,7 @@ def ProcurementInvoice():
                 request.form['billing_account'],
                 request.form['comments']
                 )
-                InvoicesAPI.RegisterInvoice(invcode, session['username'], session['password'])
+                
                 flash('Invoices created successfully', category = 'success')
                 return redirect(url_for('invoices.ProcurementInvoice'))
             except Exception as e:
@@ -397,7 +397,7 @@ def ReturnInvoice():
                 request.form['billing_account'],
                 request.form['comments']
                 )
-                InvoicesAPI.RegisterInvoice(invcode, session['username'], session['password'])
+                
                 flash('Invoices created successfully', category = 'success')
                 return redirect(url_for('invoices.ReturnInvoice'))
             except Exception as e:
@@ -432,7 +432,7 @@ def RefundInvoice():
                 request.form['billing_account'],
                 request.form['comments']
                 )
-                InvoicesAPI.RegisterInvoice(invcode, session['username'], session['password'])
+                
                 flash('Invoices created successfully', category = 'success')
                 return redirect(url_for('invoices.RefundInvoice'))
             except Exception as e:
@@ -460,6 +460,15 @@ def InvoiceView(code):
 def ViewInvoice(code, tpy):
     iframe = url_for('invoices.InvoiceView', code = code)
     invs = InvoicesAPI.GetInvoices(tpy)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.UpdateInvoice(session['username'], session['password'], code, request.form['statuses'])
+                flash('Invoice updated successfully...', category = 'success')
+                return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
     return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy)
 
 

@@ -523,6 +523,11 @@ ul.warehouse{
   text-align: left;
 }
 
+.Approved {
+  color: green;
+  text-align: left;
+}
+
 .select-what{
   float: left;
   background-color: rgb(0,0,100);
