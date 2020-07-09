@@ -46,7 +46,7 @@ def GetAccount(acc):
 
 def GetPack(code):
     con, cur = EnterpriseAPI.root()
-    df = pd.read_sql("SELECT itemname, unit_price, quantity FROM packages WHERE packagecode = '{}'".format(code), con)
+    df = pd.read_sql("SELECT itemname, unit_price, unit_cost, quantity FROM packages WHERE packagecode = '{}'".format(code), con)
     data = df.transpose().to_dict()
     con.close()
     return data

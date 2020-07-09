@@ -21,6 +21,7 @@
     {{render_field(form.Unit)}}
     {{render_field(form.SecondaryUnit)}}
     {{render_field(form.UnitPrice)}}
+    {{render_field(form.UnitCost)}}
     {{render_field(form.Group)}}
     {{render_field(form.Category)}}
     {{render_field(form.Description)}}
@@ -69,6 +70,7 @@
     <th>Provider:</th>
     <th>Unit:</th>
     <th>Unit Price:</th>
+    <th>Unit Cost:</th>
     <th>Edit:</th>
   </tr>
   {%for i in data%}
@@ -80,6 +82,7 @@
     <td>{{i[4]}}</td>
     <td>{{i[5]}}</td>
     <td>{{i[6]}}</td>
+    <td>{{i[7]}}</td>
     <td><a href = "{{url_for('logistics.edit_item', itm = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
   </tr>
   {% endfor %}

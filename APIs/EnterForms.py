@@ -65,6 +65,7 @@ class ItemsForm(Form):
     ('Piece','Piece')
     ], validators = [DataRequired()])
     UnitPrice = StringField('Unit Price: ', validators = [DataRequired()])
+    UnitCost = StringField('Unit Cost:', validators = [DataRequired()])
     Group = SelectField('Group: ', choices = [])
     Category = SelectField('Category: ', choices = [
     ('Asset','Asset'),

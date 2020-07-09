@@ -58,6 +58,7 @@ CREATE TABLE items(
   provider VARCHAR(50),
   unit VARCHAR(5),
   unit_price REAL,
+  unit_cost REAL,
   description TEXT,
   size VARCHAR(5),
   color VARCHAR(10),
@@ -259,6 +260,30 @@ CREATE TABLE Invoices(
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('US Dollars', 'USD');
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Euro', 'EUR');
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Syrian Pound', 'SYP');
+
+-- Creating basic accounting module...
+INSERT INTO categories(CategoryName, CategoryType) VALUES
+('Cash', 'Assets'),
+('Bank Accounts', 'Assets'),
+('Credit Card Accounts', 'Assets'),
+('Accounts Receivable', 'Assets'),
+('Inventory','Assets'),
+('Land','Assets'),
+('Buildings','Assets'),
+('Equipment','Assets'),
+('Capital','Equities'),
+('Notes Payable','Liabilities'),
+('Accounts Payable','Liabilities'),
+('Salaries Payable','Liabilities'),
+('Interest Payable','Liabilities'),
+('Sales Revenues','Revenues'),
+('Interest Revenues','Revenues'),
+('Salaries Expenses','Expenses'),
+('Wages','Expenses'),
+('Supplies','Expenses'),
+('Taxes','Expenses'),
+('Cost of Goods Sold','Expenses'),
+('Capital Draws','Dividends');
 
 -- addition of foreign keys...
 
@@ -500,12 +525,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
-CREATE OR REPLACE FUNCTION CreateItem(code_ VARCHAR, item_ VARCHAR, brand_ VARCHAR, provider_ VARCHAR, unit_ VARCHAR, unitprice_ REAL, description_ TEXT, size_ VARCHAR, color_ VARCHAR, sku_ VARCHAR, part_number_ VARCHAR, ieme_ VARCHAR, length_ REAL, width_ REAL, height_ REAL, diameter_ REAL, l_unit_ VARCHAR, w_unit_ VARCHAR, h_unit_ VARCHAR, d_unit_ VARCHAR, grp_ VARCHAR, category_ VARCHAR, secondaryunit_ VARCHAR)
+CREATE OR REPLACE FUNCTION CreateItem(code_ VARCHAR, item_ VARCHAR, brand_ VARCHAR, provider_ VARCHAR, unit_ VARCHAR, unitprice_ REAL, unitcost_ REAL, description_ TEXT, size_ VARCHAR, color_ VARCHAR, sku_ VARCHAR, part_number_ VARCHAR, ieme_ VARCHAR, length_ REAL, width_ REAL, height_ REAL, diameter_ REAL, l_unit_ VARCHAR, w_unit_ VARCHAR, h_unit_ VARCHAR, d_unit_ VARCHAR, grp_ VARCHAR, category_ VARCHAR, secondaryunit_ VARCHAR)
 RETURNS VOID AS $$
 DECLARE
    Cur VARCHAR;
 BEGIN
-	INSERT INTO items(code, item, brand, provider, unit, unit_price, description, size, color, sku, part_number, ieme, lengh, width, height, diameter, l_unit, w_unit, h_unit, d_unit, grp, category, secondaryunit) VALUES(code_, item_, brand_, provider_, unit_, unitprice_, description_, size_, color_, sku_, part_number_, ieme_, length_, width_, height_, diameter_, l_unit_, w_unit_, h_unit_, d_unit_, grp_, category_, secondaryunit_);
+	INSERT INTO items(code, item, brand, provider, unit, unit_price, unit_cost, description, size, color, sku, part_number, ieme, lengh, width, height, diameter, l_unit, w_unit, h_unit, d_unit, grp, category, secondaryunit) VALUES(code_, item_, brand_, provider_, unit_, unitprice_, unitcost_, description_, size_, color_, sku_, part_number_, ieme_, length_, width_, height_, diameter_, l_unit_, w_unit_, h_unit_, d_unit_, grp_, category_, secondaryunit_);
 	SELECT currencycode INTO Cur FROM Currency WHERE FunctionalCurrency = 'Yes';
 	-- When item is identified as Asset, create category 'inventory' under Assets if it does not exist and create item as asset account.
 	IF category_ = 'Asset' THEN
@@ -524,13 +549,13 @@ $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
 
-CREATE OR REPLACE FUNCTION UpdateItem(itm INT, itemname VARCHAR, brand_ VARCHAR, provider_ VARCHAR, unit_ VARCHAR, uprice REAL, description_ TEXT, size_ VARCHAR, color_ VARCHAR, sku_ VARCHAR, partnum VARCHAR, ieme_ VARCHAR, length_ REAL, width_ REAL, height_ REAL, diameter_ REAL, lunit VARCHAR, wunit VARCHAR, hunit VARCHAR, dunit VARCHAR, grp_ VARCHAR, category_ VARCHAR, secondaryunit_ VARCHAR)
+CREATE OR REPLACE FUNCTION UpdateItem(itm INT, itemname VARCHAR, brand_ VARCHAR, provider_ VARCHAR, unit_ VARCHAR, uprice REAL, ucost REAL, description_ TEXT, size_ VARCHAR, color_ VARCHAR, sku_ VARCHAR, partnum VARCHAR, ieme_ VARCHAR, length_ REAL, width_ REAL, height_ REAL, diameter_ REAL, lunit VARCHAR, wunit VARCHAR, hunit VARCHAR, dunit VARCHAR, grp_ VARCHAR, category_ VARCHAR, secondaryunit_ VARCHAR)
 RETURNS VOID AS $$
 DECLARE
 	X VARCHAR;
 BEGIN
 	SELECT item INTO X FROM items WHERE id = itm;
-	UPDATE items SET Item = itemname, Brand = brand_, Provider = provider_, Unit = unit_, Unit_Price = uprice, Description = description_ , Size = size_, Color = color_, sku = sku_, part_number = partnum, ieme = ieme_, lengh = length_, width = width_ , height = height_, diameter = diameter_, l_unit = lunit, w_unit = wunit, h_unit = hunit, d_unit = dunit, grp = grp_, category = category_ , secondaryunit = secondaryunit_ WHERE id = itm;
+	UPDATE items SET Item = itemname, Brand = brand_, Provider = provider_, Unit = unit_, Unit_Price = uprice, unit_cost = ucost, Description = description_ , Size = size_, Color = color_, sku = sku_, part_number = partnum, ieme = ieme_, lengh = length_, width = width_ , height = height_, diameter = diameter_, l_unit = lunit, w_unit = wunit, h_unit = hunit, d_unit = dunit, grp = grp_, category = category_ , secondaryunit = secondaryunit_ WHERE id = itm;
 	IF category_ = 'Asset' THEN
 		UPDATE Accounts SET Accounttype = 'Assets', AccountCategory = 'Inventory', AccountCode = 'Custom_Code' WHERE AccountName = X;
 		UPDATE ledger SET Accounttype = 'Assets', AccountCategory = 'Inventory' WHERE AccountName = X;

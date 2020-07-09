@@ -67,7 +67,7 @@ def GrabItems():
     try:
         item = ItemAdder(code)
         for i in item:
-            return jsonify(msg = 'success', itemcode = i[0], itemname = i[1], itemunit = i[2], unitprice = i[3])
+            return jsonify(msg = 'success', itemcode = i[0], itemname = i[1], itemunit = i[2], unitprice = i[3], unitcost = i[4])
     except Exception as e:
         return jsonify(msg = str(e))
 

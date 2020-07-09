@@ -93,7 +93,7 @@
       </div>
       <div class = 'col-b'>
         <select name = 'SecondaryUnit'>
-          <option value = "{{j[23]}}" selected hidden>{{j[23]}}</option>
+          <option value = "{{j[24]}}" selected hidden>{{j[24]}}</option>
           {% for s in secunit%}
             <option value = "{{s[0]}}">{{s[0]}}</option>
           {% endfor %}
@@ -110,11 +110,19 @@
     </div>
     <div class = 'row'>
       <div class = 'col-a'>
+        <label>Unit Cost:</label>
+      </div>
+      <div class = 'col-b'>
+        <input type = 'text' name = 'UnitCost' value = '{{j[7]}}'/>
+      </div>
+    </div>
+    <div class = 'row'>
+      <div class = 'col-a'>
         <label>Group:</label>
       </div>
       <div class = 'col-b'>
         <select name = 'Group'>
-          <option value = '{{j[21]}}' hidden>{{j[21]}}</option>
+          <option value = '{{j[22]}}' hidden>{{j[22]}}</option>
           {% for g in grp%}
           <option value = '{{g[0]}}'>{{g[0]}}</option>
           {% endfor %}
@@ -127,7 +135,7 @@
       </div>
       <div class = 'col-b'>
         <select name = 'Category'>
-        <option value = '{{j[22]}}' hidden>{{j[22]}}</option>
+        <option value = '{{j[23]}}' hidden>{{j[23]}}</option>
         <option value = 'Asset'>Asset</option>
         <option value = 'Non-Asset'>Non-Asset</option>
         </select>
@@ -138,7 +146,7 @@
         <label>Description: </label>
       </div>
       <div class = 'col-b'>
-        <textarea name = 'Description'>{{j[7]}}</textarea>
+        <textarea name = 'Description'>{{j[8]}}</textarea>
       </div>
     </div>
   </div>
@@ -148,7 +156,7 @@
         <label>Length: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'Length' value = '{{j[13]}}'/>
+        <input type = 'text' name = 'Length' value = '{{j[14]}}'/>
       </div>
     </div>
     <div class = 'row'>
@@ -157,7 +165,7 @@
       </div>
       <div class = 'col-b'>
         <select name = 'LengthUnit'>
-          <option value = '{{j[17]}}' selected hidden>{{j[17]}}</option>
+          <option value = '{{j[18]}}' selected hidden>{{j[18]}}</option>
           <option value = 'mm'>mm</option>
           <option value = 'cm'>cm</option>
           <option value = 'inch'>inch</option>
@@ -173,7 +181,7 @@
         <label>Width: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'Width' value = '{{j[14]}}'/>
+        <input type = 'text' name = 'Width' value = '{{j[15]}}'/>
       </div>
     </div>
     <div class = 'row'>
@@ -182,7 +190,7 @@
       </div>
       <div class = 'col-b'>
         <select name = 'WidthUnit'>
-          <option value = '{{j[18]}}' selected hidden>{{j[18]}}</option>
+          <option value = '{{j[19]}}' selected hidden>{{j[19]}}</option>
           <option value = 'mm'>mm</option>
           <option value = 'cm'>cm</option>
           <option value = 'inch'>inch</option>
@@ -198,7 +206,7 @@
         <label>Height: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'Height' value = '{{j[15]}}'/>
+        <input type = 'text' name = 'Height' value = '{{j[16]}}'/>
       </div>
     </div>
     <div class = 'row'>
@@ -207,7 +215,7 @@
       </div>
       <div class = 'col-b'>
         <select name = 'HeightUnit'>
-          <option value = '{{j[19]}}' selected hidden>{{j[19]}}</option>
+          <option value = '{{j[20]}}' selected hidden>{{j[20]}}</option>
           <option value = 'mm'>mm</option>
           <option value = 'cm'>cm</option>
           <option value = 'inch'>inch</option>
@@ -223,7 +231,7 @@
         <label>Diameter: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'Diameter' value = '{{j[16]}}'/>
+        <input type = 'text' name = 'Diameter' value = '{{j[17]}}'/>
       </div>
     </div>
     <div class = 'row'>
@@ -232,7 +240,7 @@
       </div>
       <div class = 'col-b'>
         <select name = 'DiamaterUnit'>
-          <option value = '{{j[20]}}' selected hidden>{{j[20]}}</option>
+          <option value = '{{j[21]}}' selected hidden>{{j[21]}}</option>
           <option value = 'mm'>mm</option>
           <option value = 'cm'>cm</option>
           <option value = 'inch'>inch</option>
@@ -248,7 +256,7 @@
         <label>Size: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'Size' value = '{{j[8]}}'/>
+        <input type = 'text' name = 'Size' value = '{{j[9]}}'/>
       </div>
     </div>
   </div>
@@ -258,7 +266,7 @@
         <label>SKU: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'SKU' value = '{{j[10]}}'/>
+        <input type = 'text' name = 'SKU' value = '{{j[11]}}'/>
       </div>
     </div>
     <div class = 'row'>
@@ -266,7 +274,7 @@
         <label>Part Number: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'PartNumber' value = '{{j[11]}}'/>
+        <input type = 'text' name = 'PartNumber' value = '{{j[12]}}'/>
       </div>
     </div>
     <div class = 'row'>
@@ -274,7 +282,7 @@
         <label>IEME: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'IEME' value = '{{j[12]}}'/>
+        <input type = 'text' name = 'IEME' value = '{{j[13]}}'/>
       </div>
     </div>
   </div>
@@ -284,7 +292,7 @@
         <label>Color: </label>
       </div>
       <div class = 'col-b'>
-        <input type = 'text' name = 'Color' value = '{{j[9]}}'/>
+        <input type = 'text' name = 'Color' value = '{{j[10]}}'/>
       </div>
     </div>
   </div>
@@ -313,6 +321,7 @@
     <th>Provider:</th>
     <th>Unit:</th>
     <th>Unit Price:</th>
+    <th>Unit Cost:</th>
     <th>Edit:</th>
   </tr>
   {%for i in data%}
@@ -324,6 +333,7 @@
     <td>{{i[4]}}</td>
     <td>{{i[5]}}</td>
     <td>{{i[6]}}</td>
+    <td>{{i[7]}}</td>
     <td><a href = "{{url_for('logistics.edit_item', itm = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
   </tr>
   {% endfor %}

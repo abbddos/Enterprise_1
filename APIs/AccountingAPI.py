@@ -68,7 +68,7 @@ def GetCategories():
     Revenues = []
     Expenses = []
     Dividends = []
-    Cash_Check = []
+    
 
     con, cur = EnterpriseAPI.root()
     cur.execute('SELECT * FROM categories')
@@ -76,28 +76,26 @@ def GetCategories():
     con.close()
 
     for cat in cats:
-        if cat[3] == 'Assets':
+        if cat[2] == 'Assets':
             Assets.append(cat[1])
-        elif cat[3] == 'Equities':
+        elif cat[2] == 'Equities':
             Equities.append(cat[1])
-        elif cat[3] == 'Liabilities':
+        elif cat[2] == 'Liabilities':
             Liabilities.append(cat[1])
-        elif cat[3] == 'Revenues':
+        elif cat[2] == 'Revenues':
             Revenues.append(cat[1])
-        elif cat[3] == 'Expenses':
+        elif cat[2] == 'Expenses':
             Expenses.append(cat[1])
-        elif cat[3] == 'Dividends':
+        elif cat[2] == 'Dividends':
             Dividends.append(cat[1]) 
-        elif cat[3] == 'Cash_Cehck':
-            Cash_Check.append(cat[1])
 
     data = {'Assets': Assets, 
             'Equities': Equities,
             'Liabilities': Liabilities,
             'Revenues': Revenues,
             'Expenses': Expenses,
-            'Dividends': Dividends,
-            'Cash_Check': Cash_Check}
+            'Dividends': Dividends
+            }
 
     return data
 

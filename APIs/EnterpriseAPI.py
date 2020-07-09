@@ -232,18 +232,18 @@ def UpdateGroup(sess_uname, sess_pswd, id, name, description):
     con.commit()
     con.close()
 
-def CreateItem(sess_uname, sess_pswd, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
+def CreateItem(sess_uname, sess_pswd, itemname, brand, provider, unit, uprice, ucost, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
     code = random.randint(100000000000,999999999999)
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('SELECT CreateItem(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-    (str(code), itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
+    cur.execute('SELECT CreateItem(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    (str(code), itemname, brand, provider, unit, uprice, ucost, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
     con.commit()
     con.close()
 
-def UpdateItem(sess_uname, sess_pswd, itm, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
+def UpdateItem(sess_uname, sess_pswd, itm, itemname, brand, provider, unit, uprice, ucost, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit):
     con, cur = connector(sess_uname, sess_pswd)
-    cur.execute('SELECT UpdateItem(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-    (itm, itemname, brand, provider, unit, uprice, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
+    cur.execute('SELECT UpdateItem(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+    (itm, itemname, brand, provider, unit, uprice, ucost, description, size, color, sku, partnum, ieme, length, width, height, diameter, lunit, wunit, hunit, dunit, grp, category, secondaryunit))
     con.commit()
     con.close()
 
@@ -270,7 +270,7 @@ def ItemPicker():
 
 def ItemAdder(code):
     con, cur = root()
-    cur.execute('SELECT code, item, unit, unit_price FROM items WHERE code = %s', (code,))
+    cur.execute('SELECT code, item, unit, unit_price, unit_cost FROM items WHERE code = %s', (code,))
     data = cur.fetchall()
     con.close()
     return data
