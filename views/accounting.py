@@ -87,8 +87,8 @@ def edit_account(type, category, account):
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
-                AccountingAPI.UpdateAccount(session['username'], session['password'],
-                type, category, account, 
+                AccountingAPI.UpdateAccount(session['username'], session['password'], request.form['AccountID'],
+                type, category, 
                 request.form['AccountCode'],
                 request.form['AccountName'],
                 request.form['Currency'],

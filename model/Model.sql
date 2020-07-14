@@ -174,7 +174,7 @@ CREATE TABLE Categories(
 
 CREATE TABLE Accounts(
 	AccountID SERIAL NOT NULL PRIMARY KEY,
-	AccountType VARCHAR(25) UNIQUE,        
+	AccountType VARCHAR(25),        
 	AccountCategory VARCHAR(100),
 	AccountName VARCHAR(100) UNIQUE,
 	Currency VARCHAR(5),
@@ -449,7 +449,7 @@ BEGIN
 			INSERT INTO Ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date,accttype, acctcat, acctname, CB + (dbt * ex_rate) - (cdt * ex_rate));
 		END IF;
 	END IF;
-	IF accttype = 'Equities' OR accttype = 'Liabilities' OR accttype = 'Reveneus' THEN
+	IF accttype = 'Equities' OR accttype = 'Liabilities' OR accttype = 'Revenues' THEN
 		UPDATE Accounts SET CurrentBalance = CurrentBalance - (dbt * ex_rate) + (cdt * ex_rate) WHERE AccountName = acctname;
 		IF EXISTS(SELECT * FROM Ledger WHERE accountname = acctname AND entrydate = current_date) THEN
 			UPDATE Ledger SET BalanceAtDate = CB - (dbt * ex_rate) + (cdt * ex_rate) WHERE AccountName = acctname;
@@ -491,18 +491,19 @@ $$ LANGUAGE plpgsql;
 
 --===============================================================================================================================================================
 
-CREATE OR REPLACE FUNCTION UpdateAccount(account VARCHAR, category VARCHAR, code VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments_ TEXT, newcode VARCHAR)
+CREATE OR REPLACE FUNCTION UpdateAccount(ident INT, account VARCHAR, category VARCHAR, newcode VARCHAR, name VARCHAR, currency_ VARCHAR, OBalance REAL, CBalance REAL, comments_ TEXT)
 RETURNS void AS $$
 DECLARE
 	ex_rate REAL;
+	
 BEGIN
 	SELECT exchangerate INTO ex_rate FROM Currency WHERE currencycode = currency_;
 	IF NOT EXISTS(SELECT * FROM ledger WHERE accountname = name AND entrydate = current_date) THEN
-		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, AccountCode = newcode, AccountName = name, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, AccountCode = newcode, AccountName = name, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountID = ident;
 		INSERT INTO ledger(entrydate, accounttype, accountcategory, accountname, BalanceAtDate) VALUES(current_date, account, category, name, CBalance * ex_rate);
 	END IF;
 	IF EXISTS(SELECT * FROM ledger WHERE accountname = name AND entrydate = current_date) THEN
-		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountCode = code;
+		UPDATE ACCOUNTS set AccountType = account, AccountCategory = category, AccountCode = newcode,  Currency = currency_, OpeningBalance = OBalance, CurrentBalance = CBalance * ex_rate, Comments = comments_ WHERE AccountID = ident;
 		UPDATE ledger SET balanceatdate = CBalance * ex_rate WHERE accountname = name AND entrydate = current_date;
 	END IF;
 END;
@@ -596,7 +597,7 @@ END;
 $$ LANGUAGE plpgsql;
 --===============================================================================================================================================================
 
-CREATE OR REPLACE FUNCTION RegisterInvoice(jrncode VARCHAR, code VARCHAR, created_by VARCHAR)
+CREATE OR REPLACE FUNCTION RegisterInvoice_SRF(jrncode VARCHAR, code VARCHAR, created_by VARCHAR, SR VARCHAR, CGS VARCHAR)
 RETURNS VOID AS $$
 DECLARE
 	term VARCHAR;
@@ -616,6 +617,8 @@ DECLARE
 	amnt_ REAL;
 	ex_rate REAL;
 	crn_ VARCHAR;
+	ln_cost REAL;
+	T_cost REAL;
 	
 BEGIN
 	
@@ -626,7 +629,99 @@ BEGIN
 	SELECT ExchangeRate INTO ex_rate FROM currency WHERE currencycode = crn;
 	
 
-	IF 	invtype = 'sales' OR invtype = 'return' THEN
+	IF 	invtype = 'sales' THEN
+	T_cost = 0;
+		IF term = 'Immediate payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
+				T_cost = T_cost + ln_cost;				
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, bill_amnt, 0,  created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, 0, bill_amnt, created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, T_cost, 0, created_by, '--');
+
+		END IF;
+		IF term = 'Later payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
+				T_cost = T_cost + ln_cost;								
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, bill_amnt, 0,  created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, 0, bill_amnt, created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CSG, crn, T_cost, 0, created_by, '--');
+		END IF;
+	END IF;
+
+	IF invtype = 'refund' THEN
+	T_cost = 0;
+		IF term = 'Immediate payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
+				T_cost = T_cost + ln_cost;				
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, 0, bill_amnt, created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, bill_amnt, 0, created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, 0, T_cost, created_by, '--');
+		END IF;
+		IF term = 'Later payment' THEN
+			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
+				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
+				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+				amnt_ = amnt * ex_rate;
+				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
+				T_cost = T_cost + ln_cost;					
+			END LOOP;
+			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, 0, bill_amnt, created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, bill_amnt, 0, created_by, '--');
+			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, 0, T_cost, created_by, '--');
+		END IF;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION RegisterInvoice_PRT(jrncode VARCHAR, code VARCHAR, created_by VARCHAR)
+RETURNS VOID AS $$
+DECLARE
+	term VARCHAR;
+	invtype VARCHAR;
+	sent_name VARCHAR;
+	sent_type VARCHAR;
+	sent_cat VARCHAR;
+	bill_type VARCHAR;
+	bill_cat VARCHAR;
+	bill_name VARCHAR;
+	bill_amnt REAL;
+	crn VARCHAR;
+	acct VARCHAR;
+	cat VARCHAR;
+	rec RECORD;
+	amnt REAL;
+	amnt_ REAL;
+	ex_rate REAL;
+	crn_ VARCHAR;
+
+BEGIN
+
+	SELECT invoicetype, sentto, terms, paymentaccount, totalamount, currency INTO invtype, sent_name, term, bill_name, bill_amnt, crn FROM invoices WHERE invoicecode = code GROUP BY invoicetype, sentto, terms, paymentaccount, totalamount, currency;
+	SELECT accounttype, accountcategory INTO sent_type, sent_cat FROM accounts WHERE accountname = sent_name;
+	SELECT accounttype, accountcategory INTO bill_type, bill_cat FROM accounts WHERE accountname = bill_name;
+	SELECT ExchangeRate INTO ex_rate FROM currency WHERE currencycode = crn;	
+
+	IF invtype = 'return' THEN
 		IF term = 'Immediate payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
@@ -646,7 +741,8 @@ BEGIN
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, bill_amnt, 0,  created_by, '--');
 		END IF;
 	END IF;
-	IF invtype = 'procurement' OR invtype = 'refund' THEN
+
+	IF invtype = 'procurement' THEN
 		IF term = 'Immediate payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
@@ -666,6 +762,8 @@ BEGIN
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, 0, bill_amnt, created_by, '--');
 		END IF;
 	END IF;
+
+	
 END;
 $$ LANGUAGE plpgsql;
 	

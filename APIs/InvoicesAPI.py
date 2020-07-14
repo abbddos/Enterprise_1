@@ -33,6 +33,15 @@ def GetOneCustomer(sess_uname, sess_pswd, id):
     con.close()
     return data
 
+def REVSnCOST():
+    con, cur = EnterpriseAPI.root()
+    cur.execute("SELECT accountname FROM accounts WHERE accountcategory = 'Sales Revenues'")
+    SR = cur.fetchall()
+    cur.execute("SELECT accountname FROM accounts WHERE accountcategory = 'Cost of Goods Sold'")
+    CGS = cur.fetchall()
+    con.close()
+    return SR, CGS
+
 def GetAccount(acc):
     con, cur = EnterpriseAPI.root()
     if acc == 'Cash':
@@ -77,24 +86,41 @@ def GetInvoices(tp):
     con.close()
     return data
 
-def RegisterInvoice(invcode, sess_uname, sess_pswd):
+def RegisterInvoice(invcode, sess_uname, sess_pswd, tpy,  **kwargs):
     JournalCode = 'JRN_' + str(date.today()) + '-' + str(random.randint(100000,999999))
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT RegisterInvoice(%s, %s, %s)', (JournalCode, invcode, sess_uname))
-    con.commit()
-    con.close()
+    if tpy == 'procurement' or tpy == 'return':
+        cur.execute('SELECT RegisterInvoice_PRT(%s, %s, %s)', (JournalCode, invcode, sess_uname))
+        con.commit()
+        con.close()
+    elif tpy == 'sales' or tpy == 'refund':
+        cur.execute('SELECT RegisterInvoice_SRF(%s, %s, %s, %s, %s)', (JournalCode, invcode, sess_uname, kwargs['SR'], kwargs['CGS']))
+        con.commit()
+        con.close()
 
-def UpdateInvoice(sess_uname, sess_pswd, code, status):
+def UpdateInvoice(sess_uname, sess_pswd, code, tpy, status, **kwargs):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    if status == 'Approved':
-        cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
-        con.commit()
-        con.close()
-        RegisterInvoice(code, sess_uname, sess_pswd)
-    elif status == 'Canceled':
-        cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
-        con.commit()
-        con.close()
+    if tpy == 'procurement' or tpy == 'return':
+        if status == 'Approved':
+            cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
+            con.commit()
+            con.close()
+            RegisterInvoice(code, sess_uname, sess_pswd, tpy)
+        elif status == 'Canceled':
+            cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
+            con.commit()
+            con.close()
+    elif tpy == 'sales' or tpy == 'refund':
+        if status == 'Approved':
+            cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
+            con.commit()
+            con.close()
+            RegisterInvoice(code, sess_uname, sess_pswd, tpy, SR = kwargs['REV_Account'], CGS = kwargs['CGS_Account'])
+        elif status == 'Canceled':
+            cur.execute('UPDATE invoices SET invstatus = %s WHERE invoicecode = %s', (status, code))
+            con.commit()
+            con.close()
+
     
 
 def GetPrintedInvoice(code):

@@ -462,16 +462,27 @@ def InvoiceView(code):
 def ViewInvoice(code, tpy):
     iframe = url_for('invoices.InvoiceView', code = code)
     invs = InvoicesAPI.GetInvoices(tpy)
+    RS, CGS = InvoicesAPI.REVSnCOST()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
-            try:
-                InvoicesAPI.UpdateInvoice(session['username'], session['password'], code, request.form['statuses'])
-                flash('Invoice updated successfully...', category = 'success')
-                return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
-            except Exception as e:
-                flash(str(e), category = 'fail')
-                return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
-    return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy)
+            if tpy == 'procurement' or tpy == 'return':
+                try:
+                    InvoicesAPI.UpdateInvoice(session['username'], session['password'], code, tpy, request.form['statuses'])
+                    flash('Invoice updated successfully...', category = 'success')
+                    return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
+                except Exception as e:
+                    flash(str(e), category = 'fail')
+                    return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
+            elif tpy == 'sales' or tpy == 'refund':
+                try:
+                    InvoicesAPI.UpdateInvoice(session['username'], session['password'], code, tpy, request.form['statuses'], 
+                    REV_Account = request.form['RVACT'], CGS_Account = request.form['CGSACT'])
+                    flash('Invoice updated successfully...', category = 'success')
+                    return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
+                except Exception as e:
+                    flash(str(e), category = 'fail')
+                    return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
+    return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS)
 
 
 # REST Routes

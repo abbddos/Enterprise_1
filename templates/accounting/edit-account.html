@@ -6,12 +6,13 @@
         <h3>Edit {{account}} Account</h3>
         <div class = 'fields'>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <input type = 'text' name = 'AccountID' value = '{{acdata[0]}}' hidden />
             <div class = 'row'>
                 <div class = 'col-a'>
                     <label>Account Code:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'AccountCode' value = '{{acdata[0]}}' />
+                    <input type = 'text' name = 'AccountCode' value = '{{acdata[1]}}' />
                 </div>
             </div>
             <div class = 'row'>
@@ -19,7 +20,7 @@
                     <label>Account Name:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'AccountName' value = '{{acdata[1]}}'/>
+                    <input type = 'text' name = 'AccountName' value = '{{acdata[2]}}'/>
                 </div>
             </div>
             <div class = 'row'>
@@ -28,7 +29,7 @@
                 </div>
                 <div class = 'col-b'>
                     <select name = 'Currency'>
-                        <option value = '{{acdata[2]}}' selected hidden>{{acdata[2]}}</option>
+                        <option value = '{{acdata[3]}}' selected hidden>{{acdata[3]}}</option>
                         {% for c in curs%}
                             <option value = '{{c[0]}}'>{{c[0]}}</option>
                         {% endfor %}
@@ -40,7 +41,7 @@
                     <label>Opening Balance:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'OpenBalance' value = '{{acdata[3]}}'/>
+                    <input type = 'text' name = 'OpenBalance' value = '{{acdata[4]}}'/>
                 </div>
             </div>
             <div class = 'row'>
@@ -48,7 +49,7 @@
                     <label>Current Balance:</label>
                 </div>
                 <div class = 'col-b'>
-                    <input type = 'text' name = 'CurrentBalance' value = '{{acdata[4]/acdata[6]}}'/>
+                    <input type = 'text' name = 'CurrentBalance' value = '{{acdata[5]/acdata[7]}}'/>
                 </div>
             </div>
             <div class = 'row'>
@@ -56,7 +57,7 @@
                     <label>Comments:</label>
                 </div>
                 <div class = 'col-b'>
-                    <textarea name = 'Comments'>{{acdata[5]}}</textarea>
+                    <textarea name = 'Comments'>{{acdata[6]}}</textarea>
                 </div>
             </div>
         </div>
@@ -76,6 +77,7 @@
     <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
 <table>
     <tr>
+        <th hidden>accountid</th>
         <th>Account Code:</th>
         <th>Account Name:</th>
         <th>Currency:</th>
@@ -86,11 +88,12 @@
     </tr>
     {% for acc in accounts %}
         <tr class = 'table-row'>
-            <td>{{acc[0]}}</td>
+            <td hidden>{{acc[0]}}</td>
             <td>{{acc[1]}}</td>
             <td>{{acc[2]}}</td>
             <td>{{acc[3]}}</td>
-            <td>{{acc[4]/acc[5]}}</td>
+            <td>{{acc[4]}}</td>
+            <td>{{acc[5]/acc[6]}}</td>
             <td><a href = "{{url_for('accounting.edit_account', type = category, category = account , account = acc[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
             <td><a href = "#" class = 't-sheet' id = '{{acc[1]}}'><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
         </tr>

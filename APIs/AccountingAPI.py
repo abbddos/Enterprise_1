@@ -137,7 +137,7 @@ def GetCurrencies():
 
 def GetAccounts(type, category):
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT AccountCode, AccountName, Currency, openingbalance, currentbalance, exchangerate FROM GetAccount Where AccountType = %s AND AccountCategory = %s ORDER BY accountcode', (type, category))
+    cur.execute('SELECT Accountid, AccountCode, AccountName, Currency, openingbalance, currentbalance, exchangerate FROM GetAccount Where AccountType = %s AND AccountCategory = %s ORDER BY accountcode', (type, category))
     data = cur.fetchall()
     con.close()
     return data
@@ -150,15 +150,15 @@ def AddNewAccount(sess_uname, sess_pswd, account, category, code, name, currency
 
 def GetAccountData(sess_uname, sess_pswd, type, category, account):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute('SELECT accountcode, accountname, currency, openingbalance, currentbalance, comments, exchangerate from GetAccount WHERE accountcode = %s', (account,))
+    cur.execute('SELECT accountid, accountcode, accountname, currency, openingbalance, currentbalance, comments, exchangerate from GetAccount WHERE accountid = %s', (account,))
     data = cur.fetchone()
     con.close()
     return data
 
-def UpdateAccount(sess_uname, sess_pswd, type, category, account, newcode, name, currency, openbalance, currentbalance, comments):
+def UpdateAccount(sess_uname, sess_pswd, ident, type, category, newcode, name, currency, openbalance, currentbalance, comments):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
     cur.execute('SELECT UpdateAccount(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-    (type, category, account, name, currency, openbalance, currentbalance, comments, newcode))
+    (ident, type, category, newcode, name, currency, openbalance, currentbalance, comments))
     con.commit()
     con.close()
 
@@ -385,6 +385,8 @@ def NetIncomeStatementPDF(sess_uname, sess_pswd, startdate, enddate):
         data2['exp'] = exp[0]
     if rev[0] == None:
         data2['rev'] = 0
+    else:
+        data2['rev'] = rev[0]
 
     con.close()
     return data1, data2
