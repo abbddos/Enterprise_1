@@ -53,7 +53,7 @@
             <td>{{acc[4]}}</td>
             <td>{{acc[5]/acc[6]}}</td>
             <td><a href = "{{url_for('accounting.edit_account', type = category, category = account , account = acc[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
-            <td><a href = "#" class = 't-sheet' id = '{{acc[1]}}'><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
+            <td><a href = "#" class = 't-sheet' id = '{{acc[2]}}'><img src = "{{url_for('static', filename = 'images/T.png')}}" style = 'height: 25px; width: 25px;'/></a></td>
         </tr>
     {% endfor%}
 </table>

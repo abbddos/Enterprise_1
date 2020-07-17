@@ -9,17 +9,17 @@
  <a href = "{{url_for('logistics.SecondaryUnits')}}">Secondary Units</a>
  <ul class = 'warehouse' id = 'warehouse'><a href = "#">Warehouses</a>
    {% for w in wh%}
-    <li class = 'warehousecontent'><a href = "{{url_for('logistics.edit_warehouse', code = w[0])}}" id = 'toggler'>- {{w[0]}}</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('logistics.edit_warehouse', code = w[0])}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/warehouse.png')}}" style = 'width:20px; height:20px;'/> {{w[0]}}</a></li>
    {% endfor %}
-   <li class = 'warehousecontent'><a href = "{{url_for('logistics.create_warehouse')}}">+ Create New Warehouse</a></li>
+   <li class = 'warehousecontent'><a href = "{{url_for('logistics.create_warehouse')}}"><img src = "{{url_for('static', filename = 'images/new.png')}}" style = 'width: 20px; height: 20px;' /> Create New Warehouse</a></li>
  </ul>
  <a href = "{{url_for('logistics.requests')}}">Requests</a>
  <a href = "{{url_for('logistics.transactions')}}">Transactions</a>
  <ul class = 'reports' id = 'reports'><a href = "#">Reports</a>
-  <li class = 'warehousecontent'><a href = "{{url_for('logistics.warehouse_inventory')}}">Warehouses inventory report:</a></li>
-  <li class = 'warehousecontent'><a href = "{{url_for('logistics.items_packages_inventory')}}">Items/Packages inventory report:</a></li>
-  <li class = 'warehousecontent'><a href = "{{url_for('logistics.bins_report')}}">Current Bins statuses report:</a></li>
-  <li class = 'warehousecontent'><a href = "{{url_for('logistics.transactions_report')}}">Transactions report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.warehouse_inventory')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width: 21px; height: 21px;'/>Warehouses inventory report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.items_packages_inventory')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width: 21px; height: 21px;'/>Items/Packages inventory report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.bins_report')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width: 21px; height: 21px;'/>Current Bins statuses report:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('logistics.transactions_report')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width: 21px; height: 21px;'/>Transactions report:</a></li>
  </ul>
  </div>
 {% block logisticspage%}

@@ -460,11 +460,12 @@ def InvoiceView(code):
 
 @mod.route('view_invoice/<code>/<tpy>', methods = ['GET','POST'])
 def ViewInvoice(code, tpy):
+    Appr = InvoicesAPI.ApproversList()
     iframe = url_for('invoices.InvoiceView', code = code)
     invs = InvoicesAPI.GetInvoices(tpy)
     RS, CGS = InvoicesAPI.REVSnCOST()
     if request.method == 'POST':
-        if request.form['submit'] == 'Submit':
+        if request.form['submit'] == 'Submit' and session['username'] in Appr:
             if tpy == 'procurement' or tpy == 'return':
                 try:
                     InvoicesAPI.UpdateInvoice(session['username'], session['password'], code, tpy, request.form['statuses'])
@@ -482,6 +483,9 @@ def ViewInvoice(code, tpy):
                 except Exception as e:
                     flash(str(e), category = 'fail')
                     return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
+        else:
+            flash('User does not have permission to approve or cancel this invoice', category = 'fail')
+            return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
     return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS)
 
 

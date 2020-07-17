@@ -7,48 +7,48 @@
   <h3>Accounting</h3>
  <ul class = 'warehouse' id = 'assets'><a href = "#">Assets</a>
     {% for ast in data['Assets'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Assets', account = ast)}}" id = 'toggler'>- {{ast}}</a></li>
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Assets', account = ast)}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/folder.png')}}" style = 'width: 20px; height: 20px;'> {{ast}}</a></li>
     {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Assets')}}">+ Add new Assets Category</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Assets')}}"><img src = "{{url_for('static', filename = 'images/new_folder.png')}}" style = 'width: 20px; height: 20px;' /> Add new Assets Category</a></li>
   </ul>
  <ul class = 'warehouse' id = 'equities'><a href = "#">Equities</a>
     {% for eqt in data['Equities'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Equities', account = eqt)}}" id = 'toggler'>- {{eqt}}</a></li>
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Equities', account = eqt)}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/folder.png')}}" style = 'width: 20px; height: 20px;'> {{eqt}}</a></li>
     {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Equities')}}">+ Add new Equities Category</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Equities')}}"><img src = "{{url_for('static', filename = 'images/new_folder.png')}}" style = 'width: 20px; height: 20px;' /> Add new Equities Category</a></li>
   </ul>
   <ul class = 'warehouse' id = 'liabilities'><a href = "#">Liabilities</a>
     {% for lbt in data['Liabilities'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Liabilities', account = lbt)}}" id = 'toggler'>- {{lbt}}</a></li>
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Liabilities', account = lbt)}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/folder.png')}}" style = 'width: 20px; height: 20px;'> {{lbt}}</a></li>
     {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Liabilities')}}">+ Add new Liabilities Category</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Liabilities')}}"><img src = "{{url_for('static', filename = 'images/new_folder.png')}}" style = 'width: 20px; height: 20px;' /> Add new Liabilities Category</a></li>
   </ul>
   <ul class = 'warehouse' id = 'revenues'><a href = "#">Revenues</a>
     {% for rvn in data['Revenues'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Revenues', account = rvn)}}" id = 'toggler'>- {{rvn}}</a></li>
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Revenues', account = rvn)}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/folder.png')}}" style = 'width: 20px; height: 20px;'> {{rvn}}</a></li>
     {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Revenues')}}">+ Add new Revenues Category</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Revenues')}}"><img src = "{{url_for('static', filename = 'images/new_folder.png')}}" style = 'width: 20px; height: 20px;' /> Add new Revenues Category</a></li>
   </ul>
   <ul class = 'warehouse' id = 'expenses'><a href = "#">Expenses</a>
     {% for exp in data['Expenses'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Expenses', account = exp)}}" id = 'toggler'>- {{exp}}</a></li>
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Expenses', account = exp)}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/folder.png')}}" style = 'width: 20px; height: 20px;'> {{exp}}</a></li>
     {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Expenses')}}">+ Add new Expenses Category</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Expenses')}}"><img src = "{{url_for('static', filename = 'images/new_folder.png')}}" style = 'width: 20px; height: 20px;' /> Add new Expenses Category</a></li>
   </ul>
   <ul class = 'warehouse' id = 'dividends'><a href = "#">Dividends</a>
     {% for dvd in data['Dividends'] %}
-     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Dividends', account = dvd)}}" id = 'toggler'>- {{dvd}}</a></li>
+     <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_account', category = 'Dividends', account = dvd)}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/folder.png')}}" style = 'width: 20px; height: 20px;'> {{dvd}}</a></li>
     {% endfor %}
-    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Dividends')}}">+ Add new Dividends Category</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('accounting.add_category', category = 'Dividends')}}"><img src = "{{url_for('static', filename = 'images/new_folder.png')}}" style = 'width: 20px; height: 20px;' /> Add new Dividends Category</a></li>
   </ul>
 
   <a href = "{{url_for('accounting.journal')}}">Journal</a>
   <a href = "{{url_for('accounting.currencies')}}">Currencies</a>
  
  <ul class = 'reports' id = 'statements'><a href = "#">Statements</a>
-  <li class = 'warehousecontent'><a href = "{{url_for('accounting.BalanceSheet')}}">Balance Sheet</a></li>
-  <li class = 'warehousecontent'><a href = "{{url_for('accounting.TrialSheet')}}">Trial Balance</a></li>
-  <li class = 'warehousecontent'><a href = "{{url_for('accounting.NetINcomeStatement')}}">Net Income Statement</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('accounting.BalanceSheet')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Balance Sheet</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('accounting.TrialSheet')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Trial Balance</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('accounting.NetINcomeStatement')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Net Income Statement</a></li>
  </ul>
  </div>
  

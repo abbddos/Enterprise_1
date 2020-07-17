@@ -140,3 +140,14 @@ def GetPrintedInvoice(code):
     ItmData = cur.fetchall()
     con.close()
     return SentData, InvoiceData, ItmData
+
+def ApproversList():
+    List = []
+    con, cur = EnterpriseAPI.root()
+    cur.execute("SELECT username FROM approvers WHERE can_approve = 'invoices'")
+    data = cur.fetchall()
+    con.close()
+    for d in data:
+        List.append(d[0])
+
+    return List
