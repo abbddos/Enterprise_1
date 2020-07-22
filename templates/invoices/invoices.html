@@ -1,7 +1,7 @@
 {% extends 'layout.html'%}
 {% block content%}
 <div class="vertical-menu">
-  <h3>Invoices</h3>
+  <h3>Bills & Invoices</h3>
  <a href = "{{url_for('invoices.Providers')}}">Providers</a>
  <a href = "{{url_for('invoices.Customers')}}">Customers</a>
  <a href = "{{url_for('invoices.groups')}}">Groups</a>
@@ -15,8 +15,8 @@
     <li class = 'warehousecontent'><a href = "{{url_for('invoices.RefundInvoice')}}"><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = 'width: 20px; height: 20px'/> Refund Invoice</a></li>
  </ul>
  <ul class = 'warehouse' id = 'records'><a href = "#">Bills</a>
-    <li class = 'warehousecontent'><a href = "#" id = 'toggler'><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = 'width: 20px; height: 20px'/> Payment Bill</a></li>
-    <li class = 'warehousecontent'><a href = "#"><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = 'width: 20px; height: 20px'/> Reception Bill</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('invoices.PaymentBill')}}" id = 'toggler'><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = 'width: 20px; height: 20px'/> Payment Bill</a></li>
+    <li class = 'warehousecontent'><a href = "{{url_for('invoices.ReceptionBill')}}"><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = 'width: 20px; height: 20px'/> Reception Bill</a></li>
  </ul>
 
  

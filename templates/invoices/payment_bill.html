@@ -1,0 +1,274 @@
+{% extends 'invoices/invoices.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block invoicespage%}
+
+<div class = 'actionpage'>
+    <form method = 'post' style = 'margin-left: -35px; width: 98%;' >
+      <h3>Payment Bill</h3>
+      <div class = 'fields'>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Method:</label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'PaymentMethod' id = 'paymethod'>
+                    <option value = "no account">----</option>
+                    <option value = "Cash">Cash</option>
+                    <option value = "Bank Accounts">Bank Transfer</option>
+                    <option value = "Credit Card Accounts">Credit Card</option>
+                </select>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Account:</label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'PaymentAccount' id = 'payaccount'></select>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Currency:</label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'PaymentCurrency' id = 'paycurrency'></select>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Date:</label>
+            </div>
+            <div class = 'col-b'>
+                <input type = 'date' name = 'PaymentDate' />
+            </div>
+        </div>
+            <div class = 'col-a'>
+                <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px; color: rgba(0,0,100);" id = 'add-entry'>Add payment entry</a>
+            </div>
+        <table style = 'width: 100%;'>
+            <thead>
+            <tr>
+                <th>Account Type</th>
+                <th>Account Category</th>
+                <th>Account Name</th>
+                <th>Currency</th>
+                <th>Debit</th>
+                <th>Description</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody id = 'entry-table'></tbody>
+            <tfoot>
+              <tr class = 'totals' style = 'font-weight: bold;'>
+                <td>Total:</td>
+                <td></td>
+                <td></td>
+                <td><p id = 'FC'> </p></td>
+                <td><p id = 'deb-total'>0</p></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tfoot>
+        </table>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Comments:</label>
+            </div>
+            <div class = 'col-b'>
+                <textarea name="comments"></textarea>
+                <input type = 'hidden' name = 'credit' id = 'credit' />
+            </div>
+        </div>
+      </div>
+      <div class = 'submission'>
+        <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+              {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <p id = 'message'></p>
+      </div>
+    </form>
+    <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+    <table>
+      <tr>
+        <th>Bill Code</th>
+        <th>Created by</th>
+        <th>Created on</th>
+        <th>Status</th>
+        <th>View</th>
+        <th>Edit</th>
+      </tr>
+      {% for b in bills%}
+      <tr>
+        <td>{{b[0]}}</td>
+        <td>{{b[1]}}</td>
+        <td>{{b[2]}}</td>
+        <td>{{b[3]}}</td>
+        <td><a href = "#"><img src = "{{url_for('static', filename = 'images/view.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
+        <td><a href = "#"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;' /></a></td>
+      </tr>
+      {% endfor %}
+    </table>
+    </div>
+<script>
+    $(document).ready(function(){
+        var i = 0;
+        var tp = 0;
+        var totaldebit = 0;
+        var totalcredit = 0;
+        var currentdebit = 0;
+        var currentcredit = 0;
+        var ex_rate = [0];
+        var Bill_Ex = 1;
+
+        $('#paymethod').change(function(){
+            $.getJSON('/accounting/GrabActName/' + $(this).val(), function(data){
+                $('#payaccount').find('option').remove();
+                $('#payaccount').append('<option></option>');
+                $('#paycurrency').find('option').remove();
+                $('#paycurrency').append('<option></option>');
+                $.each(data.act, function(key, val){
+                    $('#payaccount').append("<option value = '"+val+"'>"+val+"</option>");
+                });
+            });
+        });
+
+        $('#payaccount').change(function(){
+            $.getJSON('/accounting/GrabCurrency/'+ $(this).val(), function(data){
+                $('#paycurrency').find('option').remove();
+                $('#paycurrency').append('<option></option>');
+                $.each(data.cur, function(key, val){
+                    $('#paycurrency').append("<option value = '"+val+"'>"+val+"</option>");
+                });
+            });
+        });
+
+        $('#paycurrency').change(function(){
+            $('#FC').text($(this).val());
+            $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
+                Bill_Ex = data.ex;
+            });
+        });
+
+        $('#add-entry').click(function(){
+            i++;
+            tp++;
+            $('#entry-table').append("<tr id = 'tr_" + i+ "'><td><select name = 'account-type' style = 'width: 100%;' id = '"+tp+"' class = 'type'><option></option><option value = 'Assets'>Assets</option><option value = 'Equities'>Equities</option><option value = 'Liabilities'>Liabilities</option><option value = 'Revenues'>Revenues</option><option value = 'Expenses'>Expenses</option><option value = 'Dividends'>Dividends</option></select></td><td><select name = 'account-category' style = 'width: 100%;' id = 'cat_"+tp+"' class = 'category'></select></td><td><select name = 'account-name' style = 'width: 100%;' id = 'act_cat_"+tp+"' class = 'account'></select></td><td><select name = 'currency' style = 'width: 100%;' id = 'cur_act_cat_"+tp+"' class = 'currency'></select></td><td><input type = 'text' name = 'debit' style = 'width: 100%;' class = 'debit' id = 'deb_"+i+"'/></td><td><input type = 'text' name = 'description' id = 'desc_"+i+"'  style = 'width:100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
+            ex_rate.push(0);
+        });
+
+        $(document).on('click','.rmv', function(){
+             var ids = $(this).attr('id');
+             var iids = parseInt(ids);
+             var debs = parseFloat($('#deb_'+ids).val());
+             var crds = parseFloat($('#crd_'+ids).val());
+            if(Number.isNaN(debs)){
+              totaldebit -= 0;
+              }
+            else{
+              totaldebit -= debs * ex_rate[iids];
+            }
+            if(Number.isNaN(crds)){
+              totalcredit -= 0;
+            }
+            else{
+              totalcredit -= crds * ex_rate[iids];
+            }
+             $('#tr_'+ ids).remove();
+             $('#deb-total').text((totaldebit / Bill_Ex).toFixed(2));
+             $('#credit').val((totaldebit / Bill_Ex).toFixed(2));
+        });
+
+        $(document).on('focus', '.debit', function(){
+          if(Number.isNaN(parseFloat($(this).val()))){
+            currentdebit = 0;
+          }
+          else{
+          currentdebit = parseFloat($(this).val());
+          }
+        });
+
+        $(document).on('change', '.type', function(){
+            var ids = $(this).attr('id');
+            totaldebit = totaldebit - ($('#deb_' + ids).val() * ex_rate[ids]);
+            totalcredit = totalcredit - ($('#crd_' + ids).val() * ex_rate[ids]);
+            $('#deb-total').text((totaldebit / Bill_Ex).toFixed(2));
+            $('#crd-total').text(totalcredit); 
+            $("#deb_" + ids).val("");
+            $("#crd_" + ids).val("");
+            $.getJSON('/accounting/GrabCategory/' + $(this).val(), function(data){
+              $('#cat_'+ids).find('option').remove();
+              $('#cat_'+ids).append("<option></option>");
+              $.each(data.cat, function(key, val){
+                $('#cat_'+ids).append("<option value = '"+val+"'>"+val+"</option>");
+              });
+            });  
+        });  
+
+        $(document).on('change', '.category', function(){
+            var ids = $(this).attr('id');
+            var ide = $(this).attr('id').replace('cat_', '');
+            totaldebit = totaldebit - ($('#deb_' + ide).val() * ex_rate[ide]);
+            totalcredit = totalcredit - ($('#crd_' + ide).val() * ex_rate[ide]);
+            $('#deb-total').text((totaldebit / Bill_Ex).toFixed(2));
+            $('#crd-total').text(totalcredit); 
+            $("#deb_" + ide).val("");
+            $("#crd_" + ide).val("");
+            $.getJSON('/accounting/GrabActName/' + $(this).val(), function(data){
+              $('#act_'+ids).find('option').remove();
+              $('#act_'+ids).append("<option></option>");
+              $.each(data.act, function(key, val){
+                $('#act_'+ids).append("<option value = '"+val+"'>"+val+"</option>");
+              });
+            });
+        });
+
+        $(document).on('change', '.account', function(){
+          var ids = $(this).attr('id');
+          var ide = $(this).attr('id').replace('act_cat_', '');
+          totaldebit = totaldebit - ($('#deb_' + ide).val() * ex_rate[ide]);
+            totalcredit = totalcredit - ($('#crd_' + ide).val() * ex_rate[ide]);
+            $('#deb-total').text((totaldebit / Bill_Ex).toFixed(2));
+            $('#crd-total').text(totalcredit); 
+            $("#deb_" + ide).val("");
+            $("#crd_" + ide).val("");
+          $.getJSON('/accounting/GrabCurrency/'+ $(this).val(), function(data){
+            $('#cur_'+ids).find('option').remove();
+            $('#cur_'+ids).append("<option></option>");
+            $.each(data.cur, function(key, val){
+              $('#cur_'+ids).append("<option value = '"+val+"'>"+val+"</option>");
+            });
+          });
+        
+        });
+
+        $(document).on('change', '.currency', function(){
+          var tt = parseInt($(this).attr('id').replace("cur_act_cat_", ""));
+          $("#deb_" + tt).val("");
+          $("#crd_" + tt).val("");
+          $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
+              ex_rate[tt] = data.ex;
+            });
+        });
+
+        $(document).on('change', '.debit', function(){
+          var debs = parseFloat($(this).val());
+          var did = parseInt($(this).attr('id').replace('deb_',''));
+          if(Number.isNaN(debs)){
+            debs = 0;
+          }
+          totaldebit = totaldebit - (currentdebit * ex_rate[did])  + (debs * ex_rate[did]);
+          $('#deb-total').text((totaldebit / Bill_Ex).toFixed(2));
+          $('#credit').val((totaldebit / Bill_Ex).toFixed(2));
+        }); 
+    });
+</script>
+{% endblock %}

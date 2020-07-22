@@ -337,6 +337,43 @@ def SalesInvoice():
                 return redirect(url_for('invoices.SalesInvoice'))
     return render_template('invoices/sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
 
+@mod.route('edit_sales_invoice/<invcode>', methods = ['GET','POST'])
+def EditSalesInvoice(invcode):
+    customers = InvoicesAPI.GetAllCustomers()
+    currencies = AccountingAPI.GetAllCurrencies()
+    itms = EnterpriseAPI.ItemPicker()
+    pkgs = EnterpriseAPI.PackagePicker()
+    invs = InvoicesAPI.GetInvoices('sales')
+    data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.EditInvoice(session['username'], session['password'], invcode, 'sales',
+                request.form['Customer'],
+                request.form['SheetDate'],
+                request.form['currency'],
+                request.form['terms'],
+                request.form.getlist('description'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('quantity'),
+                request.form.getlist('amount'),
+                request.form['totalamount'],
+                request.form['discount'],
+                request.form['tax'],
+                request.form['invamount'],
+                request.form['pay_method'],
+                request.form['billing_account'],
+                request.form['comments']
+                )
+                
+                flash('Invoices updated successfully', category = 'success')
+                return redirect(url_for('invoices.SalesInvoice')) 
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.SalesInvoice')) 
+    return render_template('invoices/edit_sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+
+
 @mod.route('procurement_invoice/', methods = ['GET','POST'])
 def ProcurementInvoice():
     providers = EnterpriseAPI.GetProviders()
@@ -371,6 +408,42 @@ def ProcurementInvoice():
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ProcurementInvoice'))
     return render_template('invoices/procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
+
+@mod.route('edit_procurement_invoice/<invcode>', methods = ['GET','POST'])
+def EditProcurementInvoice(invcode):
+    providers = EnterpriseAPI.GetProviders()
+    currencies = AccountingAPI.GetAllCurrencies()
+    itms = EnterpriseAPI.ItemPicker()
+    pkgs = EnterpriseAPI.PackagePicker()
+    invs = InvoicesAPI.GetInvoices('procurement')
+    data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.EditInvoice(session['username'], session['password'], invcode, 'procurement',
+                request.form['Customer'],
+                request.form['SheetDate'],
+                request.form['currency'],
+                request.form['terms'],
+                request.form.getlist('description'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('quantity'),
+                request.form.getlist('amount'),
+                request.form['totalamount'],
+                request.form['discount'],
+                request.form['tax'],
+                request.form['invamount'],
+                request.form['pay_method'],
+                request.form['billing_account'],
+                request.form['comments']
+                )
+                
+                flash('Invoices updated successfully', category = 'success')
+                return redirect(url_for('invoices.ProcurementInvoice')) 
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.ProcurementInvoice')) 
+    return render_template('invoices/edit_procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
 
 @mod.route('return_invoice/', methods = ['GET','POST'])
 def ReturnInvoice():
@@ -407,6 +480,42 @@ def ReturnInvoice():
                 return redirect(url_for('invoices.ReturnInvoice'))
     return render_template('invoices/return_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
 
+@mod.route('edit_return_invoice/<invcode>', methods = ['GET','POST'])
+def EditReturnInvoice(invcode):
+    providers = EnterpriseAPI.GetProviders()
+    currencies = AccountingAPI.GetAllCurrencies()
+    itms = EnterpriseAPI.ItemPicker()
+    pkgs = EnterpriseAPI.PackagePicker()
+    invs = InvoicesAPI.GetInvoices('return')
+    data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.EditInvoice(session['username'], session['password'], invcode, 'return',
+                request.form['Customer'],
+                request.form['SheetDate'],
+                request.form['currency'],
+                request.form['terms'],
+                request.form.getlist('description'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('quantity'),
+                request.form.getlist('amount'),
+                request.form['totalamount'],
+                request.form['discount'],
+                request.form['tax'],
+                request.form['invamount'],
+                request.form['pay_method'],
+                request.form['billing_account'],
+                request.form['comments']
+                )
+                
+                flash('Invoices updated successfully', category = 'success')
+                return redirect(url_for('invoices.ReturnInvoice')) 
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.ReturnInvoice')) 
+    return render_template('invoices/edit_return_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+
 @mod.route('refund_invoice/', methods = ['GET','POST'])
 def RefundInvoice():
     customers = InvoicesAPI.GetAllCustomers()
@@ -441,6 +550,45 @@ def RefundInvoice():
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.RefundInvoice'))
     return render_template('invoices/refund_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
+
+@mod.route('edit_refund_invoice/<invcode>', methods = ['GET','POST'])
+def EditRefundInvoice(invcode):
+    customers = InvoicesAPI.GetAllCustomers()
+    currencies = AccountingAPI.GetAllCurrencies()
+    itms = EnterpriseAPI.ItemPicker()
+    pkgs = EnterpriseAPI.PackagePicker()
+    invs = InvoicesAPI.GetInvoices('refund')
+    data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.EditInvoice(session['username'], session['password'], invcode, 'refund',
+                request.form['Customer'],
+                request.form['SheetDate'],
+                request.form['currency'],
+                request.form['terms'],
+                request.form.getlist('description'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('quantity'),
+                request.form.getlist('amount'),
+                request.form['totalamount'],
+                request.form['discount'],
+                request.form['tax'],
+                request.form['invamount'],
+                request.form['pay_method'],
+                request.form['billing_account'],
+                request.form['comments']
+                )
+                
+                flash('Invoices updated successfully', category = 'success')
+                return redirect(url_for('invoices.RefundInvoice')) 
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.RefundInvoice')) 
+    return render_template('invoices/edit_refund_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+
+
+
 
 @mod.route('print_invoice/<code>')
 def PrintInvoice(code):
@@ -487,6 +635,72 @@ def ViewInvoice(code, tpy):
             flash('User does not have permission to approve or cancel this invoice', category = 'fail')
             return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
     return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS)
+
+@mod.route('payment_bill/', methods = ['GET','POST'])
+def PaymentBill():
+    bills = InvoicesAPI.GetBills('payment')
+    paymethod = {}
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                paymethod['acttype'] = 'Assets'
+                paymethod['actcat'] = request.form['PaymentMethod']
+                paymethod['actname'] = request.form['PaymentAccount']
+                paymethod['currency'] = request.form['PaymentCurrency']
+                paymethod['debit'] = 0
+                paymethod['credit'] = request.form['credit']
+
+                InvoicesAPI.CreateBill(session['username'], session['password'],
+                request.form['PaymentDate'], 'payment',
+                request.form.getlist('account-type'),
+                request.form.getlist('account-category'),
+                request.form.getlist('account-name'),
+                request.form.getlist('currency'),
+                request.form.getlist('debit'),
+                paymethod['debit'],
+                request.form.getlist('description'),
+                paymethod,
+                request.form['comments']
+                ) 
+                flash('Bill successfully created...', category = 'success')
+                return redirect(url_for('invoices.PaymentBill'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.PaymentBill'))
+    return render_template('invoices/payment_bill.html', username = session['username'], bills = bills)
+
+@mod.route('reception_bill/', methods = ['GET','POST'])
+def ReceptionBill():
+    bills = InvoicesAPI.GetBills('reception')
+    paymethod = {}
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                paymethod['acttype'] = 'Assets'
+                paymethod['actcat'] = request.form['PaymentMethod']
+                paymethod['actname'] = request.form['PaymentAccount']
+                paymethod['currency'] = request.form['PaymentCurrency']
+                paymethod['debit'] = request.form['debit']
+                paymethod['credit'] = 0
+
+                InvoicesAPI.CreateBill(session['username'], session['password'],
+                request.form['PaymentDate'], 'reception',
+                request.form.getlist('account-type'),
+                request.form.getlist('account-category'),
+                request.form.getlist('account-name'),
+                request.form.getlist('currency'),
+                paymethod['credit'],
+                request.form.getlist('credit'),
+                request.form.getlist('description'),
+                paymethod,
+                request.form['comments']
+                ) 
+                flash('Bill successfully created...', category = 'success')
+                return redirect(url_for('invoices.ReceptionBill'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.ReceptionBill'))
+    return render_template('invoices/reception_bill.html', username = session['username'], bills = bills)
 
 
 # REST Routes

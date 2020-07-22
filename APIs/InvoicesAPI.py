@@ -79,6 +79,15 @@ def AddInvoice(sess_uname, sess_pswd, type, sentto, invdate, currency, term, des
     con.close()
     return code
 
+def EditInvoice(sess_uname, sess_pswd, invcode, type, sentto, invdate, currency, term, desc, uniprice, qty, amnt, amnt_sum, discount, tax, total, pay_method, pay_acct, comments):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('DELETE FROM invoices WHERE invoicecode = %s', (invcode,))
+    for i in range(len(desc)):
+        cur.execute("INSERT INTO INVOICES(invoicetype, invoicecode, created_by, sentto, invoicedate, currency, terms, description, unitprice, quantity, lineamount, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        (type, invcode, sess_uname, sentto, invdate, currency, term, desc[i], uniprice[i], qty[i], amnt[i], amnt_sum, discount, tax, total, pay_method, pay_acct, comments))
+    con.commit()
+    con.close()
+
 def GetInvoices(tp):
     con, cur = EnterpriseAPI.root()
     cur.execute('SELECT invoicecode, invoicedate, created_by, terms, invstatus FROM invoices WHERE invoicetype = %s GROUP BY invoicecode, invoicedate, created_by, terms, invstatus', (tp,))
@@ -151,3 +160,40 @@ def ApproversList():
         List.append(d[0])
 
     return List
+
+def GetInvoice(sess_uname, sess_pswd, invcode):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT sentto, invoicedate, currency, terms, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments, invstatus FROM invoices WHERE invoicecode = %s GROUP BY sentto, invoicedate, currency, terms, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments, invstatus',(invcode,))
+    data1 = cur.fetchone()
+    cur.execute('SELECT invoiceid, description, unitprice, quantity, lineamount FROM invoices WHERE invoicecode = %s', (invcode,))
+    data2 = cur.fetchall()
+    con.close()
+    return data1, data2
+
+def CreateBill(sess_uname, sess_pswd, billdate, tpy, acttype, actcat, actname, currency, debit, credit, description, paymethod, comments):
+    code = ''
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    if tpy == 'payment':
+        code = 'PAY' + '_' + str(date.today()) + str(random.randint(100000,999999))
+        for i in range(len(acttype)):
+            cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+            (code, billdate, tpy, acttype[i], actcat[i], actname[i], currency[i], debit[i], paymethod['debit'], sess_uname, description[i]))
+        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments))
+        con.commit()
+    elif tpy == 'reception':
+        code = 'REC' + '_' + str(date.today()) + str(random.randint(100000,999999))
+        for i in range(len(acttype)):
+            cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+            (code, billdate, tpy, acttype[i], actcat[i], actname[i], currency[i], paymethod['credit'], credit[i], sess_uname, description[i]))
+        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments))
+        con.commit()
+    con.close()
+
+def GetBills(tpy):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT billcode, createdby, billdate, status FROM bills WHERE billtype = %s GROUP BY billcode, createdby, billdate, status', (tpy,))
+    data = cur.fetchall()
+    con.close()
+    return data

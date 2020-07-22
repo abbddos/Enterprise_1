@@ -256,6 +256,25 @@ CREATE TABLE Invoices(
     comments TEXT
 );
 
+
+CREATE TABLE Bills(
+	BillID SERIAL NOT NULL PRIMARY KEY,
+	BillCode VARCHAR(25),
+	BillDate DATE,
+	BillType VARCHAR(10),
+	AccountType VARCHAR(25),
+	AccountCategory VARCHAR(100),
+	AccountName VARCHAR(100),
+	Currency VARCHAR(5),
+	Debit REAL,
+	Credit REAL,
+	CreatedBy VARCHAR(50),
+	Description TEXT,
+	Comments TEXT, 
+	status VARCHAR(10) DEFAULT 'Pending'
+);
+
+
 -- Adding Default Currencies...
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('US Dollars', 'USD');
 INSERT INTO Currency(CurrencyName, CurrencyCode) VALUES('Euro', 'EUR');
