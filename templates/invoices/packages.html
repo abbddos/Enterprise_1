@@ -31,6 +31,7 @@
           <th>Item Name:</th>
           <th>Unit:</th>
           <th>Unit Price:</th>
+          <th>Unit Cost:</th>
           <th>Quantity:</th>
           <th>Remove:</th>
         </tr>
@@ -99,7 +100,7 @@
           ItCode: $(this).text(),
         }, function(data){
           if(data.msg == 'success'){
-            $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.itemcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = '"+data.itemunit+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'unitprice' value = '" + data.unitprice + "' style = 'width: 100%;' /></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+            $('#itm-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'code' value = '"+data.itemcode+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'Name' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unit' value = '"+data.itemunit+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'unitprice' value = '" + data.unitprice + "' style = 'width: 100%;' /></td><td><input type = 'text' name = 'unitcost' value = '"+ data.unitcost +"' style = 'width:100%;'/></td><td><input type = 'text' name = 'quantity' style = 'width: 100%'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
           }
           else{
             $('.msg').val('Item not found');

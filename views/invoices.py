@@ -232,6 +232,8 @@ def packages():
                 request.form.getlist('code'),
                 request.form.getlist('Name'),
                 request.form.getlist('unit'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('unitcost'),
                 request.form.getlist('quantity'),
                 request.form['description'])
                 flash('Package Created Successcully', category = 'success')
@@ -256,6 +258,8 @@ def edit_package(pkg):
                 request.form.getlist('code'),
                 request.form.getlist('Name'),
                 request.form.getlist('unit'),
+                request.form.getlist('unitprice'),
+                request.form.getlist('unitcost'),
                 request.form.getlist('quantity'),
                 request.form['description'])
                 flash('Package Updated Successfully', category = 'success')
@@ -611,7 +615,7 @@ def ViewInvoice(code, tpy):
     Appr = InvoicesAPI.ApproversList()
     iframe = url_for('invoices.InvoiceView', code = code)
     invs = InvoicesAPI.GetInvoices(tpy)
-    RS, CGS = InvoicesAPI.REVSnCOST()
+    RS, CGS, Stat = InvoicesAPI.REVSnCOST(code)
     if request.method == 'POST':
         if request.form['submit'] == 'Submit' and session['username'] in Appr:
             if tpy == 'procurement' or tpy == 'return':
@@ -634,7 +638,7 @@ def ViewInvoice(code, tpy):
         else:
             flash('User does not have permission to approve or cancel this invoice', category = 'fail')
             return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
-    return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS)
+    return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS, Stat = Stat)
 
 @mod.route('payment_bill/', methods = ['GET','POST'])
 def PaymentBill():

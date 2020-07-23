@@ -94,7 +94,8 @@ CREATE TABLE packages(
   unit VARCHAR(10),
   quantity REAL,
   description TEXT, 
-  unit_price REAL
+  unit_price REAL, 
+  unit_cost REAL
 );
 
 CREATE TABLE warehouses(

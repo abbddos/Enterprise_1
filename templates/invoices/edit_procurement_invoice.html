@@ -237,6 +237,7 @@
           
           <h3>Pick Package <span class="close">&times;</span></h3>
           <h5 style = 'color: green;'> Pick an Pakcage from the table below to add it to package</h5>
+          <input type = 'text' id = 'pkgnum' placeholder = 'Number of packages' />
           <div class = 'items' stye = 'overflow: scroll;'>
             <table>
               <tr>
@@ -261,7 +262,7 @@
                 var ex_rate = 0;
                 var uniprice = [0];
                 var currentamount = 0;
-                var totalamount = $('#invamount').val();
+                var totalamount = 0;
         
                 
                 $.getJSON('/accounting/GetExchange/' + $('#currency').val(), function(data){
@@ -270,6 +271,7 @@
                         var dd = $(this).attr('id').replace('tr_', '');
                         i = parseInt(dd);
                         uniprice[i] = $('#unitprice_' + dd).val() * ex_rate;
+                        totalamount = totalamount + parseFloat($('#amnt_' + dd).val());
                     });
                 })
         
@@ -353,7 +355,7 @@
                     ItCode: $(this).text(),
                 }, function(data){
                     if(data.msg == 'success'){
-                        uniprice[i] = data.unitprice;
+                        uniprice[i] = data.unitcost;
                         $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+(data.unitprice / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
                        
                     }
@@ -367,15 +369,16 @@
         
                 $('.pkg').click(function(){
                     $('.select-what').hide();
+                    var pkgnum = parseInt($('#pkgnum').val());
                     $.getJSON('/invoices/Get-Pack/' + $(this).text(), function(data){
                         $.each(data, function(key, val){
                             i++;
-                            var amnt = val.quantity * (val.unit_price / ex_rate);
-                            uniprice[i] = val.unit_price;
-                            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+ (val.unit_price / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity+"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                            var amnt = val.quantity * pkgnum *(val.unit_price / ex_rate);
+                            uniprice[i] = val.unit_cost;
+                            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+ (val.unit_cost / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+val.quantity * pkgnum +"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+ amnt.toFixed(2) +"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
                             totalamount = totalamount + amnt;
-                            $('#totalamount').val(totalamount);
-                            $('#invamount').val(totalamount);
+                            $('#totalamount').val(totalamount.toFixed(2));
+                            $('#invamount').val(totalamount.toFixed(2));
                         });
                     });
                     $('#myModal1').hide();

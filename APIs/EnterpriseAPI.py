@@ -282,11 +282,11 @@ def GetPackages():
     con.close()
     return data
 
-def CreatePackage(sess_uname, sess_pswd, packagename, itemcode, itemname, unit, unitprice, quantity, description):
+def CreatePackage(sess_uname, sess_pswd, packagename, itemcode, itemname, unit, unitprice, unitcost, quantity, description):
     code = 'pkg_' + str(random.randint(100000000000,999999999999))
     con, cur = connector(sess_uname, sess_pswd)
     for i in range(len(itemcode)):
-        cur.execute('INSERT INTO packages(packagecode, packagename, itemcode, itemname, unit, unit_price, quantity, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)',
+        cur.execute('INSERT INTO packages(packagecode, packagename, itemcode, itemname, unit, unit_price, unit_cost, quantity, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
         (code, packagename, itemcode[i], itemname[i], unit[i], unitprice[i], quantity[i], description))
         con.commit()
 
@@ -298,16 +298,16 @@ def FetchPackage(pkg):
     cur.execute('SELECT packagecode, packagename, description FROM packages WHERE packagecode = %s GROUP BY packagecode, packagename, description', (pkg,))
     data1 = cur.fetchone()
     #...Get Package content.
-    cur.execute('SELECT itemcode, itemname, unit, unit_price, quantity FROM packages WHERE packagecode = %s', (pkg,))
+    cur.execute('SELECT itemcode, itemname, unit, unit_price, unit_cost, quantity FROM packages WHERE packagecode = %s', (pkg,))
     data2 = cur.fetchall()
     con.close()
     return data1, data2
 
-def UpdatePackage(sess_uname, sess_pswd, pkg, packagename, itemcode, itemname, unit, unitprice, quantity, description):
+def UpdatePackage(sess_uname, sess_pswd, pkg, packagename, itemcode, itemname, unit, unitprice, unitcost, quantity, description):
     con, cur = connector(sess_uname, sess_pswd)
     cur.execute('DELETE FROM packages WHERE packagecode = %s', (pkg,))
     for i in range(len(itemcode)):
-        cur.execute('INSERT INTO packages(packagecode, packagename, itemcode, itemname, unit, unit_price, quantity, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s)',
+        cur.execute('INSERT INTO packages(packagecode, packagename, itemcode, itemname, unit, unit_price, unit_cost, quantity, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
         (pkg, packagename, itemcode[i], itemname[i], unit[i], unitprice[i], quantity[i], description))
         con.commit()
     con.close()

@@ -155,6 +155,8 @@
             $('#FC').text($(this).val());
             $.getJSON('/accounting/GetExchange/' + $(this).val(), function(data){
                 Bill_Ex = data.ex;
+                $('#deb-total').text((totaldebit / Bill_Ex).toFixed(2));
+                $('#credit').val((totaldebit / Bill_Ex).toFixed(2));
             });
         });
 

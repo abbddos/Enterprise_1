@@ -3,6 +3,9 @@
 {% block invoicespage%}
 <div class = 'actionpage'>
     <form method = 'POST' style = 'margin-left: -35px; width: 98%;'>
+        {% if Stat[0] != 'pending'%}
+        <p style = 'color:red; text-align: left;'>This invoice is {{Stat[0]}}, you cannot update its status...</p>
+        {% endif %}
         <div class = 'fields'>
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <input type = 'hidden' id = 'type' value = '{{type}}' />
@@ -14,7 +17,9 @@
                     <label>Set Status:</label>
                 </div>
                 <div class =  'col-b'>
-                    <select name = 'statuses'>
+                    <select name = 'statuses' {% if Stat[0] != 'pending'%} disabled {% endif %}>
+                        <option value = '{{Stat[0]}}' selected hidden>{{Stat[0]}}</option>
+                        <option value = 'pending'>Pending</option>
                         <option value = 'Canceled'>Cancel</option>
                         <option value = 'Approved'>Approve</option>
                     </select>
@@ -25,7 +30,7 @@
                     <label>Revenues Account:</label>
                 </div>
                 <div class = 'col -b'>
-                    <select name = 'RVACT'>
+                    <select name = 'RVACT' {% if Stat[0] != 'pending'%} disabled {% endif %}>
                         {%for r in RS%}
                         <option value = '{{r[0]}}'>{{r[0]}}</option>
                         {%endfor%}
@@ -37,7 +42,7 @@
                     <label>Cost of Goods sold Account:</label>
                 </div>
                 <div class = 'col-b'>
-                    <select name = 'CGSACT'>
+                    <select name = 'CGSACT' {% if Stat[0] != 'pending'%} disabled {% endif %}>
                         {%for c in CGS%}
                         <option value = '{{c[0]}}'>{{c[0]}}</option>
                         {%endfor%}
@@ -46,7 +51,7 @@
             </div>
         </div>
         <div class = 'submission'>
-            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' {% if Stat[0] != 'pending'%} disabled {% endif %}/>
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                   {% for category, message in messages %}

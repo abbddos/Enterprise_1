@@ -33,14 +33,16 @@ def GetOneCustomer(sess_uname, sess_pswd, id):
     con.close()
     return data
 
-def REVSnCOST():
+def REVSnCOST(code):
     con, cur = EnterpriseAPI.root()
     cur.execute("SELECT accountname FROM accounts WHERE accountcategory = 'Sales Revenues'")
     SR = cur.fetchall()
     cur.execute("SELECT accountname FROM accounts WHERE accountcategory = 'Cost of Goods Sold'")
     CGS = cur.fetchall()
+    cur.execute('SELECT invstatus FROM invoices WHERE invoicecode = %s', (code,))
+    Stat = cur.fetchone()
     con.close()
-    return SR, CGS
+    return SR, CGS, Stat
 
 def GetAccount(acc):
     con, cur = EnterpriseAPI.root()
