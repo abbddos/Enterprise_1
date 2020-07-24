@@ -673,6 +673,66 @@ def PaymentBill():
                 return redirect(url_for('invoices.PaymentBill'))
     return render_template('invoices/payment_bill.html', username = session['username'], bills = bills)
 
+@mod.route('edit_payment_bill/<billcode>', methods = ['GET','POST'])
+def EditPaymentBill(billcode):
+    bills = InvoicesAPI.GetBills('payment')
+    paymethod = {}
+    data1, data2 = InvoicesAPI.GetOneBill(billcode, 'payment')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                paymethod['acttype'] = 'Assets'
+                paymethod['actcat'] = request.form['PaymentMethod']
+                paymethod['actname'] = request.form['PaymentAccount']
+                paymethod['currency'] = request.form['PaymentCurrency']
+                paymethod['debit'] = 0
+                paymethod['credit'] = request.form['credit']
+
+                InvoicesAPI.EditBill(session['username'], session['password'], billcode,
+                request.form['PaymentDate'], 'payment',
+                request.form.getlist('account-type'),
+                request.form.getlist('account-category'),
+                request.form.getlist('account-name'),
+                request.form.getlist('currency'),
+                request.form.getlist('debit'),
+                paymethod['debit'],
+                request.form.getlist('description'),
+                paymethod,
+                request.form['comments']
+                ) 
+                flash('Bill successfully created...', category = 'success')
+                return redirect(url_for('invoices.PaymentBill'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.PaymentBill'))
+    return render_template('invoices/edit_payment_bill.html', username = session['username'], 
+    bills = bills,
+    data1 = data1,
+    data2 = data2)
+
+@mod.route('view_payment_bill/<billcode>', methods = ['GET','POST'])
+def ViewPaymentBill(billcode):
+    Appr = InvoicesAPI.BillApproversList()
+    bills = InvoicesAPI.GetBills('payment')
+    paymethod = {}
+    data1, data2 = InvoicesAPI.GetOneBill(billcode, 'payment')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit'and session['username'] in Appr:
+            try:
+                InvoicesAPI.RegisterBill(session['username'], session['password'], billcode, request.form['status'])
+                flash('Bill registered successfully...', category = 'success')
+                return redirect(url_for('invoices.PaymentBill'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.PaymentBill'))
+        else:
+            flash('This user does not have permission to register this bill...', category = 'fail')
+            return redirect(url_for('invoices.ViewPaymentBill', billcode = billcode))
+    return render_template('invoices/view_payment_bill.html', username = session['username'], 
+    bills = bills,
+    data1 = data1,
+    data2 = data2)
+
 @mod.route('reception_bill/', methods = ['GET','POST'])
 def ReceptionBill():
     bills = InvoicesAPI.GetBills('reception')
@@ -706,6 +766,66 @@ def ReceptionBill():
                 return redirect(url_for('invoices.ReceptionBill'))
     return render_template('invoices/reception_bill.html', username = session['username'], bills = bills)
 
+@mod.route('edit_reception_bill/<billcode>', methods = ['GET','POST'])
+def EditReceptionBill(billcode):
+    bills = InvoicesAPI.GetBills('reception')
+    paymethod = {}
+    data1, data2 = InvoicesAPI.GetOneBill(billcode, 'reception')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                paymethod['acttype'] = 'Assets'
+                paymethod['actcat'] = request.form['PaymentMethod']
+                paymethod['actname'] = request.form['PaymentAccount']
+                paymethod['currency'] = request.form['PaymentCurrency']
+                paymethod['debit'] = request.form['debit']
+                paymethod['credit'] = 0
+
+                InvoicesAPI.EditBill(session['username'], session['password'], billcode,
+                request.form['PaymentDate'], 'reception',
+                request.form.getlist('account-type'),
+                request.form.getlist('account-category'),
+                request.form.getlist('account-name'),
+                request.form.getlist('currency'),
+                paymethod['credit'],
+                request.form.getlist('credit'),
+                request.form.getlist('description'),
+                paymethod,
+                request.form['comments']
+                ) 
+                flash('Bill successfully created...', category = 'success')
+                return redirect(url_for('invoices.ReceptionBill'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.ReceptionBill'))
+    
+    return render_template('invoices/edit_reception_bill.html', username = session['username'], 
+    bills = bills,
+    data1 = data1,
+    data2 = data2)
+
+@mod.route('view_reception_bill/<billcode>', methods = ['GET','POST'])
+def ViewReceptionBill(billcode):
+    Appr = InvoicesAPI.BillApproversList()
+    bills = InvoicesAPI.GetBills('payment')
+    paymethod = {}
+    data1, data2 = InvoicesAPI.GetOneBill(billcode, 'reception')
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit'and session['username'] in Appr:
+            try:
+                InvoicesAPI.RegisterBill(session['username'], session['password'], billcode, request.form['status'])
+                flash('Bill registered successfully...', category = 'success')
+                return redirect(url_for('invoices.ReceptionBill'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.ReceptionBill'))
+        else:
+            flash('This user does not have permission to register this bill...', category = 'fail')
+            return redirect(url_for('invoices.ViewReceptionBill', billcode = billcode))
+    return render_template('invoices/view_reception_bill.html', username = session['username'], 
+    bills = bills,
+    data1 = data1,
+    data2 = data2)
 
 # REST Routes
 @mod.route('/Get-Accounts/<acc>')

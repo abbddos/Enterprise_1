@@ -788,6 +788,17 @@ END;
 $$ LANGUAGE plpgsql;
 	
 --===============================================================================================================================================================
+CREATE OR REPLACE FUNCTION RegisterBill(billcode_ VARCHAR)
+RETURNS VOID AS $$
+DECLARE rec RECORD;
+BEGIN
+	FOR rec IN SELECT * FROM bills WHERE billcode = billcode_ LOOP
+		PERFORM CreateJournalEntry(rec.billcode, rec.accounttype, rec.accountcategory, rec.accountname, rec.currency, rec.debit, rec.credit, rec.createdby, rec.description);
+	END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
 -- Views...
 
 CREATE OR REPLACE VIEW Bins_view AS	

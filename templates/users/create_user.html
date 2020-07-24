@@ -15,7 +15,7 @@
     {{ render_field(form.phone1)}}
     {{ render_field(form.phone2)}}
     {{ render_field(form.usrtype)}}
-    <h5 style = 'color: rgb(0,0,100); font-weight: bold;'>Can Approve:</h5>
+    <h5 style = 'color: rgb(0,0,100); font-weight: bold; text-align: left;'>Can Approve:</h5>
     <table>
       <tr>
         <th><input type = 'Checkbox' id = 'select_all' /></th>
@@ -28,6 +28,10 @@
       <tr>
         <td><input type = 'Checkbox' value = 'invoices' name = 'appr-check' class = 'appr_check' /></td>
         <td>Invoices</td>
+      </tr>
+      <tr>
+        <td><input type = 'Checkbox' value = 'bills' name = 'appr-check' class = 'appr_check' /></td>
+        <td>Bills</td>
       </tr>
     </table>
   </div>

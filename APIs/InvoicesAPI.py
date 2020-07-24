@@ -163,6 +163,17 @@ def ApproversList():
 
     return List
 
+def BillApproversList():
+    List = []
+    con, cur = EnterpriseAPI.root()
+    cur.execute("SELECT username FROM approvers WHERE can_approve = 'bills'")
+    data = cur.fetchall()
+    con.close()
+    for d in data:
+        List.append(d[0])
+
+    return List
+
 def GetInvoice(sess_uname, sess_pswd, invcode):
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
     cur.execute('SELECT sentto, invoicedate, currency, terms, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments, invstatus FROM invoices WHERE invoicecode = %s GROUP BY sentto, invoicedate, currency, terms, ammountsum, discount, tax, totalamount, paymentmethod, paymentaccount, comments, invstatus',(invcode,))
@@ -199,3 +210,49 @@ def GetBills(tpy):
     data = cur.fetchall()
     con.close()
     return data
+
+def GetOneBill(code, tpy):
+    data1 = (0,)
+    data2 = (0,)
+    con, cur = EnterpriseAPI.root()
+    if tpy == 'payment':
+        cur.execute('SELECT billcode, accountcategory, accountname, currency, billdate, credit, comments, status FROM bills WHERE billcode = %s AND billtype = %s AND credit != 0 GROUP BY billcode, accountcategory, accountname, currency, billdate, credit, comments, status', (code, tpy))
+        data1 = cur.fetchone()
+        cur.execute('SELECT billid, accounttype, accountcategory, accountname, currency, debit, description FROM bills WHERE billcode = %s AND billtype = %s AND debit != 0', (code, tpy))
+        data2 = cur.fetchall()
+    elif tpy == 'reception':
+        cur.execute('SELECT billcode, accountcategory, accountname, currency, billdate, debit, comments, status FROM bills WHERE billcode = %s AND billtype = %s AND debit != 0GROUP BY billcode, accountcategory, accountname, currency, billdate, debit, comments, status', (code, tpy))
+        data1 = cur.fetchone()
+        cur.execute('SELECT billid, accounttype, accountcategory, accountname, currency, credit, description FROM bills WHERE billcode = %s AND billtype = %s AND credit != 0', (code, tpy))
+        data2 = cur.fetchall()
+    con.close()
+    return data1, data2
+
+def EditBill(sess_uname, sess_pswd, code, billdate, tpy, acttype, actcat, actname, currency, debit, credit, description, paymethod, comments):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('DELETE FROM bills WHERE billcode = %s', (code,))
+    if tpy == 'payment':
+        for i in range(len(acttype)):
+            cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+            (code, billdate, tpy, acttype[i], actcat[i], actname[i], currency[i], debit[i], paymethod['debit'], sess_uname, description[i]))
+        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments))
+        con.commit() 
+    elif tpy == 'reception':
+        for i in range(len(acttype)):
+            cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
+            (code, billdate, tpy, acttype[i], actcat[i], actname[i], currency[i], paymethod['credit'], credit[i], sess_uname, description[i]))
+        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments))
+        con.commit()
+    con.close()
+
+def RegisterBill(sess_uname, sess_pswd, billcode, status):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    if status == 'Approved':
+        cur.execute('UPDATE bills SET status = %s WHERE billcode = %s',(status, billcode))
+        cur.execute('SELECT registerbill(%s)', (billcode,))
+    elif status == 'Canceled':
+        cur.execute('UPDATE bills SET status = %s WHERE billcode = %s',(status, billcode))
+    con.commit()
+    con.close()

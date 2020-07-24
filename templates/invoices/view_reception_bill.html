@@ -1,0 +1,158 @@
+{% extends 'invoices/invoices.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block invoicespage%}
+<div class = 'actionpage'>
+    <form method = 'post' style = 'margin-left: -35px; width: 98%;' >
+      <h3>View Reception Bill</h3>
+      <div class = 'fields'>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <p style = 'color: red; text-align: left;' {% if data1[7] == 'Pending'%} hidden {% endif%}>This bill is {{data1[7]}} you cannot update its status...</p>
+        <div class = 'row'>
+          <div class = 'col-a'>
+            <label>Bill Code:</label>
+          </div>
+          <div class = 'col-b'>
+            <input type = 'text' value = '{{data1[0]}}' disabled />
+          </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Method:</label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'PaymentMethod' id = 'paymethod' disabled>
+                    <option value = "no account">----</option>
+                    <option value = '{{data1[1]}}' selected hidden>{{data1[1]}}</option>
+                    <option value = "Cash">Cash</option>
+                    <option value = "Bank Accounts">Bank Transfer</option>
+                    <option value = "Credit Card Accounts">Credit Card</option>
+                </select>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Account:</label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'PaymentAccount' id = 'payaccount' disabled>
+                  <option value = '{{data1[2]}}' selected hidden>{{data1[2]}}</option>
+                </select>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Currency:</label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'PaymentCurrency' id = 'paycurrency' disabled >
+                  <option value = '{{data1[3]}}' selected hidden>{{data1[3]}}</option>
+                </select>
+            </div>
+        </div>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Payment Date:</label>
+            </div>
+            <div class = 'col-b'>
+                <input type = 'date' name = 'PaymentDate' value = '{{data1[4]}}' disabled>
+            </div>
+        </div>
+            <div class = 'col-a'>
+                <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px; color: rgba(0,0,100);" id = 'add-entry' hidden >Add payment entry</a>
+            </div>
+        <table style = 'width: 100%;'>
+            <thead>
+            <tr>
+                <th>Account Type</th>
+                <th>Account Category</th>
+                <th>Account Name</th>
+                <th>Currency</th>
+                <th>Credit</th>
+                <th>Description</th>
+               
+            </tr>
+            </thead>
+            <tbody id = 'entry-table'>
+              {% for d in data2 %}
+                <tr id = "{{'tr_' + d[0]|string}}">
+                    <td>{{d[1]}}</td>
+                    <td>{{d[2]}}</td>
+                    <td>{{d[3]}}</td>
+                    <td>{{d[4]}}</td>
+                    <td>{{d[5]}}</td>
+                    <td>{{d[6]}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+            <tfoot>
+              <tr class = 'totals' style = 'font-weight: bold;'>
+                <td>Total:</td>
+                <td></td>
+                <td></td>
+                <td><p id = 'FC'>{{data1[3]}}</p></td>
+                <td><p id = 'crd-total'>{{data1[5]}}</p></td>
+                <td></td>
+                
+              </tr>
+            </tfoot>
+        </table>
+        <div class = 'row'>
+            <div class = 'col-a'>
+                <label>Comments:</label>
+            </div>
+            <div class = 'col-b'>
+                <textarea name="comments"  disabled >{{data1[6]}}</textarea>
+                <input type = 'hidden' name = 'debit' id = 'debit' />
+            </div>
+        </div>
+        <div class = 'raw'>
+            <div class = 'col-a'>
+                <label>Status: </label>
+            </div>
+            <div class = 'col-b'>
+                <select name = 'status' {% if data1[7] != 'Pending'%} disabled {% endif %}>
+                    <option value = '{{data1[7]}}' selected hidden>{{data1[7]}}</option>
+                    <option value = 'Pending'>Pending</option>
+                    <option value = 'Approved'>Approve</option>
+                    <option value = 'Canceled'>Cancel</option>
+                </select>
+            </div>
+        </div>
+      </div>
+      <div class = 'submission'>
+        <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' {% if data1[7] != 'Pending'%} disabled {% endif %}/>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              {% for category, message in messages %}
+                <div class = "{{category}}">
+                <p>{{ message }}</p>
+                </div>
+              {% endfor %}
+          {% endif %}
+        {% endwith %}
+        <p id = 'message'></p>
+      </div>
+    </form>
+    <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+    <table>
+      <tr>
+        <th>Bill Code</th>
+        <th>Created by</th>
+        <th>Created on</th>
+        <th>Status</th>
+        <th>View</th>
+        <th>Edit</th>
+      </tr>
+      {% for b in bills%}
+      <tr class = '{{b[3]}}'>
+        <td>{{b[0]}}</td>
+        <td>{{b[1]}}</td>
+        <td>{{b[2]}}</td>
+        <td>{{b[3]}}</td>
+        <td><a href = "{{url_for('invoices.ViewReceptionBill', billcode = b[0])}}"><img src = "{{url_for('static', filename = 'images/view.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
+        <td><a href = "{{url_for('invoices.EditReceptionBill', billcode = b[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;' /></a></td>
+      </tr>
+      {% endfor %}
+    </table>
+    </div>
+{% endblock %}

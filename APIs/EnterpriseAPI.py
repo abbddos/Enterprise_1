@@ -530,11 +530,18 @@ def ReqInfo(reqid):
     return data1, data2, data3
 
 def ApprRequests():
+    List = []
     con, cur = root()
     cur.execute("SELECT rqstid FROM request WHERE status = 'Approved' GROUP BY rqstid")
-    data = cur.fetchall()
+    data1 = cur.fetchall()
+    cur.execute("SELECT invoicecode FROM invoices WHERE invstatus = 'Approved' GROUP BY invoicecode")
+    data2 = cur.fetchall()
     con.close()
-    return data
+    for d1 in data1:
+        List.append(d1)
+    for d2 in data2:
+        List.append(d2)
+    return List
 
 def Warehouse_Inventory_to_CSV(sess_uname, sess_pswd, fromdate, todate, whs):
     con, cur = connector(sess_uname, sess_pswd)
