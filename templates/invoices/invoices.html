@@ -21,11 +21,20 @@
 
  
  <ul class = 'reports' id = 'reports'><a href = "#">Reports</a>
-  <li class = 'warehousecontent'><a href = "#"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Invoices report:</a></li>
-  <li class = 'warehousecontent'><a href = "#"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Billsreport:</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('invoices.InvoicesReport')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Invoices report (CSV):</a></li>
+  <li class = 'warehousecontent'><a href = "{{url_for('invoices.BillsReport')}}"><img src = "{{url_for('static', filename = 'images/report.png')}}" style = 'width:20px; height: 20px;' />Billsreport (CSV):</a></li>
   
  </ul>
  </div>
+   {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
 {% block invoicespage%}
 {% endblock %}
 {% endblock %}

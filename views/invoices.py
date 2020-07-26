@@ -827,6 +827,30 @@ def ViewReceptionBill(billcode):
     data1 = data1,
     data2 = data2)
 
+@mod.route('invoices_report')
+def InvoicesReport():
+    try:
+        file = InvoicesAPI.InvoicesReport(session['username'], session['password'])
+        response = make_response(file)
+        response.headers['Content-type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachement; filename = Invoices_Report.csv'
+        return response
+    except Exception as e:
+        flash(str(e), category = 'fail')
+        return url_for('invoices.invoices')
+
+@mod.route('bills_report')
+def BillsReport():
+    try:
+        file = InvoicesAPI.BillsReport(session['username'], session['password'])
+        response = make_response(file)
+        response.headers['Content-type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachement; filename = Bills_Report.csv'
+        return response
+    except Exception as e:
+        flash(str(e), category = 'fail')
+        return url_for('invoices.invoices')
+
 # REST Routes
 @mod.route('/Get-Accounts/<acc>')
 def GetAccount(acc):

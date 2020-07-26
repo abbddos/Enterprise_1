@@ -256,3 +256,17 @@ def RegisterBill(sess_uname, sess_pswd, billcode, status):
         cur.execute('UPDATE bills SET status = %s WHERE billcode = %s',(status, billcode))
     con.commit()
     con.close()
+
+def InvoicesReport(sess_uname, sess_pswd):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    data = pd.read_sql('SELECT * FROM invoices ORDER BY invoicecode', con)
+    file = data.to_csv()
+    con.close()
+    return file
+
+def BillsReport(sess_uname, sess_pswd):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    data = pd.read_sql('SELECT * FROM bills ORDER BY billcode', con)
+    file = data.to_csv()
+    con.close()
+    return file
