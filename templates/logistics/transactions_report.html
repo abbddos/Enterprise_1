@@ -44,6 +44,14 @@
             .Pending{
                 color: black;
             }
+
+            .footer{
+                position: fixed;
+                color: gray;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -89,4 +97,5 @@
             {% endfor %}
         </table>
     </body>
+    <p class = 'footer'>{{cmp[1]}}, {{cmp[2]}}, phone1: {{cmp[3]}}, phone2: {{cmp[4]}}, email: {{cmp[5]}}, PO-BOX: {{cmp[6]}}, {{cmp[7]}}</p>
 </html>

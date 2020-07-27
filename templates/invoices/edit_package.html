@@ -89,9 +89,11 @@
   </div>
   <div id="myModal" class="modal">
     <div class="modal-content">
+      
       <h3>Pick Item <span class="close">&times;</span></h3>
       <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
       <div class = 'items' stye = 'overflow: scroll;'>
+        <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-itm' />
         <table>
           <tr>
             <th>Item Code:</th>
@@ -99,8 +101,8 @@
             <th>Provider: </th>
             <th>Unit: </th>
           </tr>
-          {% for t in itt %}
-            <tr>
+          {% for t in itms %}
+            <tr class = 'table-row-itm'>
               <td><a class = 'itm' href = '#'>{{t[0]}}</a></td>
               <td>{{t[1]}}</td>
               <td>{{t[2]}}</td>
@@ -109,6 +111,7 @@
           {% endfor %}
         </table>
       </div>
+    </div>
     </div>
   
   <script>

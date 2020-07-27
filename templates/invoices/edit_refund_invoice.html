@@ -212,6 +212,7 @@
       <h3>Pick Item <span class="close">&times;</span></h3>
       <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
       <div class = 'items' stye = 'overflow: scroll;'>
+        <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-itm' />
         <table>
           <tr>
             <th>Item Code:</th>
@@ -220,7 +221,7 @@
             <th>Unit: </th>
           </tr>
           {% for t in itms %}
-            <tr>
+            <tr class = 'table-row-itm'>
               <td><a class = 'itm' href = '#'>{{t[0]}}</a></td>
               <td>{{t[1]}}</td>
               <td>{{t[2]}}</td>
@@ -231,30 +232,29 @@
       </div>
     </div>
     </div>
-
+  
     <div id="myModal1" class="modal">
-        <div class="modal-content">
-          
-          <h3>Pick Package <span class="close">&times;</span></h3>
-          <h5 style = 'color: green;'> Pick an Pakcage from the table below to add it to package</h5>
-          <input type = 'text' id = 'pkgnum' placeholder = 'Number of packages' />
-          <div class = 'items' stye = 'overflow: scroll;'>
-            <table>
-              <tr>
-                <th>Package Code:</th>
-                <th>Package Name: </th>
+      <div class="modal-content">
+        
+        <h3>Pick Package <span class="close">&times;</span></h3>
+        <h5 style = 'color: green;'> Pick an Pakcage from the table below to add it to package</h5>
+        <div class = 'items' stye = 'overflow: scroll;'>
+          <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-pkg' />
+          <table>
+            <tr>
+              <th>Package Code:</th>
+              <th>Package Name: </th>
+            </tr>
+            {% for p in pkgs %}
+              <tr class = 'table-row-pkg'>
+                <td><a class = 'pkg' href = '#'>{{p[0]}}</a></td>
+                <td>{{p[1]}}</td>
               </tr>
-              {% for p in pkgs %}
-                <tr>
-                  <td><a class = 'pkg' href = '#'>{{p[0]}}</a></td>
-                  <td>{{p[1]}}</td>
-                </tr>
-              {% endfor %}
-            </table>
-          </div>
+            {% endfor %}
+          </table>
         </div>
-        </div>
-
+      </div>
+      </div>
 <script>
     $(document).ready(function(){
         

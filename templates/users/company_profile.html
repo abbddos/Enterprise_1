@@ -1,0 +1,88 @@
+{% extends 'users/admin.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block adminpage%}
+<div class = 'actionpage'>
+    <form method = 'post'>
+        <h3>Update your company profile</h3>
+        <div class = 'fields'>
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Company Name:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'companyname' value = '{{pro[1]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Address:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'companyaddress' value = '{{pro[2]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Phone 1:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'phone1' value = '{{pro[3]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Phone 2:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'phone2' value = '{{pro[4]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Email:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'email' value = '{{pro[5]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>PO Box:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'pobox' value = '{{pro[6]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Registration:</label>
+                </div>
+                <div class = 'col-b'>
+                    <input type = 'text' name = 'registration' value = '{{pro[7]}}' />
+                </div>
+            </div>
+            <div class = 'row'>
+                <div class = 'col-a'>
+                    <label>Description:</label>
+                </div>
+                <div class = 'col-b'>
+                    <textarea name = 'description'>{{pro[8]}}</textarea>
+                </div>
+            </div>
+        </div>
+        <div class = 'submission'>
+            <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                  {% for category, message in messages %}
+                    <div class = "{{category}}">
+                    <p>{{ message }}</p>
+                    </div>
+                  {% endfor %}
+              {% endif %}
+            {% endwith %}
+          </div>
+    </form>
+
+{% endblock %}

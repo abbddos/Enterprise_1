@@ -2,6 +2,7 @@ from flask import *
 from flask_mail import *
 from APIs import AccountingForms
 from  APIs import AccountingAPI
+from APIs import EnterpriseAPI
 import pdfkit
 import datetime
 import app
@@ -186,11 +187,12 @@ def EditCurrency(code):
 @mod.route('/BalanceSheet/', methods = ['GET','POST'])
 def BalanceSheet():
     data = AccountingAPI.GetCategories()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             if request.form['SheetFormat'] == 'pdf':
                 data1, data2 = AccountingAPI.GetBalanceSheetPDF(session['username'], session['password'], request.form['SheetDate'])
-                rendered = render_template('accounting/balance_sheet.html', data1 = data1, data2 = data2, date = request.form['SheetDate'])
+                rendered = render_template('accounting/balance_sheet.html', data1 = data1, data2 = data2, date = request.form['SheetDate'], cmp = cmp)
                 pdf = pdfkit.from_string(rendered, False)
                 response = make_response(pdf)
                 response.headers['Content-type'] = 'application/pdf'
@@ -208,13 +210,14 @@ def BalanceSheet():
 @mod.route('/NetIncomeStatement/', methods = ['GET','POST'])
 def NetINcomeStatement():
     data = AccountingAPI.GetCategories()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             if request.form['SheetFormat'] == 'pdf':
                 data1, data2 = AccountingAPI.NetIncomeStatementPDF(session['username'], session['password'],
                 request.form['StartDate'],
                 request.form['EndDate'])
-                rendered = render_template('accounting/net_income_statement.html', data1 = data1, data2 = data2, date1 = request.form['StartDate'], date2 = request.form['EndDate'])
+                rendered = render_template('accounting/net_income_statement.html', data1 = data1, data2 = data2, date1 = request.form['StartDate'], date2 = request.form['EndDate'], cmp = cmp)
                 pdf = pdfkit.from_string(rendered, False)
                 response = make_response(pdf)
                 response.headers['Content-type'] = 'application/pdf'
@@ -232,6 +235,7 @@ def NetINcomeStatement():
 def TrialSheet():
     data = AccountingAPI.GetCategories()
     data1 = AccountingAPI.GetAllAccounts()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             if request.form['SheetFormat'] == 'pdf':
@@ -239,7 +243,7 @@ def TrialSheet():
                 request.form['StartDate'],
                 request.form['EndDate'],
                 request.form.getlist('act_check'))
-                rendered = render_template('accounting/trial_balance_sheet.html', data = trial1, sums = trial2, date1 = request.form['StartDate'], date2 = request.form['EndDate'])
+                rendered = render_template('accounting/trial_balance_sheet.html', data = trial1, sums = trial2, date1 = request.form['StartDate'], date2 = request.form['EndDate'], cmp = cmp)
                 pdf = pdfkit.from_string(rendered, False)
                 response = make_response(pdf)
                 response.headers['Content-type'] = 'application/pdf'

@@ -32,6 +32,22 @@ CREATE TABLE approvers(
 	Can_Approve VARCHAR(50)
 );
 
+-- Company/Organization profile:
+
+CREATE TABLE CompanyProfile(
+	id SERIAL PRIMARY KEY,
+	CompanyName VARCHAR(1000),
+	Address VARCHAR(50),
+	phone_1 VARCHAR(20),
+	phone_2 VARCHAR(20),
+	email VARCHAR(50),
+	pobox VARCHAR(10),
+	registration VARCHAR(10),
+	description TEXT
+);
+
+INSERT INTO CompanyProfile(CompanyName, Address, phone_1, phone_2, email, pobox, registration, description) VALUES('','','','','','','','');
+
 -- Creation of logistics tables...
 CREATE TABLE providers(
 	id SERIAL NOT NULL PRIMARY KEY,

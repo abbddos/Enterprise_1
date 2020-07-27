@@ -470,6 +470,7 @@ def edit_request(reqid):
 @mod.route('/warehouse_inventory', methods = ['GET','POST'])
 def warehouse_inventory():
     wh = EnterpriseAPI.GetWareHouses()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method =='POST':
         if request.form['submit'] == 'Submit':
             if request.form['to-date'] < request.form['from-date']:
@@ -491,7 +492,7 @@ def warehouse_inventory():
                     request.form['to-date'],
                     request.form.getlist('wh_check'))
                     reportdate = datetime.datetime.now()
-                    rendered = render_template('/logistics/warehouse_inventory.html', reportdate = reportdate, whs = request.form.getlist('wh_check'), data = data )
+                    rendered = render_template('/logistics/warehouse_inventory.html', reportdate = reportdate, whs = request.form.getlist('wh_check'), data = data, cmp = cmp )
                     pdf = pdfkit.from_string(rendered, False)
                     response = make_response(pdf)
                     response.headers['Content-type'] = 'application/pdf'
@@ -504,6 +505,7 @@ def items_packages_inventory():
     wh = EnterpriseAPI.GetWareHouses()
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             if request.form['to-date'] < request.form['from-date']:
@@ -527,7 +529,7 @@ def items_packages_inventory():
                     request.form.getlist('itm_check'),
                     request.form.getlist('pkg_check'))
                     reportdate = datetime.datetime.now()
-                    rendered = render_template('/logistics/item-pack-inventory-report.html', reportdate = reportdate, itm = request.form.getlist('itm_check'), pkg = request.form.getlist('pkg_check'), data = data )
+                    rendered = render_template('/logistics/item-pack-inventory-report.html', reportdate = reportdate, itm = request.form.getlist('itm_check'), pkg = request.form.getlist('pkg_check'), data = data, cmp = cmp )
                     pdf = pdfkit.from_string(rendered, False)
                     response = make_response(pdf)
                     response.headers['Content-type'] = 'application/pdf'
@@ -538,6 +540,7 @@ def items_packages_inventory():
 @mod.route('/bins_report', methods = ['GET','POST'])
 def bins_report():
     wh = EnterpriseAPI.GetWareHouses()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             if request.form['file-type'] == 'csv':
@@ -549,7 +552,7 @@ def bins_report():
             elif request.form['file-type'] == 'pdf':
                 data = EnterpriseAPI.Bins_Report_to_PDF(session['username'], session['password'], request.form.getlist('wh_check'))
                 reportdate = datetime.datetime.now()
-                rendered = render_template('logistics/bins_report.html', data = data, reportdate = reportdate)
+                rendered = render_template('logistics/bins_report.html', data = data, reportdate = reportdate, cmp = cmp)
                 pdf = pdfkit.from_string(rendered, False)
                 response = make_response(pdf)
                 response.headers['Content-type'] = 'application/pdf'
@@ -560,6 +563,7 @@ def bins_report():
 @mod.route('/transactions_report', methods = ['GET','POST'])
 def transactions_report():
     wh = EnterpriseAPI.GetWareHouses()
+    cmp = EnterpriseAPI.GetCompanyProfile()
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             if request.form['file-type'] == 'csv':
@@ -571,7 +575,7 @@ def transactions_report():
             elif request.form['file-type'] == 'pdf':
                 data1 = EnterpriseAPI.Transactions_Report_to_PDF(session['username'], session['password'])
                 reportdate = datetime.datetime.now()
-                rendered = render_template('logistics/transactions_report.html', reportdate = reportdate, data1 = data1)
+                rendered = render_template('logistics/transactions_report.html', reportdate = reportdate, data1 = data1, cmp = cmp)
                 pdf = pdfkit.from_string(rendered, False)
                 response = make_response(pdf)
                 response.headers['Content-type'] = 'application/pdf'
@@ -583,7 +587,8 @@ def transactions_report():
 def print_invoice(transid, transby, transtype, transtatus, wh):
     data, cmnt = EnterpriseAPI.TransInvoice(transid)
     transdate = str(datetime.datetime.now())
-    rendered = render_template('logistics/transaction-invoice.html', transid = transid, transdate = cmnt[0], transtype = transtype, transby = transby, transtatus = transtatus, wh = wh, data = data, cmnt = cmnt)
+    cmp = EnterpriseAPI.GetCompanyProfile()
+    rendered = render_template('logistics/transaction-invoice.html', transid = transid, transdate = cmnt[0], transtype = transtype, transby = transby, transtatus = transtatus, wh = wh, data = data, cmnt = cmnt, cmp = cmp)
     pdf = pdfkit.from_string(rendered, False)
     response = make_response(pdf)
     response.headers['Content-type'] = 'application/pdf'

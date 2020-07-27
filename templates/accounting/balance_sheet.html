@@ -34,9 +34,18 @@
             tr:nth-child(even){background-color: #eee;}
 
             .balance-total{
+                
                 background-color:darkgray;
                 font-weight: bold;
                 font-size: 12px;
+            }
+
+            .footer{
+                position: fixed;
+                color: gray;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
             }
 
         </style>
@@ -156,5 +165,6 @@
                
             </tr>
         </table>
+        <p class = 'footer'>{{cmp[1]}}, {{cmp[2]}}, phone1: {{cmp[3]}}, phone2: {{cmp[4]}}, email: {{cmp[5]}}, PO-BOX: {{cmp[6]}}, {{cmp[7]}}</p>
     </body>
 </html>

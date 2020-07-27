@@ -597,7 +597,8 @@ def EditRefundInvoice(invcode):
 @mod.route('print_invoice/<code>')
 def PrintInvoice(code):
     SentData, InvoiceData, ItmData = InvoicesAPI.GetPrintedInvoice(code)
-    rendered = render_template('invoices/printed_invoice.html', SentData = SentData, InvoiceData = InvoiceData, ItmData = ItmData)
+    cmp = EnterpriseAPI.GetCompanyProfile()
+    rendered = render_template('invoices/printed_invoice.html', SentData = SentData, InvoiceData = InvoiceData, ItmData = ItmData, cmp = cmp)
     pdf = pdfkit.from_string(rendered, False)
     response = make_response(pdf)
     response.headers['Content-type'] = 'application/pdf'
@@ -607,7 +608,8 @@ def PrintInvoice(code):
 @mod.route('invoice_view/<code>')
 def InvoiceView(code):
     SentData, InvoiceData, ItmData = InvoicesAPI.GetPrintedInvoice(code)
-    return render_template('invoices/printed_invoice.html', SentData = SentData, InvoiceData = InvoiceData, ItmData = ItmData)
+    cmp = EnterpriseAPI.GetCompanyProfile()
+    return render_template('invoices/printed_invoice.html', SentData = SentData, InvoiceData = InvoiceData, ItmData = ItmData, cmp = cmp)
 
 
 @mod.route('view_invoice/<code>/<tpy>', methods = ['GET','POST'])

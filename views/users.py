@@ -105,3 +105,25 @@ def edit_user(id):
                 flash(str(e), category = 'fail')
                 return redirect(url_for('users.create_user'))
     return render_template('users/edit_user.html', username = session['username'], data1 = data1, data2 = data2, data3 = data3)
+
+@mod.route('/Company-Profile', methods = ['GET','POST'])
+def CompanyProfile():
+    profile = EnterpriseAPI.GetCompanyProfile()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                EnterpriseAPI.UpdateCompanyProfile(session['username'], session['password'],
+                request.form['companyname'],
+                request.form['companyaddress'],
+                request.form['phone1'],
+                request.form['phone2'],
+                request.form['email'],
+                request.form['pobox'],
+                request.form['registration'],
+                request.form['description'])
+                flash('Company profile updated succcessfully', category = 'success')
+                return redirect(url_for('users.CompanyProfile'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('users.CompanyProfile'))
+    return render_template('users/company_profile.html', username = session['username'], pro = profile)

@@ -158,6 +158,21 @@ def ResetPassword(sess_uname, sess_pswd, user):
     con.close()
     return rst_pass, name 
 
+
+def GetCompanyProfile():
+    con, cur = root()
+    cur.execute("SELECT * FROM companyprofile WHERE id = 1")
+    data = cur.fetchone()
+    con.close()
+    return data
+
+def UpdateCompanyProfile(sess_uname, sess_pswd, name, address, phone1, phone2, email, pobox, registration, description):
+    con, cur = connector(sess_uname, sess_pswd)
+    cur.execute('UPDATE companyprofile SET companyname = %s, address = %s, phone_1 = %s, phone_2 = %s, email = %s, pobox = %s, registration = %s, description = %s',
+    (name, address, phone1, phone2, email, pobox, registration, description))
+    con.commit()
+    con.close()
+
 def GetProviders():
     con, cur = root()
     cur.execute('SELECT id, name, address, phone_1, phone_2, email, pobox FROM providers')
@@ -287,7 +302,7 @@ def CreatePackage(sess_uname, sess_pswd, packagename, itemcode, itemname, unit, 
     con, cur = connector(sess_uname, sess_pswd)
     for i in range(len(itemcode)):
         cur.execute('INSERT INTO packages(packagecode, packagename, itemcode, itemname, unit, unit_price, unit_cost, quantity, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-        (code, packagename, itemcode[i], itemname[i], unit[i], unitprice[i], quantity[i], description))
+        (code, packagename, itemcode[i], itemname[i], unit[i], unitprice[i], unitcost[i], quantity[i], description))
         con.commit()
 
     con.close()
@@ -308,7 +323,7 @@ def UpdatePackage(sess_uname, sess_pswd, pkg, packagename, itemcode, itemname, u
     cur.execute('DELETE FROM packages WHERE packagecode = %s', (pkg,))
     for i in range(len(itemcode)):
         cur.execute('INSERT INTO packages(packagecode, packagename, itemcode, itemname, unit, unit_price, unit_cost, quantity, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)',
-        (pkg, packagename, itemcode[i], itemname[i], unit[i], unitprice[i], quantity[i], description))
+        (pkg, packagename, itemcode[i], itemname[i], unit[i], unitprice[i], unitcost[i], quantity[i], description))
         con.commit()
     con.close()
 
