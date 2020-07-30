@@ -1,4 +1,5 @@
 import psycopg2
+import hashlib
 #from werkzeug.utils import secure_filename
 import os
 from openpyxl import load_workbook
@@ -43,14 +44,28 @@ def NewUser(newname):
 # If found Logger value returns the boolean value of True, otherwise, it returns
 # False.
 def Logger(usrname, passwd):
-    con, cur = root()
-    cur.execute('SELECT username, password FROM users WHERE username = %s and password = %s', (usrname, passwd))
-    result = cur.fetchone()
-    try:
-        if result[0] == usrname and result[1] == passwd:
-            return True
-    except:
-        return False
+    passwd1 = passwd
+    if passwd != 'admin':
+        m = hashlib.sha256()
+        m.update(passwd.encode('utf8'))
+        passwd1 = m.hexdigest()
+        con, cur = root()
+        cur.execute('SELECT username, password, usertype FROM users WHERE username = %s and password = %s', (usrname, passwd1))
+        result = cur.fetchone()
+        try:
+            if result[0] == usrname and result[1] == passwd1:
+                return {'username': result[0], 'password': result[1], 'logged': True, 'role':result[2]}
+        except:
+            return {'logged': False}
+    else:
+        con, cur = root()
+        cur.execute('SELECT username, password, usertype FROM users WHERE username = %s and password = %s', (usrname, passwd1))
+        result = cur.fetchone()
+        try:
+            if result[0] == usrname and result[1] == passwd1:
+                return {'username': result[0], 'password': result[1], 'logged': True, 'role': result[2]}
+        except:
+            return {'logged': False}
 
 # .......The following functions are specifically for the user to update his/her own...
 # .......information and password.
@@ -70,9 +85,20 @@ def UpdateProfile(firstname, lastname, email, phone1, phone2, user):
     con.close()
 
 def ChangePassword(user, currentpswd, newpswd):
+    m = hashlib.sha256()
+    newpass = None
+    oldpass = currentpswd
+    if currentpswd != 'admin':
+        m.update(newpswd.encode('utf8'))
+        newpass = m.hexdigest()
+        m.update(currentpswd.encode('utf8'))
+        oldpass = m.hexdigest()
+    else:
+        m.update(newpswd.encode('utf8'))
+        newpass = m.hexdigest()
     con, cur = root()
-    cur.execute('UPDATE users SET password = %s WHERE username = %s AND password = %s', (newpswd, user, currentpswd))
-    cur.execute("ALTER ROLE {} WITH PASSWORD '{}'".format(user, newpswd))
+    cur.execute('UPDATE users SET password = %s WHERE username = %s AND password = %s', (newpass, user, oldpass))
+    cur.execute("ALTER ROLE {} WITH PASSWORD '{}'".format(user, newpass))
     con.commit()
     con.close()
 
@@ -117,11 +143,14 @@ def CreateUser(sess_uname, sess_pswd, firstname, lastname, company, position, de
     #... Adding user to users table...
     UserName = firstname[0].lower() + lastname.lower()
     NewName = NewUser(UserName)
-    Password = NewName + '@123'
+    passwd = NewName + '@123'
+    m = hashlib.sha256()
+    m.update(passwd.encode('utf8'))
+    Password = m.hexdigest()
     cur.execute('INSERT INTO users(firstname, lastname, username, password, company, position, department, email, phone1, phone2, usertype) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
     (firstname, lastname, NewName, Password, company, position, department, email, phone1, phone2, usrtype))
     #... Creating Database User with UserType permissions.
-    cur.execute("CREATE ROLE {} WITH LOGIN PASSWORD '{}'".format(NewName, Password))
+    cur.execute("CREATE ROLE {} WITH SUPERUSER LOGIN PASSWORD '{}'".format(NewName, Password))
     con.commit()
     for a in range(len(approvals)):
         cur.execute('INSERT INTO approvers(firstname, lastname, username, position, department, email, can_approve) VALUES(%s, %s, %s, %s, %s, %s, %s)', (firstname, lastname, NewName, position, department, email, approvals[a]))
@@ -152,8 +181,11 @@ def ResetPassword(sess_uname, sess_pswd, user):
     cur.execute('SELECT firstname, username, email FROM users WHERE id = %s', (user,))
     name = cur.fetchone()
     rst_pass = str(name[1]) + '@123'
-    cur.execute('UPDATE users SET password = %s WHERE id = %s' ,(rst_pass, user))
-    cur.execute("ALTER ROLE {} WITH PASSWORD '{}'".format(sess_uname, rst_pass))
+    m = hashlib.sha256()
+    m.update(rst_pass.encode('utf8'))
+    resetpass = m.hexdigest()
+    cur.execute('UPDATE users SET password = %s WHERE id = %s' ,(resetpass, user))
+    cur.execute("ALTER ROLE {} WITH PASSWORD '{}'".format(sess_uname, resetpass))
     con.commit()
     con.close()
     return rst_pass, name 

@@ -18,7 +18,7 @@ mod = Blueprint('logistics', __name__, url_prefix = '/logistics')
 @mod.route('/')
 def logistics():
     wh = EnterpriseAPI.GetWareHouses()
-    return render_template('logistics/logistics.html', username = session['username'], wh = wh)
+    return render_template('logistics/logistics.html', username = session['username'], role = session['role'], wh = wh)
 
 @mod.route('/Providers/', methods = ['GET' ,'POST'])
 def Providers():
@@ -41,7 +41,7 @@ def Providers():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.Providers'))
-    return render_template('logistics/providers.html', username = session['username'], form = form, data = data, wh = wh)
+    return render_template('logistics/providers.html', username = session['username'], role = session['role'], form = form, data = data, wh = wh)
 
 @mod.route('/edit_provider/<prv>/', methods = ['GET', 'POST'])
 def edit_provider(prv):
@@ -65,7 +65,7 @@ def edit_provider(prv):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.Providers'))
-    return render_template('logistics/edit_provider.html', username = session['username'], form = form, data = data, data1 = data1, wh = wh)
+    return render_template('logistics/edit_provider.html', username = session['username'], role = session['role'], form = form, data = data, data1 = data1, wh = wh)
 
 @mod.route('/groups/', methods = ['GET','POST'])
 def groups():
@@ -82,7 +82,7 @@ def groups():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.groups'))
-    return render_template('logistics/groups.html', username = session['username'], data = data, wh = wh)
+    return render_template('logistics/groups.html', username = session['username'], role = session['role'], data = data, wh = wh)
 
 @mod.route('/edit_group/<id>/', methods = ['GET','POST'])
 def edit_group(id):
@@ -100,7 +100,7 @@ def edit_group(id):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.groups'))
-    return render_template('logistics/edit_group.html', data = data, data1 = data1, username = session['username'], wh = wh)
+    return render_template('logistics/edit_group.html', data = data, data1 = data1, username = session['username'], role = session['role'], wh = wh)
 
 @mod.route('/items/', methods = ['GET','POST'])
 def items():
@@ -142,7 +142,7 @@ def items():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.items'))
-    return render_template('logistics/items.html', username = session['username'], form = form, data = data, wh = wh)
+    return render_template('logistics/items.html', username = session['username'], role = session['role'],  form = form, data = data, wh = wh)
 
 @mod.route('/edit_item/<itm>/', methods = ['GET','POST'])
 def edit_item(itm):
@@ -184,7 +184,7 @@ def edit_item(itm):
             #except Exception as e:
             #    flash(str(e), category = 'fail')
             #    return redirect(url_for('logistics.items'))
-    return render_template('logistics/edit_item.html', username = session['username'], data = data, data1 = data1, provs = provs, grp = grp, wh = wh, secunit = secunit)
+    return render_template('logistics/edit_item.html', username = session['username'], role = session['role'], data = data, data1 = data1, provs = provs, grp = grp, wh = wh, secunit = secunit)
 
 @mod.route('/packages/', methods = ['GET','POST'])
 def packages():
@@ -210,7 +210,7 @@ def packages():
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.packages'))
 
-    return render_template('logistics/packages.html', username = session['username'], itms = itms, pkg = pkg, wh = wh)
+    return render_template('logistics/packages.html', username = session['username'], role = session['role'], itms = itms, pkg = pkg, wh = wh)
 
 @mod.route('/edit_package/<pkg>/', methods = ['GET','POST'])
 def edit_package(pkg):
@@ -235,7 +235,7 @@ def edit_package(pkg):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.packages'))
-    return render_template('logistics/edit_package.html', username = session['username'], pks = pks, itms = itms, pkk = pkk, itt = itt, wh = wh)
+    return render_template('logistics/edit_package.html', username = session['username'], role = session['role'], pks = pks, itms = itms, pkk = pkk, itt = itt, wh = wh)
 
 @mod.route('Secondary_units/', methods = ['GET','POST'])
 def SecondaryUnits():
@@ -254,7 +254,7 @@ def SecondaryUnits():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.SecondaryUnits'))
-    return render_template('logistics/Secondary_units.html', username = session['username'], data = data, wh = wh)
+    return render_template('logistics/Secondary_units.html', username = session['username'], role = session['role'], data = data, wh = wh)
 
 @mod.route('Edit_Secondary_unit/<code>/', methods = ['GET','POST'])
 def EditSecondaryUnit(code):
@@ -274,7 +274,7 @@ def EditSecondaryUnit(code):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.SecondaryUnits'))
-    return render_template('logistics/Edit_secondary_unit.html', username = session['username'], data = data, data1 = data1, wh = wh)
+    return render_template('logistics/Edit_secondary_unit.html', username = session['username'], role = session['role'], data = data, data1 = data1, wh = wh)
 
 @mod.route('/warehouses/create_warehouse/', methods = ['GET','POST'])
 def create_warehouse():
@@ -293,7 +293,7 @@ def create_warehouse():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.create_warehouse'))
-    return render_template('logistics/create_warehouse.html', form = form, wh = wh, username = session['username'])
+    return render_template('logistics/create_warehouse.html', form = form, wh = wh, username = session['username'], role = session['role'])
 
 @mod.route('/warehouses/edit_warehouse/<code>/', methods = ['GET','POST'])
 def edit_warehouse(code):
@@ -313,7 +313,7 @@ def edit_warehouse(code):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.create_warehouse'))
-    return render_template('logistics/edit_warehouse.html', whh = whh, wh = wh, bins = bins, username = session['username'], form = form, code = code)
+    return render_template('logistics/edit_warehouse.html', whh = whh, wh = wh, bins = bins, username = session['username'], role = session['role'],  form = form, code = code)
 
 @mod.route('/warehouses/edit_warehouse/add_bin/<wh>/', methods = ['GET','POST'])
 def add_bin(wh):
@@ -389,7 +389,7 @@ def transactions():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('logistics.transactions'))
-    return render_template('logistics/transactions.html', username = session['username'], itms = itms, pkgs = pkgs, warehouse = warehouse, wh = wh, trans = trans, rqst = rqst)
+    return render_template('logistics/transactions.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, warehouse = warehouse, wh = wh, trans = trans, rqst = rqst)
 
 @mod.route('/edit_transaction/<transid>', methods = ['GET','POST'])
 def edit_transaction(transid):
@@ -407,7 +407,7 @@ def edit_transaction(transid):
             except Exception as e:
                 flash('Cannot to update a Complete or Canceled transacction.', category = 'fail')
                 return redirect(url_for('logistics.edit_transaction', transid = transid))
-    return render_template('logistics/edit-transaction.html', username = session['username'], warehouse = warehouse, wh = wh, trans = trans, head = head, details = details, rqst = rqst)
+    return render_template('logistics/edit-transaction.html', username = session['username'], role = session['role'], warehouse = warehouse, wh = wh, trans = trans, head = head, details = details, rqst = rqst)
 
 @mod.route('/requests', methods = ['GET','POST'])
 def requests():
@@ -442,7 +442,7 @@ def requests():
                 except Exception as e:
                     flash(str(e), category = 'fail')
                     return redirect(url_for('logistics.requests'))
-    return render_template('logistics/requests.html', username = session['username'], trans = trans, wh = wh, itms = itms, pkgs = pkgs, appr = appr)
+    return render_template('logistics/requests.html', username = session['username'], role = session['role'],  trans = trans, wh = wh, itms = itms, pkgs = pkgs, appr = appr)
 
 @mod.route('edit_request/<reqid>', methods = ['GET','POST'])
 def edit_request(reqid):
@@ -465,7 +465,7 @@ def edit_request(reqid):
                 except Exception as e:
                     flash(str(e), category = 'fail')
                     return redirect(url_for('logistics.requests'))
-    return render_template('logistics/edit_request.html', username = session['username'], trans = trans, wh = wh, appr = appr, head = head, details = details, aprv = aprv)
+    return render_template('logistics/edit_request.html', username = session['username'], role = session['role'], trans = trans, wh = wh, appr = appr, head = head, details = details, aprv = aprv)
 
 @mod.route('/warehouse_inventory', methods = ['GET','POST'])
 def warehouse_inventory():
@@ -498,7 +498,7 @@ def warehouse_inventory():
                     response.headers['Content-type'] = 'application/pdf'
                     response.headers['Content-Disposition'] = 'attachement; filename = warehouse-inventory-report.pdf'
                     return response
-    return render_template('logistics/warehouse-inventory-report.html', username = session['username'], wh = wh)
+    return render_template('logistics/warehouse-inventory-report.html', username = session['username'], role = session['role'], wh = wh)
 
 @mod.route('/items_packages_inventory', methods = ['GET','POST'])
 def items_packages_inventory():
@@ -535,7 +535,7 @@ def items_packages_inventory():
                     response.headers['Content-type'] = 'application/pdf'
                     response.headers['Content-Disposition'] = 'attachement; filename = item-pack-inventory-report.pdf'
                     return response
-    return render_template('logistics/item-package-inventory-report.html', username = session['username'], wh = wh, itms = itms, pkgs = pkgs)
+    return render_template('logistics/item-package-inventory-report.html', username = session['username'], role = session['role'], wh = wh, itms = itms, pkgs = pkgs)
 
 @mod.route('/bins_report', methods = ['GET','POST'])
 def bins_report():
@@ -558,7 +558,7 @@ def bins_report():
                 response.headers['Content-type'] = 'application/pdf'
                 response.headers['Content-Disposition'] = 'attachement; filename = bins-statuses-report.pdf'
                 return response
-    return render_template('logistics/bins-report.html', username = session['username'], wh = wh)
+    return render_template('logistics/bins-report.html', username = session['username'], role = session['role'], wh = wh)
 
 @mod.route('/transactions_report', methods = ['GET','POST'])
 def transactions_report():
@@ -581,7 +581,7 @@ def transactions_report():
                 response.headers['Content-type'] = 'application/pdf'
                 response.headers['Content-Disposition'] = 'attachement; filename = transactions-report.pdf'
                 return response
-    return render_template('logistics/transactions-report.html', username = session['username'], wh = wh)
+    return render_template('logistics/transactions-report.html', username = session['username'], role = session['role'],  wh = wh)
 
 @mod.route('/print_invoice/<transid>/<transby>/<transtype>/<transtatus>/<wh>')
 def print_invoice(transid, transby, transtype, transtatus, wh):

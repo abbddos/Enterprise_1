@@ -13,7 +13,7 @@ mod = Blueprint('invoices', __name__, url_prefix = '/invoices')
 
 @mod.route('/')
 def invoices():
-    return render_template('invoices/invoices.html', username = session['username'])
+    return render_template('invoices/invoices.html', username = session['username'], role = session['role'])
 
 @mod.route('/Providers/', methods = ['GET' ,'POST'])
 def Providers():
@@ -35,7 +35,7 @@ def Providers():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.Providers'))
-    return render_template('invoices/providers.html', username = session['username'], form = form, data = data)
+    return render_template('invoices/providers.html', username = session['username'], role = session['role'], form = form, data = data)
 
 @mod.route('/edit_provider/<prv>/', methods = ['GET', 'POST'])
 def edit_provider(prv):
@@ -58,7 +58,7 @@ def edit_provider(prv):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.Providers'))
-    return render_template('invoices/edit_provider.html', username = session['username'], form = form, data = data, data1 = data1)
+    return render_template('invoices/edit_provider.html', username = session['username'], role = session['role'], form = form, data = data, data1 = data1)
 
 @mod.route('/Customers/', methods = ['GET' ,'POST'])
 def Customers():
@@ -80,7 +80,7 @@ def Customers():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.Customers'))
-    return render_template('invoices/customers.html', username = session['username'], form = form, data = data)
+    return render_template('invoices/customers.html', username = session['username'], role = session['role'], form = form, data = data)
 
 @mod.route('/edit_customer/<cst>/', methods = ['GET', 'POST'])
 def edit_customer(cst):
@@ -103,7 +103,7 @@ def edit_customer(cst):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.Customers'))
-    return render_template('invoices/edit_customer.html', username = session['username'], form = form, data = data, data1 = data1)
+    return render_template('invoices/edit_customer.html', username = session['username'], role = session['role'], form = form, data = data, data1 = data1)
 
 @mod.route('/groups/', methods = ['GET','POST'])
 def groups():
@@ -119,7 +119,7 @@ def groups():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.groups'))
-    return render_template('invoices/groups.html', username = session['username'], data = data)
+    return render_template('invoices/groups.html', username = session['username'], role = session['role'], data = data)
 
 @mod.route('/edit_group/<id>/', methods = ['GET','POST'])
 def edit_group(id):
@@ -136,7 +136,7 @@ def edit_group(id):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.groups'))
-    return render_template('invoices/edit_group.html', data = data, data1 = data1, username = session['username'])
+    return render_template('invoices/edit_group.html', data = data, data1 = data1, username = session['username'], role = session['role'])
 
 @mod.route('/items/', methods = ['GET','POST'])
 def items():
@@ -177,7 +177,7 @@ def items():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.items'))
-    return render_template('invoices/items.html', username = session['username'], form = form, data = data)
+    return render_template('invoices/items.html', username = session['username'], role = session['role'], form = form, data = data)
 
 @mod.route('/edit_item/<itm>/', methods = ['GET','POST'])
 def edit_item(itm):
@@ -218,7 +218,7 @@ def edit_item(itm):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.items'))
-    return render_template('invoices/edit_item.html', username = session['username'], data = data, data1 = data1, provs = provs, grp = grp, secunit = secunit)
+    return render_template('invoices/edit_item.html', username = session['username'], role = session['role'], data = data, data1 = data1, provs = provs, grp = grp, secunit = secunit)
 
 @mod.route('/packages/', methods = ['GET','POST'])
 def packages():
@@ -243,7 +243,7 @@ def packages():
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.packages'))
 
-    return render_template('invoices/packages.html', username = session['username'], itms = itms, pkg = pkg)
+    return render_template('invoices/packages.html', username = session['username'], role = session['role'], itms = itms, pkg = pkg)
 
 @mod.route('/edit_package/<pkg>/', methods = ['GET','POST'])
 def edit_package(pkg):
@@ -267,7 +267,7 @@ def edit_package(pkg):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.packages'))
-    return render_template('invoices/edit_package.html', username = session['username'], pks = pks, itms = itms, pkk = pkk, itt = itt)
+    return render_template('invoices/edit_package.html', username = session['username'], role = session['role'], pks = pks, itms = itms, pkk = pkk, itt = itt)
 
 @mod.route('Secondary_units/', methods = ['GET','POST'])
 def SecondaryUnits():
@@ -285,7 +285,7 @@ def SecondaryUnits():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SecondaryUnits'))
-    return render_template('invoices/Secondary_units.html', username = session['username'], data = data)
+    return render_template('invoices/Secondary_units.html', username = session['username'], role = session['role'], data = data)
 
 @mod.route('Edit_Secondary_unit/<code>/', methods = ['GET','POST'])
 def EditSecondaryUnit(code):
@@ -304,7 +304,7 @@ def EditSecondaryUnit(code):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SecondaryUnits'))
-    return render_template('invoices/Edit_secondary_unit.html', username = session['username'], data = data, data1 = data1)
+    return render_template('invoices/Edit_secondary_unit.html', username = session['username'], role = session['role'], data = data, data1 = data1)
 
 @mod.route('sales_invoice/', methods = ['GET','POST'])
 def SalesInvoice():
@@ -339,7 +339,7 @@ def SalesInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SalesInvoice'))
-    return render_template('invoices/sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
+    return render_template('invoices/sales_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
 
 @mod.route('edit_sales_invoice/<invcode>', methods = ['GET','POST'])
 def EditSalesInvoice(invcode):
@@ -375,7 +375,7 @@ def EditSalesInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SalesInvoice')) 
-    return render_template('invoices/edit_sales_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_sales_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
 
 
 @mod.route('procurement_invoice/', methods = ['GET','POST'])
@@ -411,7 +411,7 @@ def ProcurementInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ProcurementInvoice'))
-    return render_template('invoices/procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
+    return render_template('invoices/procurement_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
 
 @mod.route('edit_procurement_invoice/<invcode>', methods = ['GET','POST'])
 def EditProcurementInvoice(invcode):
@@ -447,7 +447,7 @@ def EditProcurementInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ProcurementInvoice')) 
-    return render_template('invoices/edit_procurement_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_procurement_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
 
 @mod.route('return_invoice/', methods = ['GET','POST'])
 def ReturnInvoice():
@@ -482,7 +482,7 @@ def ReturnInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ReturnInvoice'))
-    return render_template('invoices/return_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
+    return render_template('invoices/return_invoice.html', username = session['username'], role = session['role'], tms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
 
 @mod.route('edit_return_invoice/<invcode>', methods = ['GET','POST'])
 def EditReturnInvoice(invcode):
@@ -518,7 +518,7 @@ def EditReturnInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ReturnInvoice')) 
-    return render_template('invoices/edit_return_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_return_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
 
 @mod.route('refund_invoice/', methods = ['GET','POST'])
 def RefundInvoice():
@@ -553,7 +553,7 @@ def RefundInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.RefundInvoice'))
-    return render_template('invoices/refund_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
+    return render_template('invoices/refund_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
 
 @mod.route('edit_refund_invoice/<invcode>', methods = ['GET','POST'])
 def EditRefundInvoice(invcode):
@@ -589,7 +589,7 @@ def EditRefundInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.RefundInvoice')) 
-    return render_template('invoices/edit_refund_invoice.html', username = session['username'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_refund_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
 
 
 
@@ -640,7 +640,7 @@ def ViewInvoice(code, tpy):
         else:
             flash('User does not have permission to approve or cancel this invoice', category = 'fail')
             return redirect(url_for('invoices.ViewInvoice', code = code, tpy = tpy))
-    return render_template('invoices/view_invoice.html', username = session['username'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS, Stat = Stat)
+    return render_template('invoices/view_invoice.html', username = session['username'], role = session['role'], invs = invs, iframe = iframe, type = tpy, RS = RS, CGS = CGS, Stat = Stat)
 
 @mod.route('payment_bill/', methods = ['GET','POST'])
 def PaymentBill():
@@ -673,7 +673,7 @@ def PaymentBill():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.PaymentBill'))
-    return render_template('invoices/payment_bill.html', username = session['username'], bills = bills)
+    return render_template('invoices/payment_bill.html', username = session['username'], role = session['role'], bills = bills)
 
 @mod.route('edit_payment_bill/<billcode>', methods = ['GET','POST'])
 def EditPaymentBill(billcode):
@@ -707,7 +707,7 @@ def EditPaymentBill(billcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.PaymentBill'))
-    return render_template('invoices/edit_payment_bill.html', username = session['username'], 
+    return render_template('invoices/edit_payment_bill.html', username = session['username'], role = session['role'], 
     bills = bills,
     data1 = data1,
     data2 = data2)
@@ -730,7 +730,7 @@ def ViewPaymentBill(billcode):
         else:
             flash('This user does not have permission to register this bill...', category = 'fail')
             return redirect(url_for('invoices.ViewPaymentBill', billcode = billcode))
-    return render_template('invoices/view_payment_bill.html', username = session['username'], 
+    return render_template('invoices/view_payment_bill.html', username = session['username'], role = session['role'], 
     bills = bills,
     data1 = data1,
     data2 = data2)
@@ -766,7 +766,7 @@ def ReceptionBill():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ReceptionBill'))
-    return render_template('invoices/reception_bill.html', username = session['username'], bills = bills)
+    return render_template('invoices/reception_bill.html', username = session['username'], role = session['role'], bills = bills)
 
 @mod.route('edit_reception_bill/<billcode>', methods = ['GET','POST'])
 def EditReceptionBill(billcode):
@@ -801,7 +801,7 @@ def EditReceptionBill(billcode):
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ReceptionBill'))
     
-    return render_template('invoices/edit_reception_bill.html', username = session['username'], 
+    return render_template('invoices/edit_reception_bill.html', username = session['username'], role = session['role'], 
     bills = bills,
     data1 = data1,
     data2 = data2)
@@ -824,7 +824,7 @@ def ViewReceptionBill(billcode):
         else:
             flash('This user does not have permission to register this bill...', category = 'fail')
             return redirect(url_for('invoices.ViewReceptionBill', billcode = billcode))
-    return render_template('invoices/view_reception_bill.html', username = session['username'], 
+    return render_template('invoices/view_reception_bill.html', username = session['username'], role = session['role'], 
     bills = bills,
     data1 = data1,
     data2 = data2)

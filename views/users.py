@@ -38,8 +38,8 @@ def create_user():
                 return redirect(url_for('users.create_user'))
             except Exception as e:
                 flash(str(e), category = 'fail')
-                return render_template('users/create_user.html', username = session['username'], data = data, form = form)
-    return render_template('users/create_user.html', username = session['username'], data = data, form = form)
+                return render_template('users/create_user.html', username = session['username'], role = session['role'], data = data, form = form)
+    return render_template('users/create_user.html', username = session['username'], role = session['role'], data = data, form = form )
 
 # ........ Resetting user password to initial default password.
 @mod.route('/reset_password/<user>/')
@@ -74,7 +74,7 @@ def create_multiple_users():
             #except Exception as e:
             #    flash(str(e), category = 'fail')
             #    return render_template('users/create_multiple_users.html', username = session['username'], form = form)
-    return render_template('users/create_multiple_users.html', username = session['username'], form = form, data = data)
+    return render_template('users/create_multiple_users.html', username = session['username'], role = session['role'], form = form, data = data)
 
 # ........ Updating user information using UpdateUser API at Model.py
 # ........ This allows administrators to update users' info and assigned...
@@ -104,7 +104,7 @@ def edit_user(id):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('users.create_user'))
-    return render_template('users/edit_user.html', username = session['username'], data1 = data1, data2 = data2, data3 = data3)
+    return render_template('users/edit_user.html', username = session['username'], role = session['role'], data1 = data1, data2 = data2, data3 = data3 )
 
 @mod.route('/Company-Profile', methods = ['GET','POST'])
 def CompanyProfile():
@@ -126,4 +126,4 @@ def CompanyProfile():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('users.CompanyProfile'))
-    return render_template('users/company_profile.html', username = session['username'], pro = profile)
+    return render_template('users/company_profile.html', username = session['username'], role = session['role'], pro = profile)

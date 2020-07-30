@@ -12,7 +12,7 @@ mod = Blueprint('accounting', __name__, url_prefix = '/accounting')
 @mod.route('/')
 def accounting():
     data = AccountingAPI.GetCategories()
-    return render_template('accounting/accounting.html', username = session['username'], data = data)
+    return render_template('accounting/accounting.html', username = session['username'], role = session['role'], data = data)
 
 @mod.route('/add_category/<category>', methods = ['GET','POST'])
 def add_category(category):
@@ -30,7 +30,7 @@ def add_category(category):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_category', category = category))
-    return render_template('accounting/add-category.html', username = session['username'], data = data, category = category, form = form)
+    return render_template('accounting/add-category.html', username = session['username'], role = session['role'],  data = data, category = category, form = form)
 
 @mod.route('/edit_category/<category>/<account>', methods = ['GET','POST'])
 def edit_category(category, account):
@@ -51,7 +51,7 @@ def edit_category(category, account):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_account', category = category, account = account))
-    return render_template('accounting/add-account.html', username = session['username'], data = data, category = category,  cats = cats, form = form, accounts = AllAccounts, account = account)
+    return render_template('accounting/add-account.html', username = session['username'], role = session['role'],  data = data, category = category,  cats = cats, form = form, accounts = AllAccounts, account = account)
 
 @mod.route('/add_account/<category>/<account>', methods = ['GET','POST'])
 def add_account(category, account):
@@ -76,7 +76,7 @@ def add_account(category, account):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.add_account', category = category, account = account))
-    return render_template('accounting/add-account.html', username = session['username'], data = data, category = category, cats = cats, form = form, accounts = AllAccounts, account = account)
+    return render_template('accounting/add-account.html', username = session['username'], role = session['role'], data = data, category = category, cats = cats, form = form, accounts = AllAccounts, account = account)
 
 @mod.route('/edit_account/<type>/<category>/<account>', methods = ['GET','POST'])
 def edit_account(type, category, account):
@@ -100,7 +100,7 @@ def edit_account(type, category, account):
                 return redirect(url_for('accounting.add_account', category = type, account = category))
             except Exception as e:
                 flash(str(e), category = 'fail')
-    return render_template('accounting/edit-account.html', username = session['username'], data = data, category = type,  cats = cats, accounts = AllAccounts, account = category, acdata = AccountData, curs = currencies)     
+    return render_template('accounting/edit-account.html', username = session['username'], role = session['role'], data = data, category = type,  cats = cats, accounts = AllAccounts, account = category, acdata = AccountData, curs = currencies)     
 
 @mod.route('/journal', methods = ['GET','POST'])
 def journal():
@@ -123,7 +123,7 @@ def journal():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.journal'))
-    return render_template('accounting/journal.html', username = session['username'], data = data,  jrns = jrns, FC = FCurr)
+    return render_template('accounting/journal.html', username = session['username'], role = session['role'], data = data,  jrns = jrns, FC = FCurr)
 
 @mod.route('/view_journal_entry/<entrycode>', methods = ['GET','POST'])
 def view_journal_entry(entrycode):
@@ -133,7 +133,7 @@ def view_journal_entry(entrycode):
     FCurr = AccountingAPI.GetFuntionalCurrency()
     if request.method == 'POST':
         return redirect(url_for('accounting.journal'))
-    return render_template('accounting/view-journal-entry.html', username = session['username'], data = data,  jrns = jrns, data1 = data1, data2 = data2, data3 = data3, FC = FCurr)
+    return render_template('accounting/view-journal-entry.html', username = session['username'], role = session['role'], data = data,  jrns = jrns, data1 = data1, data2 = data2, data3 = data3, FC = FCurr)
 
 @mod.route('/currencies', methods = ['GET','POST'])
 def currencies():
@@ -157,7 +157,7 @@ def currencies():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.currencies'))
-    return render_template('accounting/currencies.html', username = session['username'], form = form, data = data, data1 = data1)
+    return render_template('accounting/currencies.html', username = session['username'], role = session['role'], form = form, data = data, data1 = data1)
 
 @mod.route('/edit_currency/<code>', methods = ['GET','POST'])
 def EditCurrency(code):
@@ -182,7 +182,7 @@ def EditCurrency(code):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('accounting.currencies'))
-    return render_template('accounting/edit_currency.html', username = session['username'], data = data, data1 = data1, data2 = data2)
+    return render_template('accounting/edit_currency.html', username = session['username'], role = session['role'], data = data, data1 = data1, data2 = data2)
 
 @mod.route('/BalanceSheet/', methods = ['GET','POST'])
 def BalanceSheet():
@@ -205,7 +205,7 @@ def BalanceSheet():
                 response.headers['Content-Disposition'] = 'attachement; filename = Balance_Sheet.csv'
                 return response
 
-    return render_template('accounting/get_balancesheet.html', username = session['username'], data = data)
+    return render_template('accounting/get_balancesheet.html', username = session['username'], role = session['role'], data = data)
 
 @mod.route('/NetIncomeStatement/', methods = ['GET','POST'])
 def NetINcomeStatement():
@@ -229,7 +229,7 @@ def NetINcomeStatement():
                 response.headers['Content-type'] = 'text/csv'
                 response.headers['Content-Disposition'] = 'attachement; filename = Net_Income_Statement.csv'
                 return response
-    return render_template('accounting/get_income_statement.html', username = session['username'], data = data)
+    return render_template('accounting/get_income_statement.html', username = session['username'], role = session['role'], data = data)
 
 @mod.route('/TrialSheet/', methods = ['GET','POST'])
 def TrialSheet():
@@ -258,7 +258,7 @@ def TrialSheet():
                 response.headers['Content-type'] = 'text/csv'
                 response.headers['Content-Disposition'] = 'attachement; filename = Trial_Balance_Statement.csv'
                 return response
-    return render_template('accounting/get_trial_sheet.html', username = session['username'], data = data, data1 = data1)
+    return render_template('accounting/get_trial_sheet.html', username = session['username'], role = session['role'], data = data, data1 = data1)
 
 #REST API
 @mod.route('/checker/')

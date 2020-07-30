@@ -25,7 +25,7 @@ def user_profile(user):
                 return redirect(url_for('profile.user_profile', user = user))
             except Exception as e:
                 flash(str(e), category = 'fail')
-    return render_template('profile/user_profile.html', user = user, username = session['username'], data = data)
+    return render_template('profile/user_profile.html', user = user, username = session['username'], role = session['role'], data = data)
 
 # ........ This url is lined to ChangePassword API at Model.py to allow...
 # ........ user to change his/her password.
@@ -42,5 +42,5 @@ def change_password(user):
                 flash(str(e), category = 'fail')
         else:
             flash('Passwords must match', category = 'fail')
-            return render_template('profile/change_password.html', username = session['username'], user = user, form = form)
-    return render_template('profile/change_password.html', username = session['username'], user = user, form = form)
+            return render_template('profile/change_password.html', username = session['username'], role = session['role'], user = user, form = form)
+    return render_template('profile/change_password.html', username = session['username'], role = session['role'], user = user, form = form)

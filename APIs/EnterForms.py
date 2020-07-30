@@ -22,8 +22,10 @@ class CreateUser(Form):
     phone2 = StringField('Phone #2: ')
     usrtype = SelectField('User Type: ', choices = [
     ('Admin', 'Admin'),
-    ('User', 'User'),
-    ('Viewer', 'Viewer')
+    ('Logistics', 'Logistics'),
+    ('Accounting', 'Accounting'),
+    ('Invoices','Invoices'),
+    ('Manager','Manager')
     ])
 
 class FileForm(Form):

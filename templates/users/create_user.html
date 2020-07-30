@@ -67,6 +67,7 @@
       <th>Reset Password</th>
     </tr>
     {% for d in data %}
+    {% if d[3] != 'admin'%}
       <tr class = 'table-row'>
         <td class = '{{d[11]}}'>{{d[0]}}</td>
         <td class = '{{d[11]}}'>{{d[1]}}</td>
@@ -83,6 +84,7 @@
         <td class = '{{d[11]}}'><a href = "{{url_for('users.edit_user', id = d[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
         <td class = '{{d[11]}}'><a href = "{{url_for('users.reset_password', user = d[0])}}"><img src = "{{url_for('static', filename = 'images/reset_password.png')}}" style = "width: 25px; height: 25px;"/></a></td>
       </tr>
+      {% endif %}
     {% endfor %}
   </table>
 </div>

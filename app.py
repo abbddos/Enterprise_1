@@ -39,11 +39,12 @@ def login():
             username = request.form['usrname']
             passwd = request.form['passwd']
             logger = Logger(username, passwd)
-            if logger == True:
-                session['username'] = username
-                session['password'] = passwd
+            if logger['logged'] == True:
+                session['username'] = logger['username']
+                session['password'] = logger['password']
+                session['role'] = logger['role']
                 return redirect(url_for('home'))
-            elif logger == False:
+            elif logger['logged'] == False:
                 flash('LOGIN ERROR: Bad username or password', category = 'fail')
                 return render_template('login.html', form = form)
 
@@ -57,7 +58,7 @@ def logout():
 
 @app.route('/home')
 def home():
-    return render_template('home.html', username = session['username'] )
+    return render_template('home.html', username = session['username'], role = session['role'] )
 
 
 # ........ JSON returning urls.
