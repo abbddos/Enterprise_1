@@ -89,17 +89,31 @@
       </div>
       <div class = 'row'>
         <div class = 'col-a'>
-          <label>User Type: </label>
+          <label>Roles:</label>
         </div>
         <div class = 'col-b'>
-          <select name = 'usertype'>
-            <option value = '{{d[11]}}' hidden>{{d[11]}}</option>
-            <option value = 'Admin'>Admin</option>
-            <option value = 'Logistics'>Logistics</option>
-            <option value = 'Accounting'>Accounting</option>
-            <option value = 'Invoices'>Invoices</option>
-            <option value = 'Manager'>Manager</option>
-          </select>
+          <table>
+            <tr>
+              <th><input type = 'Checkbox' id = 'select_all_roles' />Select All</th>
+              <th>Roles:</th>
+            </tr>
+            <tr>
+              <td><input type = 'Checkbox' value = 'Admin' name = 'role-check' class = 'role_check' {%if 'Admin' in d[11]%} checked {% else %}{% endif %}/></td>
+              <td>Admin</td>
+            </tr>
+            <tr>
+              <td><input type = 'Checkbox' value = 'Logistics' name = 'role-check' class = 'role_check' {%if 'Logistics' in d[11]%} checked {% else %}{% endif %}/></td>
+              <td>Logistics</td>
+            </tr>
+            <tr>
+              <td><input type = 'Checkbox' value = 'Accounting' name = 'role-check' class = 'role_check' {%if 'Accounting' in d[11]%} checked {% else %}{% endif %}/></td>
+              <td>Accounting</td>
+            </tr>
+            <tr>
+              <td><input type = 'Checkbox' value = 'Invoices' name = 'role-check' class = 'role_check' {%if 'Invoices' in d[11]%} checked {% else %}{% endif %}/></td>
+              <td>Invoices</td>
+            </tr>
+          </table>
         </div>
       </div>
       <div class = 'row'>
@@ -163,7 +177,7 @@
       <th>Email</th>
       <th>Phone #1</th>
       <th>Phone #2</th>
-      <th>User Type</th>
+      <th>Roles</th>
       <th>Status</th>
       <th>Edit</th>
       <th>Reset Password</th>
@@ -181,7 +195,7 @@
         <td class = '{{d[11]}}'>{{d[7]}}</td>
         <td class = '{{d[11]}}'>{{d[8]}}</td>
         <td class = '{{d[11]}}'>{{d[9]}}</td>
-        <td class = '{{d[11]}}'>{{d[10]}}</td>
+        <td class = '{{d[11]}}'>{% for r in d[10]%}{{r}}, {%endfor%}</td>
         <td class = '{{d[11]}}'>{{d[11]}}</td>
         <td class = '{{d[11]}}'><a href = "{{url_for('users.edit_user', id = d[0])}}""><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
         <td class = '{{d[11]}}'><a href = "{{url_for('users.reset_password', user = d[0])}}"><img src = "{{url_for('static', filename = 'images/reset_password.png')}}" style = "width: 25px; height: 25px;"/></a></td>
@@ -194,6 +208,9 @@
     $(document).ready(function(){
         $('#select_all').click(function(){
             $('.appr_check').prop('checked', this.checked);
+        });
+        $('#select_all_roles').click(function(){
+            $('.role_check').prop('checked', this.checked);
         });
     });
 </script>

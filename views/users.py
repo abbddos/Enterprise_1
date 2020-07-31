@@ -29,7 +29,7 @@ def create_user():
                 request.form['email'],
                 request.form['phone1'],
                 request.form['phone2'],
-                request.form['usrtype'],
+                request.form.getlist('role-check'),
                 request.form.getlist('appr-check'))
                 msg = Message('New Enterprise Account', recipients = [str(request.form['email'])])
                 msg.body = "Dear {}, \n Thank you for using Enterprise. please note that your username is: {} and your password is {}. \n It is highly recommended that you change your password as soon as possible. \n Thank you for using Enterprise.".format(str(request.form['firstname']), str(usrname), str(pswd)) 
@@ -96,7 +96,7 @@ def edit_user(id):
                 request.form['email'],
                 request.form['phone1'],
                 request.form['phone2'],
-                request.form['usertype'],
+                request.form.getlist('role-check'),
                 request.form['status'],
                 request.form.getlist('appr-check'), data2[0][3])
                 flash('User Updated Successfully', category = 'success')

@@ -18,14 +18,16 @@
   <body>
     <nav class = "main-nav">
       <ul>
-        {% if role == 'Admin' or role == 'root'%}
+        {% if  'Admin' in role  or 'root' in role%}
         <li><a href = "{{url_for('users.create_user')}}">Administration</a></li>
         {% endif %}
-        {% if role == 'Logistics' or role == 'root'%}
+        {% if 'Logistics' in role or 'Manager' in role or 'root' in role%}
         <li><a href = "{{url_for('logistics.logistics')}}">Logistics</a></li>
         {% endif %}
-        {% if role == 'root'%}
+        {% if 'Accounting' in role or 'Manager' in role or 'root' in role%}
         <li><a href = "{{url_for('accounting.accounting')}}">Accounting</a></li>
+        {% endif %}
+        {% if 'Accounting' in role or 'Invoices' in role or 'Manager' in role or 'root' in role%}
         <li><a href = "{{url_for('invoices.invoices')}}">Bills & Invoices</a></li>
         {% endif %}
         <li class="dropdown">

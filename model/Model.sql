@@ -17,8 +17,8 @@ CREATE TABLE users(
   email VARCHAR(50),
   phone1 VARCHAR(50),
   phone2 VARCHAR(50),
-  usertype VARCHAR(100),
-  status VARCHAR(10)
+  usertype VARCHAR(100)[],
+  status VARCHAR(10) Default 'Active'
 );
 
 CREATE TABLE approvers(
@@ -356,8 +356,8 @@ ALTER TABLE journal ADD FOREIGN KEY(accountname) REFERENCES accounts(accountname
 
 
 -- Creation of Admin user with superuser role, login and password 'admin'
-INSERT INTO users(username, password, usertype) VALUES('admin','admin','Admin');
-CREATE ROLE Admin WITH SUPERUSER LOGIN PASSWORD 'admin';
+INSERT INTO users(username, password, usertype) VALUES('admin','admin','{"root"}');
+CREATE ROLE admin WITH SUPERUSER LOGIN PASSWORD 'admin';
 
 CREATE OR REPLACE FUNCTION Inbound(transid_ VARCHAR, creator_ VARCHAR, item_name_ VARCHAR, item_code_ VARCHAR, warehouse_ VARCHAR, bin_ VARCHAR, unit_ VARCHAR, quantity_ REAL, status_ VARCHAR)
 RETURNS VOID AS $$

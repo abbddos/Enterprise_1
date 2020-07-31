@@ -14,7 +14,35 @@
     {{ render_field(form.email)}}
     {{ render_field(form.phone1)}}
     {{ render_field(form.phone2)}}
-    {{ render_field(form.usrtype)}}
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Roles:</label>
+      </div>
+      <div class = 'col-b'>
+        <table>
+          <tr>
+            <th><input type = 'Checkbox' id = 'select_all_roles' />Select All</th>
+            <th>Roles:</th>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'Admin' name = 'role-check' class = 'role_check'/></td>
+            <td>Admin</td>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'Logistics' name = 'role-check' class = 'role_check'/></td>
+            <td>Logistics</td>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'Accounting' name = 'role-check' class = 'role_check'/></td>
+            <td>Accounting</td>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'Invoices' name = 'role-check' class = 'role_check'/></td>
+            <td>Invoices</td>
+          </tr>
+        </table>
+      </div>
+    </div>
     <h5 style = 'color: rgb(0,0,100); font-weight: bold; text-align: left;'>Can Approve:</h5>
     <table>
       <tr>
@@ -61,7 +89,7 @@
       <th>Email</th>
       <th>Phone #1</th>
       <th>Phone #2</th>
-      <th>User Type</th>
+      <th>Roles</th>
       <th>Status</th>
       <th>Edit</th>
       <th>Reset Password</th>
@@ -79,7 +107,7 @@
         <td class = '{{d[11]}}'>{{d[7]}}</td>
         <td class = '{{d[11]}}'>{{d[8]}}</td>
         <td class = '{{d[11]}}'>{{d[9]}}</td>
-        <td class = '{{d[11]}}'>{{d[10]}}</td>
+        <td class = '{{d[11]}}'>{% for r in d[10]%}{{r}}, {%endfor%}</td>
         <td class = '{{d[11]}}'>{{d[11]}}</td>
         <td class = '{{d[11]}}'><a href = "{{url_for('users.edit_user', id = d[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = "width: 25px; height: 25px;"/></a></td>
         <td class = '{{d[11]}}'><a href = "{{url_for('users.reset_password', user = d[0])}}"><img src = "{{url_for('static', filename = 'images/reset_password.png')}}" style = "width: 25px; height: 25px;"/></a></td>
@@ -92,6 +120,9 @@
     $(document).ready(function(){
         $('#select_all').click(function(){
             $('.appr_check').prop('checked', this.checked);
+        });
+        $('#select_all_roles').click(function(){
+            $('.role_check').prop('checked', this.checked);
         });
     });
 </script>

@@ -20,13 +20,7 @@ class CreateUser(Form):
     email = StringField('Email: ')
     phone1 = StringField('Phone #1: ')
     phone2 = StringField('Phone #2: ')
-    usrtype = SelectField('User Type: ', choices = [
-    ('Admin', 'Admin'),
-    ('Logistics', 'Logistics'),
-    ('Accounting', 'Accounting'),
-    ('Invoices','Invoices'),
-    ('Manager','Manager')
-    ])
+    
 
 class FileForm(Form):
     FileName = FileField('Select File: ', validators = [DataRequired()])

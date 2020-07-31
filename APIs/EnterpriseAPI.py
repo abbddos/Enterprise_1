@@ -50,11 +50,13 @@ def Logger(usrname, passwd):
         m.update(passwd.encode('utf8'))
         passwd1 = m.hexdigest()
         con, cur = root()
-        cur.execute('SELECT username, password, usertype FROM users WHERE username = %s and password = %s', (usrname, passwd1))
+        cur.execute('SELECT username, password, usertype, status FROM users WHERE username = %s and password = %s', (usrname, passwd1))
         result = cur.fetchone()
         try:
-            if result[0] == usrname and result[1] == passwd1:
+            if result[0] == usrname and result[1] == passwd1 and result[3] == 'Active':
                 return {'username': result[0], 'password': result[1], 'logged': True, 'role':result[2]}
+            else:
+                return {'logged': False}
         except:
             return {'logged': False}
     else:
@@ -156,7 +158,7 @@ def CreateUser(sess_uname, sess_pswd, firstname, lastname, company, position, de
         cur.execute('INSERT INTO approvers(firstname, lastname, username, position, department, email, can_approve) VALUES(%s, %s, %s, %s, %s, %s, %s)', (firstname, lastname, NewName, position, department, email, approvals[a]))
         con.commit()
     con.close()
-    return NewName, Password
+    return NewName, passwd
 
 def CreateMultipleUsers(sess_uname, sess_pswd, FileName):
     wb = load_workbook(filename = FileName)
