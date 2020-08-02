@@ -148,6 +148,7 @@ form{
   margin-left: 15%;
   padding: 15px;
   box-shadow: 5px 10px 20px rgb(200,200,200);
+  border-radius: 15px;
 }
 
 .form-in-table{
@@ -329,6 +330,7 @@ table{
   border-color: #eee;
   box-shadow: 5px 10px 20px rgb(200,200,200);
   overflow: scroll;
+  
 }
 
 th{
@@ -346,7 +348,7 @@ th{
 
 .inactive {
   color: red;
-  ext-align: left;
+  text-align: left;
 }
 
 tr{
@@ -448,6 +450,7 @@ tr:nth-child(even):hover{
     padding: 15px;
     border: 1px solid #888; 
     width: 50%; /* Could be more or less, depending on screen size */
+    border-radius: 15px;
 }
 
 /* The Close Button */
@@ -460,7 +463,7 @@ tr:nth-child(even):hover{
 
 .close:hover,
 .close:focus {
-    color: black;
+    color: green;
     text-decoration: none;
     cursor: pointer;
 }

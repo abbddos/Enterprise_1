@@ -47,7 +47,7 @@ def reset_password(user):
     try:
         NewPass, Name = EnterpriseAPI.ResetPassword(session['username'], session['password'], user)
         flash('User Password was reset', category = 'success')
-        msg = Message('Enterprise password reset', recipients = [Name[2]])
+        msg = Message('Enterprise password reset', recipients = [str(Name[2])])
         msg.body = "Dear {}, \n Please note that your password has been reset into {} . \n Please note it is highly adviised that you change your password soon. \n Thank you for using Enterprise.".format(Name[0], NewPass)
         app.mail.send(msg)
         return redirect(url_for('users.create_user'))

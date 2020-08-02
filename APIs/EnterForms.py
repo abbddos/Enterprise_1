@@ -138,3 +138,6 @@ class CustomersForm(Form):
     email = StringField('Email: ')
     pobox = StringField('PO-BOX: ')
     description = TextAreaField('Description: ')
+
+class ForgotPassword(Form):
+    email = StringField('Email', validators = [DataRequired()])

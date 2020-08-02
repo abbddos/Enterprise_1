@@ -56,6 +56,11 @@ def logout():
     session.pop('password', None)
     return redirect(url_for('login'))
 
+@app.route('/forgot_password', methods = ['GET','POST'])
+def ForgotPassword():
+    form = EnterForms.ForgotPassword(request.form)
+    return render_template('forgot_password.html', form = form)
+
 @app.route('/home')
 def home():
     return render_template('home.html', username = session['username'], role = session['role'] )

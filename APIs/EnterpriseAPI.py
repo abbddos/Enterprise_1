@@ -88,19 +88,20 @@ def UpdateProfile(firstname, lastname, email, phone1, phone2, user):
 
 def ChangePassword(user, currentpswd, newpswd):
     m = hashlib.sha256()
+    n = hashlib.sha256()
     newpass = None
     oldpass = currentpswd
     if currentpswd != 'admin':
         m.update(newpswd.encode('utf8'))
         newpass = m.hexdigest()
-        m.update(currentpswd.encode('utf8'))
-        oldpass = m.hexdigest()
+        n.update(currentpswd.encode('utf8'))
+        oldpass = n.hexdigest()
     else:
         m.update(newpswd.encode('utf8'))
         newpass = m.hexdigest()
     con, cur = root()
     cur.execute('UPDATE users SET password = %s WHERE username = %s AND password = %s', (newpass, user, oldpass))
-    cur.execute("ALTER ROLE {} WITH PASSWORD '{}'".format(user, newpass))
+    cur.execute("ALTER ROLE {} WITH LOGIN PASSWORD '{}'".format(user, newpass))
     con.commit()
     con.close()
 
@@ -187,7 +188,7 @@ def ResetPassword(sess_uname, sess_pswd, user):
     m.update(rst_pass.encode('utf8'))
     resetpass = m.hexdigest()
     cur.execute('UPDATE users SET password = %s WHERE id = %s' ,(resetpass, user))
-    cur.execute("ALTER ROLE {} WITH PASSWORD '{}'".format(sess_uname, resetpass))
+    cur.execute("ALTER ROLE {} WITH LOGIN PASSWORD '{}'".format(name[1], resetpass))
     con.commit()
     con.close()
     return rst_pass, name 
