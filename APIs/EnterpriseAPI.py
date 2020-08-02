@@ -105,6 +105,16 @@ def ChangePassword(user, currentpswd, newpswd):
     con.commit()
     con.close()
 
+def ChangePassword1(usr, newpswd):
+     m = hashlib.sha256()
+     m.update(newpswd.encode('utf8'))
+     newpass = m.hexdigest()
+
+     con, cur = root()
+     cur.execute('UPDATE users SET password = %s WHERE username = %s', (newpass, usr))
+     cur.execute("ALTER ROLE {} WITH LOGIN PASSWORD '{}'".format(usr, newpass))
+     con.commit()
+     con.close()
 # .......The following functions are for Administrators to create users, get users info,
 # .......update users, and activate and deactivate users..
 # .......the GetUsers function gets information from all users from database in order to...

@@ -1,0 +1,29 @@
+<html>
+  <head>
+    <title>Enterprise</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel = 'stylesheet' href = "{{url_for('static', filename = 'css/style_login.css')}}" />
+    <link rel="icon" href = "{{url_for('static', filename = 'images/logo.png')}}" sizes="16x16" /> 
+  </head>
+  <body>
+    <div class = 'message'>
+        <img src = "{{url_for('static', filename = 'images/alert.png')}}" style = 'height:75px; width: 75px; float: left; margin: 10px;' />
+        <p>The reset password token has expired. Please request another token by submitting your email at the 'Forgot Password' page.</p>
+    </div>
+  </body>
+  <style>
+      .message{
+        background-color: rgba(0,0,0,0.3);
+  border-style: solid;
+  border-color: rgb(225,225,225);
+  border-width: 1px;
+  border-radius: 15px;
+  color: red;
+  width: 25%;
+  margin-left: 35%;
+  margin-top: 10%;
+  padding: 15px;
+  box-shadow: 5px 10px 20px rgb(0,0,35);
+      }
+  </style>
+</html>

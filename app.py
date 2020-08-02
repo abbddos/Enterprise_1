@@ -9,6 +9,7 @@ from views import users
 from views import logistics
 from views import accounting
 from views import invoices
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 app = Flask(__name__)
 sk = str(random.randint(1, 101))
@@ -26,6 +27,29 @@ app.config['MAIL_DEFAULT_SENDER'] = 'abbddos@gmail.com'
 csrf = CSRFProtect(app)
 #csrf.init_app(app)
 mail = Mail(app)
+
+
+def ForgotPasswordToken(email):
+    con, cur = root()
+    try:
+        cur.execute("SELECT firstname, username FROM users WHERE email = %s ", (email,))
+        usr = cur.fetchone()
+        con.close()
+
+        s = Serializer(app.secret_key, 1800)
+        token = s.dumps({'user':usr[1]}).decode('utf-8')
+        return usr, token
+    except:
+        con.close()
+        return None, None
+
+def VerifyToken(token):
+    s = Serializer(app.secret_key)
+    try:
+        usr = s.loads(token)['user']
+    except:
+        return None
+    return usr
 
 @app.route('/')
 def index():
@@ -59,11 +83,46 @@ def logout():
 @app.route('/forgot_password', methods = ['GET','POST'])
 def ForgotPassword():
     form = EnterForms.ForgotPassword(request.form)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                usr, token = ForgotPasswordToken(request.form['email'])
+                if token is not None:
+                    msg = Message('New Enterprise Account', recipients = [str(request.form['email'])])
+                    msg.body = "Dear {}:\n please follow the link below to change your password. \n Thank you for using Enterprise. \n {}".format(usr[0], url_for('ChangeForgotPassword', usr = usr[1], token = token, _external=True))
+                    mail.send(msg)
+                    flash('An email was sent to your email account', category = 'success')
+                    return redirect(url_for('ForgotPassword'))
+                else:
+                    flash('Email not found', category = 'fail')
+                    return redirect(url_for('ForgotPassword'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('ForgotPassword'))
     return render_template('forgot_password.html', form = form)
+
+@app.route('/change_forgot_password/<token>', methods = ['GET','POST'])
+def ChangeForgotPassword(token):
+    form = EnterForms.ChangePassword(request.form)
+    usr = VerifyToken(token)
+    if usr:
+        if request.method == 'POST':
+            if request.form['submit'] == 'Submit' and request.form['newpswd'] == request.form['confirm']:
+                try:
+                    ChangePassword1(usr, request.form['newpswd'])
+                    flash('Password changed...', category = 'success')
+                    return redirect(url_for('login'))
+                except Exception as e:
+                    flash(str(e), category = 'fail')
+                    return redirect(url_for('login'))
+        return render_template('change_forgot_password.html', form = form, token = token)
+    else:
+        return render_template('invalid_token.html')
 
 @app.route('/home')
 def home():
     return render_template('home.html', username = session['username'], role = session['role'] )
+
 
 
 # ........ JSON returning urls.

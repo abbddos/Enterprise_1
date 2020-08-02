@@ -96,7 +96,7 @@ input[type = password]{
 
 .success {
   text-align: center;
-  color: rgb(0,0,100);
+  color: rgb(44, 255, 2);
 }
 
 .fail {
