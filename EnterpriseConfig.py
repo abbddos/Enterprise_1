@@ -1,5 +1,5 @@
 Server = 'localhost'		#Enter your server address here
-DBdirectory = '/home/abdul/enterprise/model' #Enter model directory
+Mail_Server = 'smtp.gmail.com'
 Email_Username = 'abbddos@gmail.com'	#Enter the email you'd like to use here.
 Email_Password = 'AbdulRahman*SS1983'	#Enter the email password that you'd like to use here.
 dbusername = 'abdul'		#Enter the database root username here

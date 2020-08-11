@@ -558,7 +558,45 @@ ul.warehouse{
   background-color: white;
   color: rgb(0,0,100);
 }
-@media screen and (max-width: 600px) {
-  ul  li.dropdown,
-  ul  li {float: none;}
+
+@media only screen and (max-width: 1366px) and (max-height: 1024px) and (orientation: landscape){
+
+  .vertical-menu {
+    width: 16%; /* Set a width if you like */
+    height: 100%;
+    position: fixed;
+    background-color: #eee;
+    padding: 3px; 
+    float: left;
+  }
+  
+  .vertical-menu:hover{
+    overflow: scroll;
+  }
+  
+  .vertical-menu a {
+    background-color: #eee; /* Grey background color */
+    color: black; /* Black text color */
+    display: block; /* Make the links appear below each other */
+    padding: 12px; /* Add some padding */
+    text-decoration: none; /* Remove underline from links */
+  }
+
+  h3{
+    padding: 8px;
+    text-align: center;
+    background-color: rgb(0,0,100);
+    color: white;
+  }
+
+  form{
+    width: 98%;
+    background-color: #eee; /* Grey background color */
+    margin-left: -3%;
+    padding: 15px;
+    box-shadow: 5px 10px 20px rgb(200,200,200);
+    border-radius: 15px;
+  }
+
+
 }

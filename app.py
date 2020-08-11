@@ -10,19 +10,20 @@ from views import logistics
 from views import accounting
 from views import invoices
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+import EnterpriseConfig
 
 app = Flask(__name__)
 sk = str(random.randint(1, 101))
 app.secret_key = sk
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_SERVER'] = EnterpriseConfig.Mail_Server
 app.config['MAIL_PORT'] = 587
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'abbddos@gmail.com'
-app.config['MAIL_PASSWORD'] = 'AbdulRahman*SS1983'
-app.config['MAIL_DEFAULT_SENDER'] = 'abbddos@gmail.com'
+app.config['MAIL_USERNAME'] = EnterpriseConfig.Email_Username
+app.config['MAIL_PASSWORD'] = EnterpriseConfig.Email_Password
+app.config['MAIL_DEFAULT_SENDER'] = EnterpriseConfig.Email_Username
 
 csrf = CSRFProtect(app)
 #csrf.init_app(app)
@@ -78,6 +79,7 @@ def login():
 def logout():
     session.pop('username', None)
     session.pop('password', None)
+    session.pop('role', None)
     return redirect(url_for('login'))
 
 @app.route('/forgot_password', methods = ['GET','POST'])

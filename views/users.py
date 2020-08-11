@@ -3,6 +3,7 @@ from flask_mail import *
 import app
 from APIs import EnterForms
 from  APIs import EnterpriseAPI
+import os
 
 
 mod = Blueprint('users', __name__, url_prefix = '/users')
@@ -55,26 +56,8 @@ def reset_password(user):
         flash(str(e), category = 'fail')
         return redirect(url_for('users.create_user'))
 
-# ........ This route utilizes CreateUser API at Model.py...
-# ........ along with access to excel sheets using openpyxl library...
-# ........ It allows administrators to create several users ...
-# ........ in the same time in a bulk from a excel template.
-# ........ It is IMPORTANT that users use our distributed ...
-# ........ excel template as the API reads directly from it.
-@mod.route('/create_multiple_users/', methods = ['GET', 'POST'])
-def create_multiple_users():
-    form = EnterForms.FileForm(request.form)
-    data = EnterpriseAPI.GetUsers()
-    if request.method == 'POST':
-        if request.form['submit'] == 'Submit' and form.validate():
-            #try:
-            EnterpriseAPI.CreateMultipleUsers(session['username'], session['password'], request.form['FileName'])
-            flash('Multiple Users successfully created', category = 'success')
-            return redirect(url_for('users.create_multiple_users'))
-            #except Exception as e:
-            #    flash(str(e), category = 'fail')
-            #    return render_template('users/create_multiple_users.html', username = session['username'], form = form)
-    return render_template('users/create_multiple_users.html', username = session['username'], role = session['role'], form = form, data = data)
+
+
 
 # ........ Updating user information using UpdateUser API at Model.py
 # ........ This allows administrators to update users' info and assigned...

@@ -6,6 +6,7 @@ from openpyxl import load_workbook
 import random
 from datetime import date
 import pandas as pd
+import EnterpriseConfig
 
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'xls','xlsx'])
@@ -18,7 +19,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def root():
-    conn = psycopg2.connect("dbname = enterprise user = abdul password = ar*big1980 port = 5432")
+    conn = psycopg2.connect("dbname = enterprise user = {} password = {} port = 5432".format(EnterpriseConfig.dbusername, EnterpriseConfig.dbpassword))
     cur = conn.cursor()
     return conn, cur
 

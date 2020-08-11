@@ -104,7 +104,7 @@ input[type = password]{
   color: red;
 }
 
-@media screen and (max-width: 600px) {
+@media only screen and (max-width: 1366px) and (max-height: 1024px) and (orientation: landscape) {
   body{
     background-repeat: no-repeat;
   }
@@ -115,8 +115,8 @@ input[type = password]{
     border-color: rgb(225,225,225);
     border-width: 1px;
     color: white;
-    width: 75%;
-    margin-left: 10%;
+    width: 33%;
+    margin-left: 33%;
     margin-top: 10%;
     padding: 15px;
   }

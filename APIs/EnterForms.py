@@ -1,4 +1,5 @@
 from flask_wtf import *
+from flask_wtf.file import FileField, FileAllowed
 from wtforms import *
 from wtforms.validators import *
 
@@ -23,7 +24,7 @@ class CreateUser(Form):
     
 
 class FileForm(Form):
-    FileName = FileField('Select File: ', validators = [DataRequired()])
+    FileName = FileField('Select File: ', validators = [DataRequired(), FileAllowed(['xlsx','xls'])])
 
 class ProvidersForm(Form):
     name = StringField('Name: ', validators = [DataRequired()])

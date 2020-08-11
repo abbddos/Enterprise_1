@@ -320,7 +320,7 @@
         }, function(data){
             if(data.msg == 'success'){
                 uniprice[i] = data.unitprice;
-                $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+data.unitprice / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+(data.unitprice / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
             }
             else{
             $('.msg').val('Item not found');
@@ -338,7 +338,7 @@
                     i++;
                     var amnt = val.quantity  * pkgnum *(val.unit_price / ex_rate);
                     uniprice[i] = val.unit_price;
-                    $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+val.unit_price / ex_rate +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+ (val.quantity * pkgnum) +"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt.toFixed(2)+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
+                    $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+val.itemname+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+(val.unit_price / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' value = '"+ (val.quantity * pkgnum) +"'style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' value = '"+amnt.toFixed(2)+"' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");
                     totalamount = totalamount + amnt;
                     $('#totalamount').val(totalamount.toFixed(2));
                     $('#invamount').val(totalamount.toFixed(2));
