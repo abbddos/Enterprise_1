@@ -12,6 +12,7 @@ psql -U $dbusername -d postgres -a -f model/Model.sql
 # INSTALLING DEPENDENCIES
 
 dnf install mod_wsgi
+dnf install wkhtmltopdf
 pip3 install virtualenv
 
 # COPYING PROJECT TO APACHE DIRECTORY...
