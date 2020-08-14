@@ -615,6 +615,7 @@ def EditRefundInvoice(invcode):
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('refund')
+    srvs = InvoicesAPI.GetServicesByType('Revenue')
     data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -642,7 +643,7 @@ def EditRefundInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.RefundInvoice')) 
-    return render_template('invoices/edit_refund_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_refund_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode, srvs = srvs)
 
 
 

@@ -13,7 +13,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import EnterpriseConfig
 
 app = Flask(__name__)
-sk = str(random.randint(1, 101))
+sk = EnterpriseConfig.SecretKey
 app.secret_key = sk
 app.config['DEBUG'] = True
 app.config['TESTING'] = False
