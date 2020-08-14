@@ -11,6 +11,10 @@ $(document).ready(function(){
       search_pkg($(this).val());
     });
 
+    $('#srch-srv').keyup(function(){
+      search_srv($(this).val());
+    });
+
     function search_table(value){
       $('.table-row').each(function(){
         
@@ -33,6 +37,16 @@ $(document).ready(function(){
 
     function search_pkg(value){
       $('.table-row-pkg').each(function(){
+        
+        $(this).each(function(){
+          if($(this).text().toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) >= 0){ $(this).show();}
+          else{$(this).hide();}
+        });
+      });
+    }
+
+    function search_srv(value){
+      $('.table-row-srv').each(function(){
         
         $(this).each(function(){
           if($(this).text().toLocaleLowerCase().indexOf(value.toLocaleLowerCase()) >= 0){ $(this).show();}

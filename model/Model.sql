@@ -250,6 +250,15 @@ CREATE TABLE customers(
 	description varchar(2000)
 );
 
+CREATE TABLE Services(
+	serviceid SERIAL PRIMARY KEY,
+	ServiceName VARCHAR(50),
+	ServiceType VARCHAR(25),
+	ServiceCost REAL,
+	ServicePrice REAL,
+	Description TEXT
+);
+
 CREATE TABLE Invoices(
     invoiceid SERIAL NOT NULL PRIMARY KEY,
     invoicetype VARCHAR(20),
@@ -313,10 +322,12 @@ INSERT INTO categories(CategoryName, CategoryType) VALUES
 ('Salaries Payable','Liabilities'),
 ('Interest Payable','Liabilities'),
 ('Sales Revenues','Revenues'),
+('Services Revenues', 'Revenues')
 ('Interest Revenues','Revenues'),
 ('Salaries Expenses','Expenses'),
 ('Wages','Expenses'),
 ('Supplies','Expenses'),
+('Services Expenses', 'Expenses')
 ('Taxes','Expenses'),
 ('Cost of Goods Sold','Expenses'),
 ('Capital Draws','Dividends');
@@ -631,6 +642,46 @@ BEGIN
 	PERFORM CreateAccount('Assets','Accounts Receivable','Custom_Code' ,name_, Cur, 0,0, '');
 END;
 $$ LANGUAGE plpgsql;
+
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION CreateService(name_ VARCHAR, type_ VARCHAR, cost_ REAL, price_ REAL, description_ TEXT)
+RETURNS VOID AS $$
+DECLARE 
+	Cur VARCHAR;
+BEGIN
+	SELECT currencycode INTO Cur FROM Currency WHERE FunctionalCurrency = 'Yes';
+	INSERT INTO SERVICES(ServiceName, ServiceType, ServiceCost, ServicePrice, Description) VALUES(name_, type_, cost_, price_, description_);
+	IF type_ = 'Revenue' THEN
+		PERFORM CreateAccount('Revenues','Services Revenues','Custom_Code' ,name_, Cur, 0,0, '');
+	END IF;
+	IF type_ = 'Expense' THEN
+		PERFORM CreateAccount('Expenses','Services Expenses','Custom_Code' ,name_, Cur, 0,0, '');
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+--===============================================================================================================================================================
+
+CREATE OR REPLACE FUNCTION UpdateService(code_ INT, name_ VARCHAR, type_ VARCHAR, cost_ REAL, price_ REAL, description_ TEXT)
+RETURNS VOID AS $$
+DECLARE 
+	S VARCHAR;
+BEGIN
+	SELECT ServiceName INTO S FROM Services WHERE ServiceID = code_;
+	UPDATE Services SET ServiceName = name_, ServiceType = type_, ServiceCost = cost_, ServicePrice = price_, Description = description_ WHERE ServiceID = code_;
+	IF type_ = 'Revenue' THEN
+		UPDATE Accounts SET Accounttype = 'Revenues', AccountCategory = 'Services Revenues', AccountCode = 'Custom_Code' WHERE AccountName = S;
+		UPDATE ledger SET Accounttype = 'Revenues', AccountCategory = 'Services Revenues' WHERE AccountName = S;
+	END IF;
+	IF type_ = 'Expense' THEN
+		UPDATE Accounts SET Accounttype = 'Expenses', AccountCategory = 'Services Expenses', AccountCode = 'Custom_Code' WHERE AccountName = S;
+		UPDATE ledger SET Accounttype = 'Expenses', AccountCategory = 'Services Expenses' WHERE AccountName = S;
+	END IF;
+END;
+$$ LANGUAGE plpgsql;
+
 --===============================================================================================================================================================
 
 CREATE OR REPLACE FUNCTION RegisterInvoice_SRF(jrncode VARCHAR, code VARCHAR, created_by VARCHAR, SR VARCHAR, CGS VARCHAR)
@@ -655,6 +706,7 @@ DECLARE
 	crn_ VARCHAR;
 	ln_cost REAL;
 	T_cost REAL;
+	service_price REAL;
 	
 BEGIN
 	
@@ -667,67 +719,112 @@ BEGIN
 
 	IF 	invtype = 'sales' THEN
 	T_cost = 0;
+	service_price = 0;
 		IF term = 'Immediate payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
-				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
-				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
-				amnt_ = amnt * ex_rate;
-				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
-				T_cost = T_cost + ln_cost;				
+				IF NOT EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					service_price = service_price + amnt_;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, amnt_, created_by, rec.comments);
+				END IF;
+				IF EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
+					T_cost = T_cost + ln_cost;
+				END IF;				
 			END LOOP;
+
 			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, bill_amnt, 0,  created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, 0, bill_amnt, created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, T_cost, 0, created_by, '--');
+			IF T_cost != 0 THEN
+				PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, 0, bill_amnt - service_price, created_by, '--');
+				PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, T_cost, 0, created_by, '--');
+			END IF;
 
 		END IF;
 		IF term = 'Later payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
-				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
-				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
-				amnt_ = amnt * ex_rate;
-				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
-				T_cost = T_cost + ln_cost;								
+				IF NOT EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					service_price = service_price + amnt_;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, amnt_, created_by, rec.comments);
+				END IF;
+				IF EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
+					T_cost = T_cost + ln_cost;
+				END IF;								
 			END LOOP;
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, bill_amnt, 0,  created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, 0, bill_amnt, created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CSG, crn, T_cost, 0, created_by, '--');
+			IF T_cost != 0 THEN
+				PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, 0, bill_amnt - service_price, created_by, '--');
+				PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CSG, crn, T_cost, 0, created_by, '--');
+			END IF;
 		END IF;
 	END IF;
 
 	IF invtype = 'refund' THEN
 	T_cost = 0;
+	service_price = 0;
 		IF term = 'Immediate payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
-				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
-				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
-				amnt_ = amnt * ex_rate;
-				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
-				T_cost = T_cost + ln_cost;				
+				IF NOT EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					service_price = service_price + amnt_;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, amnt_, 0, created_by, rec.comments);
+				END IF;
+				IF EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
+					T_cost = T_cost + ln_cost;
+				END IF;				
 			END LOOP;
 			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, 0, bill_amnt, created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, bill_amnt, 0, created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, 0, T_cost, created_by, '--');
+			IF T_cost != 0 THEN
+				PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, bill_amnt - service_price, 0, created_by, '--');
+				PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, 0, T_cost, created_by, '--');
+			END IF;
 		END IF;
+
 		IF term = 'Later payment' THEN
 			FOR rec in SELECT * FROM invoices WHERE invoicecode = code LOOP
 				SELECT accounttype, accountcategory, currency INTO acct, cat, crn_ FROM accounts WHERE accountname = rec.description;
-				SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
-				amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
-				amnt_ = amnt * ex_rate;
-				PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
-				T_cost = T_cost + ln_cost;					
+				IF NOT EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					service_price = service_price + amnt_;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, amnt_, 0, created_by, rec.comments);
+				END IF;
+				IF EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
+					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
+					amnt_ = amnt * ex_rate;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
+					T_cost = T_cost + ln_cost;
+				END IF;						
 			END LOOP;
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, 0, bill_amnt, created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, bill_amnt, 0, created_by, '--');
-			PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, 0, T_cost, created_by, '--');
+			IF T_cost != 0 THEN
+				PERFORM CreateJournalEntry(jrncode, 'Revenues', 'Sales Revenues', SR, crn, bill_amnt - service_price, 0, created_by, '--');
+				PERFORM CreateJournalEntry(jrncode, 'Expenses', 'Cost of Goods Sold', CGS, crn, 0, T_cost, created_by, '--');
+			END IF;
 		END IF;
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
 
+--===========================================================================================================================================================
 
 CREATE OR REPLACE FUNCTION RegisterInvoice_PRT(jrncode VARCHAR, code VARCHAR, created_by VARCHAR)
 RETURNS VOID AS $$

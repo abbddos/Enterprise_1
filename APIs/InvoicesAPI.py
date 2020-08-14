@@ -33,6 +33,39 @@ def GetOneCustomer(sess_uname, sess_pswd, id):
     con.close()
     return data
 
+def CreateService(sess_uname, sess_pswd, servicename, servicetype, servicecost, serviceprice, description):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT CreateService(%s, %s, %s, %s, %s)', (servicename, servicetype, servicecost, serviceprice, description))
+    con.commit()
+    con.close()
+
+def UpdateService(sess_uname, sess_pswd, serviceid, servicename, servicetype, servicecost, serviceprice, description):
+    con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
+    cur.execute('SELECT UpdateService(%s, %s, %s, %s, %s, %s)', (serviceid, servicename, servicetype, servicecost, serviceprice, description))
+    con.commit()
+    con.close()
+
+def GetAllServices():
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT * FROM Services')
+    data = cur.fetchall()
+    con.close()
+    return data
+
+def GetService(serviceid):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT * FROM Services WHERE serviceid = %s', (serviceid,))
+    data = cur.fetchone()
+    con.close()
+    return data
+
+def GetServicesByType(servicetype):
+    con, cur = EnterpriseAPI.root()
+    cur.execute('SELECT * FROM Services WHERE ServiceType = %s',(servicetype,))
+    data = cur.fetchall()
+    con.close()
+    return data
+
 def REVSnCOST(code):
     con, cur = EnterpriseAPI.root()
     cur.execute("SELECT accountname FROM accounts WHERE accountcategory = 'Sales Revenues'")

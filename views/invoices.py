@@ -269,6 +269,52 @@ def edit_package(pkg):
                 return redirect(url_for('invoices.packages'))
     return render_template('invoices/edit_package.html', username = session['username'], role = session['role'], pks = pks, itms = itms, pkk = pkk, itt = itt)
 
+@mod.route('services/', methods = ['GET','POST'])
+def Services():
+    AllServices = InvoicesAPI.GetAllServices()
+    form = EnterForms.Services(request.form)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.CreateService(session['username'], session['password'],
+                request.form['servicename'],
+                request.form['servicetype'],
+                request.form['servicecost'],
+                request.form['serviceprice'],
+                request.form['description'])
+                flash('Service Successfully created...', category = 'success')
+                return redirect(url_for('invoices.Services')) 
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('inoices.Services'))
+    return render_template('invoices/services.html', username = session['username'],
+    role = session['role'],
+    form = form,
+    AllServices = AllServices)
+
+@mod.route('edit_service/<code>', methods = ['GET','POST'])
+def EditService(code):
+    AllServices = InvoicesAPI.GetAllServices()
+    Service = InvoicesAPI.GetService(code)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                InvoicesAPI.UpdateService(session['username'], session['password'], code,
+                    request.form['servicename'],
+                    request.form['servicetype'],
+                    request.form['servicecost'],
+                    request.form['serviceprice'],
+                    request.form['description']
+                ) 
+                flash('Service updated successfully...', category = 'success')
+                return redirect(url_for('invoices.Services'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('invoices.EditService', code = code))
+    return render_template('invoices/edit_service.html',
+    username = session['username'], role = session['role'],
+    AllServices = AllServices, Service = Service)
+
 @mod.route('Secondary_units/', methods = ['GET','POST'])
 def SecondaryUnits():
     data = EnterpriseAPI.GetSecondaryUnits()
@@ -312,6 +358,7 @@ def SalesInvoice():
     currencies = AccountingAPI.GetAllCurrencies()
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
+    srvs = InvoicesAPI.GetServicesByType('Revenue')
     invs = InvoicesAPI.GetInvoices('sales')
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -339,7 +386,7 @@ def SalesInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SalesInvoice'))
-    return render_template('invoices/sales_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
+    return render_template('invoices/sales_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, srvs = srvs)
 
 @mod.route('edit_sales_invoice/<invcode>', methods = ['GET','POST'])
 def EditSalesInvoice(invcode):
@@ -348,6 +395,7 @@ def EditSalesInvoice(invcode):
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('sales')
+    srvs = InvoicesAPI.GetServicesByType('Revenue')
     data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -375,7 +423,7 @@ def EditSalesInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.SalesInvoice')) 
-    return render_template('invoices/edit_sales_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_sales_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode, srvs = srvs)
 
 
 @mod.route('procurement_invoice/', methods = ['GET','POST'])
@@ -385,6 +433,7 @@ def ProcurementInvoice():
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('procurement')
+    srvs = InvoicesAPI.GetServicesByType('Expense')
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -411,7 +460,7 @@ def ProcurementInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ProcurementInvoice'))
-    return render_template('invoices/procurement_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
+    return render_template('invoices/procurement_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, srvs = srvs)
 
 @mod.route('edit_procurement_invoice/<invcode>', methods = ['GET','POST'])
 def EditProcurementInvoice(invcode):
@@ -420,6 +469,7 @@ def EditProcurementInvoice(invcode):
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('procurement')
+    srvs = InvoicesAPI.GetServicesByType('Expense')
     data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -447,7 +497,7 @@ def EditProcurementInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ProcurementInvoice')) 
-    return render_template('invoices/edit_procurement_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_procurement_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode, srvs = srvs)
 
 @mod.route('return_invoice/', methods = ['GET','POST'])
 def ReturnInvoice():
@@ -456,6 +506,7 @@ def ReturnInvoice():
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('return')
+    srvs = InvoicesAPI.GetServicesByType('Expense')
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -482,7 +533,7 @@ def ReturnInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ReturnInvoice'))
-    return render_template('invoices/return_invoice.html', username = session['username'], role = session['role'], tms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs)
+    return render_template('invoices/return_invoice.html', username = session['username'], role = session['role'], tms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, srvs = srvs)
 
 @mod.route('edit_return_invoice/<invcode>', methods = ['GET','POST'])
 def EditReturnInvoice(invcode):
@@ -491,6 +542,7 @@ def EditReturnInvoice(invcode):
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('return')
+    srvs = InvoicesAPI.GetServicesByType('Expense')
     data1, data2 = InvoicesAPI.GetInvoice(session['username'], session['password'], invcode)
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
@@ -518,7 +570,7 @@ def EditReturnInvoice(invcode):
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.ReturnInvoice')) 
-    return render_template('invoices/edit_return_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode)
+    return render_template('invoices/edit_return_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, providers = providers, currencies = currencies, invs = invs, data1 = data1, data2 = data2, invcode = invcode, srvs = srvs)
 
 @mod.route('refund_invoice/', methods = ['GET','POST'])
 def RefundInvoice():
@@ -527,6 +579,7 @@ def RefundInvoice():
     itms = EnterpriseAPI.ItemPicker()
     pkgs = EnterpriseAPI.PackagePicker()
     invs = InvoicesAPI.GetInvoices('refund')
+    srvs = InvoicesAPI.GetServicesByType('Revenue')
     if request.method == 'POST':
         if request.form['submit'] == 'Submit':
             try:
@@ -553,7 +606,7 @@ def RefundInvoice():
             except Exception as e:
                 flash(str(e), category = 'fail')
                 return redirect(url_for('invoices.RefundInvoice'))
-    return render_template('invoices/refund_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs)
+    return render_template('invoices/refund_invoice.html', username = session['username'], role = session['role'], itms = itms, pkgs = pkgs, customers = customers, currencies = currencies, invs = invs, srvs = srvs)
 
 @mod.route('edit_refund_invoice/<invcode>', methods = ['GET','POST'])
 def EditRefundInvoice(invcode):
@@ -863,3 +916,12 @@ def GetAccount(acc):
 def GetPack(code):
     Packs = InvoicesAPI.GetPack(code)
     return jsonify(Packs)
+
+@mod.route('/GrabService/<code>')
+def GrabService(code):
+    s = InvoicesAPI.GetService(code)
+    return jsonify(serviceid = s[0],
+                    servicename = s[1],
+                    servicetype = s[2],
+                    servicecost = s[3],
+                    serviceprice = s[4])

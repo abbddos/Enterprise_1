@@ -74,7 +74,7 @@
                 <ul>
                     <li id = 'PickItem'>Item</li>
                     <li id = 'PickPackage'>Package</li>
-                    <li id = 'other'>Other</li>
+                    <li id = 'PickService'>Services</li>
                 </ul>
             </div>
             <table style = 'width: 100%;'>
@@ -256,6 +256,31 @@
       </div>
       </div>
 
+      <div id="myModal2" class="modal">
+        <div class="modal-content">
+          
+          <h3>Pick Service <span class="close">&times;</span></h3>
+          <h5 style = 'color: green;'> Pick a service from the table below:</h5>
+          <div class = 'items' stye = 'overflow: scroll;'>
+            <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-srv' />
+            <table>
+              <tr>
+                <th>Service Code:</th>
+                <th>Service Name: </th>
+                <th>Service Type:</th>
+              </tr>
+              {% for s in srvs %}
+                <tr class = 'table-row-srv'>
+                  <td><a class = 'srv' href = '#'>{{s[0]}}</a></td>
+                  <td>{{s[1]}}</td>
+                  <td>{{s[2]}}</td>
+                </tr>
+              {% endfor %}
+            </table>
+          </div>
+        </div>
+        </div>
+
 <script>
     $(document).ready(function(){
         
@@ -317,12 +342,6 @@
             $('.select-what').slideToggle();
         });
 
-        $('#other').click(function(){
-            i++;
-            $('.select-what').slideToggle();
-            $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' style = 'width:100%;'/></td><td><input type = 'text' name = 'unitprice' class = 'unitprice' id = 'unitprice_"+i+"' style = 'width:100%;'/></td><td><input type = 'text'  class = 'quantity' name = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'width: 25px; height: 25px;'/></a></td></tr>");
-        });
-
         $(document).on('click','.rmv', function(){
             var ids = $(this).attr('id');
             var j = Number.parseInt(ids);
@@ -348,6 +367,19 @@
             delete uniprice[j];
             $('#invamount').val(newinvamount.toFixed(2));
         });
+
+
+        $('.srv').click(function(){
+            $('.select-what').hide();
+            i++;
+            $.getJSON('/invoices/GrabService/' + $(this).text(), function(data){
+                uniprice[i] = data.unitprice;
+                $('#entry-table').append("<tr id = 'tr_"+i+"'><td><input type = 'text' name = 'description' value = '"+data.servicename+"' style = 'width: 100%'/></td><td><input type = 'text' name = 'unitprice'  class = 'unitprice' value = '"+(data.serviceprice / ex_rate).toFixed(2) +"' id = 'unitprice_"+i+"' style = 'width: 100%' /></td><td><input type = 'text' name = 'quantity' class = 'quantity' style = 'width:100%;' id = 'qty_"+i+"'/></td><td><input type = 'text' class = 'amount' name = 'amount' id = 'amnt_"+i+"'style = 'width:100%;'/></td><td><a href = '#' class = 'rmv' id = '"+i+"'><img src = '/static/images/rmv.png' style = 'height: 20px; width: 20px;'/></a></td></tr>");    
+            });
+            $('#myModal2').hide();
+            return false;
+        });
+        
 
         $('.itm').click(function(){
             $('.select-what').hide();

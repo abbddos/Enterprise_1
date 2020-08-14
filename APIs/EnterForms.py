@@ -142,3 +142,13 @@ class CustomersForm(Form):
 
 class ForgotPassword(Form):
     email = StringField('Email', validators = [DataRequired()])
+
+class Services(Form):
+    servicename = StringField('Service Name:', validators = [DataRequired()])
+    servicetype = SelectField('Service Type:', choices = [
+        ('Revenue','Revenue'),
+        ('Expense','Expense')
+    ], validators = [DataRequired()])
+    servicecost = StringField('Service Cost:')
+    serviceprice = StringField('Service Price:')
+    description  = TextAreaField('Description')
