@@ -5,6 +5,7 @@
 
 # BUILDING DATABASE
 
+echo 'Enter your root databse username:'
 read dbusername
 psql -U $dbusername -d postgres -a -f model/Model.sql 
 
@@ -30,7 +31,7 @@ pip install -r requirements.txt
 
 # Setting up httpd permissions...
 setsebool -P httpd_can_network_connect 1
-setsebool -P httpd_network_connect_db 1
+setsebool -P httpd_can_network_connect_db 1
 setsebool -P httpd_execmem 1
 setsebool -P daemons_enable_cluster_mode 1
 ausearch -c 'httpd' --raw |audit2allow -M my-httpd

@@ -369,14 +369,14 @@ def NetIncomeStatementPDF(sess_uname, sess_pswd, startdate, enddate):
     data1 = {}
     data2 = {}
     con, cur = EnterpriseAPI.connector(sess_uname, sess_pswd)
-    cur.execute("SELECT * FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)", (startdate, enddate))
+    cur.execute("SELECT * FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s AND accounttype = 'Revenues')", (startdate, enddate))
     data1['rev'] = cur.fetchall()
-    cur.execute("SELECT * FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)", (startdate, enddate))
+    cur.execute("SELECT * FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s AND accounttype = 'Expenses')", (startdate, enddate))
     data1['exp'] = cur.fetchall()
 
-    cur.execute("SELECT SUM(balanceatdate) FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)",(startdate, enddate))
+    cur.execute("SELECT SUM(balanceatdate) FROM ledger WHERE accounttype = 'Revenues' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s AND accounttype = 'Revenues')",(startdate, enddate))
     rev = cur.fetchone()
-    cur.execute("SELECT SUM(balanceatdate) FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s)", (startdate, enddate))
+    cur.execute("SELECT SUM(balanceatdate) FROM ledger WHERE accounttype = 'Expenses' and entrydate = (SELECT MAX(entrydate) FROM ledger WHERE entrydate >= %s AND entrydate <= %s AND accounttype = 'Expenses')", (startdate, enddate))
     exp = cur.fetchone()
 
     if exp[0] == None:
