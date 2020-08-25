@@ -322,12 +322,12 @@ INSERT INTO categories(CategoryName, CategoryType) VALUES
 ('Salaries Payable','Liabilities'),
 ('Interest Payable','Liabilities'),
 ('Sales Revenues','Revenues'),
-('Services Revenues', 'Revenues')
+('Services Revenues', 'Revenues'),
 ('Interest Revenues','Revenues'),
 ('Salaries Expenses','Expenses'),
 ('Wages','Expenses'),
 ('Supplies','Expenses'),
-('Services Expenses', 'Expenses')
+('Services Expenses', 'Expenses'),
 ('Taxes','Expenses'),
 ('Cost of Goods Sold','Expenses'),
 ('Capital Draws','Dividends');
