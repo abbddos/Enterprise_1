@@ -12,20 +12,23 @@ mod = Blueprint('profile', __name__, url_prefix = '/profile')
 
 @mod.route('/view_profile/user_profile/<user>/', methods = ['GET', 'POST'])
 def user_profile(user):
-    data = EnterpriseAPI.GetUser(user)
-    if request.method == 'POST':
-        if request.form['submit'] == 'Submit':
-            try:
-                EnterpriseAPI.UpdateProfile(request.form['firstname'],
-                request.form['lastname'],
-                request.form['email'],
-                request.form['phone1'],
-                request.form['phone2'], user)
-                flash('Profile Updated Successfully', category = 'success')
-                return redirect(url_for('profile.user_profile', user = user))
-            except Exception as e:
-                flash(str(e), category = 'fail')
-    return render_template('profile/user_profile.html', user = user, username = session['username'], role = session['role'], data = data)
+    if user == 'admin':
+        return redirect(url_for('profile.change_password', user = user))
+    else:
+        data = EnterpriseAPI.GetUser(user)
+        if request.method == 'POST':
+            if request.form['submit'] == 'Submit':
+                try:
+                    EnterpriseAPI.UpdateProfile(request.form['firstname'],
+                    request.form['lastname'],
+                    request.form['email'],
+                    request.form['phone1'],
+                    request.form['phone2'], user)
+                    flash('Profile Updated Successfully', category = 'success')
+                    return redirect(url_for('profile.user_profile', user = user))
+                except Exception as e:
+                    flash(str(e), category = 'fail')
+        return render_template('profile/user_profile.html', user = user, username = session['username'], role = session['role'], data = data)
 
 # ........ This url is lined to ChangePassword API at Model.py to allow...
 # ........ user to change his/her password.
