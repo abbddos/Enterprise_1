@@ -1,5 +1,5 @@
 import psycopg2
-import hashlib
+
 #from werkzeug.utils import secure_filename
 import os
 from openpyxl import load_workbook
@@ -7,6 +7,7 @@ import random
 from datetime import date
 import pandas as pd
 import EnterpriseConfig
+import hashlib
 
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'xls','xlsx'])

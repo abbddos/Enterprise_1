@@ -1,4 +1,19 @@
 {% extends 'layout.html'%}
 {% block content%}
+<div class = 'home-image-placeholder' >
+    <img src = "{{url_for('static', filename = 'images/cover.jpg')}}" class = 'home-image'/>
+</div>
+<style>
+    .home-image-placeholder{
+        text-align: center;
+        padding: 5%;
+    }
 
+    .home-image{
+        width: 600px;
+        height:600px;
+        border-radius: 5%;
+        box-shadow: 0px 8px 16px 0px rgba(199, 199, 199, 0.5);
+    }
+</style>
 {% endblock %}
