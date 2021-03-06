@@ -92,7 +92,7 @@
           <label>Roles:</label>
         </div>
         <div class = 'col-b'>
-          <table>
+          <table class = 'table-in-form'>
             <tr>
               <th><input type = 'Checkbox' id = 'select_all_roles' />Select All</th>
               <th>Roles:</th>
@@ -128,27 +128,31 @@
           </select>
         </div>
     </div>
-    <h5 style = 'color: rgb(0,0,100); font-weight: bold; text-align: left;'>Can Approve:</h5>
-    
-    <table>
-      <tr>
-        <th><input type = 'Checkbox' id = 'select_all' /></th>
-        <th>All</th>
-      </tr>
-      <tr>
-        <td><input type = 'Checkbox' value = 'inventory-requests' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'inventory-requests' %} checked {% else %}{% endif %}{%endfor%}/></td>
-        <td>Inventory Requests</td>
-      </tr>
-      <tr>
-        <td><input type = 'Checkbox' value = 'invoices' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'invoices' %} checked {% else %}{% endif %}{%endfor%} /></td>
-        <td>Invoices</td>
-      </tr>
-      <tr>
-        <td><input type = 'Checkbox' value = 'bills' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'bills' %} checked {% else %}{% endif %}{%endfor%}/></td>
-        <td>Bills</td>
-      </tr>
-    </table>
-    
+    <div class = 'row'>
+      <div class = 'col-a'>
+        <label>Can approve:</label>
+      </div>
+      <div class = 'col-b'>
+        <table class = 'table-in-form'>
+          <tr>
+            <th><input type = 'Checkbox' id = 'select_all' /></th>
+            <th>All</th>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'inventory-requests' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'inventory-requests' %} checked {% else %}{% endif %}{%endfor%}/></td>
+            <td>Inventory Requests</td>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'invoices' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'invoices' %} checked {% else %}{% endif %}{%endfor%} /></td>
+            <td>Invoices</td>
+          </tr>
+          <tr>
+            <td><input type = 'Checkbox' value = 'bills' name = 'appr-check' class = 'appr_check' {% for d in data3 %}{% if d[0] == 'bills' %} checked {% else %}{% endif %}{%endfor%}/></td>
+            <td>Bills</td>
+          </tr>
+        </table>
+      </div>
+    </div>
     {% endfor %}
   </div>
   <div class = 'submission'>
@@ -164,7 +168,7 @@
     {% endwith %}
   </div>
 </form>
-<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;' placeholder = 'Search' id = 'srch' />
+<input type = 'text'  placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
       <th>ID</th>

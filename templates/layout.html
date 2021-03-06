@@ -19,6 +19,9 @@
   <body>
     <nav class = "main-nav">
       <ul>
+        <li>
+          <a href = "#" id = 'menu-icon'><img class = "menu-icon" src = "{{url_for('static', filename = 'images/logo.png')}}" /></a>
+        </li>
         {% if  'Admin' in role  or 'root' in role%}
         <li><a href = "{{url_for('users.create_user')}}">Administration</a></li>
         {% endif %}
@@ -46,4 +49,5 @@
     {% endblock%}
     </div>
   </body>
+
 </html>

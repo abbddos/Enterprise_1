@@ -67,7 +67,7 @@
     </div>
     <br />
     
-    <table id = 'itm-table' style = 'width: 100%;'>
+    <table class = 'table-in-form' id = 'itm-table' style = 'width: 100%;'>
       <tr>
         <th>Code:</th>
         <th>Name:</th>
@@ -91,6 +91,7 @@
     {% endwith %}
   </div>
 </form>
+<input type = 'text'  placeholder = 'Search' id = 'srch' />
 <table>
  <tr>
    <th>ID:</th>
@@ -104,7 +105,7 @@
    
  </tr>
  {% for tr in trans %}
-  <tr class = '{{tr[6]}}'>
+  <tr class = '{{tr[6]}} table-row'>
     <td>{{tr[0]}}</td>
     <td>{{tr[1]}}</td>
     <td>{{tr[2]}}</td>
@@ -124,7 +125,7 @@
     <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
     <div class = 'items' stye = 'overflow: scroll;'>
       <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-itm' />
-      <table>
+      <table class = 'table-in-form'>
         <tr>
           <th>Item Code:</th>
           <th>Item Name: </th>
@@ -151,7 +152,7 @@
       <h5 style = 'color: green;'> Pick an Pakcage from the table below to add it to package</h5>
       <div class = 'items' stye = 'overflow: scroll;'>
         <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-pkg' />
-        <table>
+        <table class = 'table-in-form'>
           <tr>
             <th>Package Code:</th>
             <th>Package Name: </th>

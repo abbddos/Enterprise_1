@@ -2,7 +2,7 @@
 {% from 'renderfield.html' import render_field %}
 {% block accountingpage%}
 <div class = 'actionpage'>
-<form method = 'post' style = 'float: left; margin-left: -35px; width: 98%;' >
+<form class = 'journal-form' method = 'post'>
   <h3>Journal Entries</h3>
   <div class = 'fields'>
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -30,7 +30,7 @@
         <input type = 'text' value = '{{data2[2]}}' disabled />
       </div>
     </div>
-    <table style = 'width: 100%;'>
+    <table class  = 'table-in-form' style = 'width: 100%;'>
         <thead>
         <tr>
             <th>Account Type</th>
@@ -83,7 +83,7 @@
     <p id = 'message'></p>
   </div>
 </form>
-<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+<input type = 'text' placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
     <th>Entry ID</th>

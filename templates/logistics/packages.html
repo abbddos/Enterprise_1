@@ -25,7 +25,7 @@
   </div>
   <div class = 'itms' style = 'text-align: left;'>
     <a href = '#' id = 'PickItem'>Add Item</a>
-    <table id = 'itm-table'>
+    <table class = 'table-in-form' id = 'itm-table'>
       <tr>
         <th>Item Code:</th>
         <th>Item Name:</th>
@@ -50,7 +50,7 @@
     {% endwith %}
   </div>
 </form>
-<input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+<input type = 'text' placeholder = 'Search' id = 'srch' />
 <table>
   <tr>
     <th>Code:</th>
@@ -73,7 +73,7 @@
     <h5 style = 'color: green;'> Pick an item from the table below to add it to package</h5>
     <div class = 'items' stye = 'overflow: scroll;'>
       <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch-itm' />
-      <table>
+      <table class = 'table-in-form'>
         <tr>
           <th>Item Code:</th>
           <th>Item Name: </th>

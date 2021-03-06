@@ -13,6 +13,12 @@ body{
   z-index: 1;
 }
 
+.menu-icon{
+  width: 25px;
+  height: 25px;
+  display: none;
+}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -149,6 +155,16 @@ form{
   padding: 15px;
   box-shadow: 5px 10px 20px rgb(200,200,200);
   border-radius: 15px;
+}
+
+.search-in-form{
+  border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;
+}
+
+.journal-form{
+  float: left; 
+  margin-left: -35px; 
+  width: 98%;
 }
 
 .form-in-table{
@@ -559,15 +575,28 @@ ul.warehouse{
   color: rgb(0,0,100);
 }
 
+#srch{
+  border: solid rgb(0,0,100); 
+  border-width: 1px; 
+  border-radius: 3px; 
+  margin: 5px; 
+  float: left;
+}
 @media only screen and (max-width: 1366px) and (max-height: 1024px) and (orientation: landscape){
 
+  .menu-icon{
+    width: 25px;
+    height: 25px;
+    display: block;
+  }
   .vertical-menu {
-    width: 16%; /* Set a width if you like */
+    width: 300px; /* Set a width if you like */
     height: 100%;
     position: fixed;
     background-color: #eee;
-    padding: 3px; 
+    padding: 5px;
     float: left;
+    display: none;
   }
   
   .vertical-menu:hover{
@@ -592,11 +621,51 @@ ul.warehouse{
   form{
     width: 98%;
     background-color: #eee; /* Grey background color */
-    margin-left: -3%;
+    margin-left: -12%; 
     padding: 15px;
     box-shadow: 5px 10px 20px rgb(200,200,200);
     border-radius: 15px;
   }
 
+  .journal-form{
+    width: 98%;
+    background-color: #eee; /* Grey background color */
+    margin-left: -12%; 
+    padding: 15px;
+    box-shadow: 5px 10px 20px rgb(200,200,200);
+    border-radius: 15px;
+  }
 
+  table{
+    width: 95%;
+    border: solid;
+    border-width: 1px;
+    border-color: #eee;
+    box-shadow: 5px 10px 20px rgb(200,200,200);
+    overflow: scroll; 
+    margin-left: -12%;   
+  }
+
+  .col-b{
+    text-align: right;
+  }
+
+  .table-in-form{
+    width: 100%;
+    border: solid;
+    border-width: 1px;
+    border-color: #eee;
+    box-shadow: 5px 10px 20px rgb(200,200,200);
+    overflow: scroll; 
+    margin-left: 0%;   
+  }
+
+  #srch{
+    border: solid rgb(0,0,100); 
+    border-width: 1px; 
+    border-radius: 3px; 
+    margin: 5px; 
+    float: left;
+    margin-left: -12%;
+  }
 }
