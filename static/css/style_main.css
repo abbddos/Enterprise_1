@@ -157,6 +157,10 @@ form{
   border-radius: 15px;
 }
 
+#bigform{
+  margin-left: -35px;
+}
+
 .search-in-form{
   border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;
 }
@@ -590,10 +594,11 @@ ul.warehouse{
     display: block;
   }
   .vertical-menu {
-    width: 300px; /* Set a width if you like */
+    width: 25%; /* Set a width if you like */
     height: 100%;
     position: fixed;
-    background-color: #eee;
+    background-color: rgba(0,0,0,0.7); 
+    color: white;
     padding: 5px;
     float: left;
     display: none;
@@ -604,8 +609,8 @@ ul.warehouse{
   }
   
   .vertical-menu a {
-    background-color: #eee; /* Grey background color */
-    color: black; /* Black text color */
+    background-color: rgba(0,0,0,0); 
+    color: white; /* Black text color */
     display: block; /* Make the links appear below each other */
     padding: 12px; /* Add some padding */
     text-decoration: none; /* Remove underline from links */
@@ -625,6 +630,10 @@ ul.warehouse{
     padding: 15px;
     box-shadow: 5px 10px 20px rgb(200,200,200);
     border-radius: 15px;
+  }
+
+  #bigform{
+    margin-left: -12%;
   }
 
   .journal-form{

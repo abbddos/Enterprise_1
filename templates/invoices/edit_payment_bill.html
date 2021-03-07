@@ -3,7 +3,7 @@
 {% block invoicespage%}
 
 <div class = 'actionpage'>
-    <form method = 'post' style = 'margin-left: -35px; width: 98%;' >
+    <form method = 'post' style = ' width: 98%;' id = 'bigform'>
       <h3>Edit Payment Bill</h3>
       <div class = 'fields'>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
@@ -62,7 +62,7 @@
                 <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px; color: rgba(0,0,100);" id = 'add-entry' {% if data1[7] != 'Pending'%} hidden {% endif %}>Add payment entry</a>
             </div>
         <table style = 'width: 100%;'>
-            <thead>
+            <thead class = 'table-in-form'>
             <tr>
                 <th>Account Type</th>
                 <th>Account Category</th>
@@ -136,7 +136,7 @@
         <p id = 'message'></p>
       </div>
     </form>
-    <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left; box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+    <input type = 'text'  placeholder = 'Search' id = 'srch' />
     <table>
       <tr>
         <th>Bill Code</th>

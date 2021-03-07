@@ -2,7 +2,7 @@
 {% from 'renderfield.html' import render_field %}
 {% block invoicespage%}
 <div class = 'actionpage'>
-    <form method = 'POST' style = 'margin-left: -35px; width: 98%;'>
+    <form method = 'POST' style = ' width: 98%;' id = 'bigform'>
         {% if Stat[0] != 'pending'%}
         <p style = 'color:red; text-align: left;'>This invoice is {{Stat[0]}}, you cannot update its status...</p>
         {% endif %}
@@ -64,7 +64,7 @@
             <p id = 'message'></p>
         </div>
     </form>
-    <input type = 'text' style = 'border: solid rgb(0,0,100); border-width: 1px; border-radius: 3px; margin: 5px; float: left;box-shadow: 1px 1px 2px rgb(200,200,200);' placeholder = 'Search' id = 'srch' />
+    <input type = 'text'  placeholder = 'Search' id = 'srch' />
     <table>
         <tr>
             <th>Invoice Code</th>
