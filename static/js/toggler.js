@@ -2,7 +2,6 @@ $(document).ready(function(){
  
   $('#menu-icon').click(function(){
     $('.vertical-menu').animate({width: "toggle" }, 100);
-    
   });
 
   $('#warehouse').click(function(){

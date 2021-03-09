@@ -125,7 +125,7 @@ def EditInvoice(sess_uname, sess_pswd, invcode, type, sentto, invdate, currency,
 
 def GetInvoices(tp):
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT invoicecode, invoicedate, created_by, terms, invstatus FROM invoices WHERE invoicetype = %s GROUP BY invoicecode, invoicedate, created_by, terms, invstatus', (tp,))
+    cur.execute('SELECT invoicecode, invoicedate, created_by, terms, invstatus, sentto FROM invoices WHERE invoicetype = %s GROUP BY invoicecode, invoicedate, created_by, terms, invstatus, sentto', (tp,))
     data = cur.fetchall()
     con.close()
     return data

@@ -108,6 +108,7 @@ input[type = password]{
   body{
     background-repeat: no-repeat;
     background-size: cover;
+    text-align: center;
   }
 
   form{
@@ -116,8 +117,8 @@ input[type = password]{
     border-color: rgb(225,225,225);
     border-width: 1px;
     color: white;
-    width: 33%;
-    margin-left: 33%;
+    width: 50%;
+    margin-left: 25%;
     margin-top: 10%;
     padding: 15px;
   }

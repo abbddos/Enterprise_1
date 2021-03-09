@@ -188,6 +188,7 @@
             <th>Created by</th>
             <th>Inovice terms</th>
             <th>Status</th>
+            <th>Recipient</th>
             <th>View</th>
             <th>Print</th>
             <th>Edit</th>
@@ -199,6 +200,7 @@
                 <td>{{inv[2]}}</td>
                 <td>{{inv[3]}}</td>
                 <td>{{inv[4]}}</td>
+                <td>{{inv[5]}}</td>
                 <td><a href = "{{url_for('invoices.ViewInvoice', code = inv[0], tpy = 'sales')}}"><img src = "{{url_for('static', filename = 'images/view.png')}}"style = "width: 25px; height: 25px;"></a></td>
                 <td><a href = "{{url_for('invoices.PrintInvoice', code = inv[0])}}"><img src = "{{url_for('static', filename = 'images/invoice.png')}}" style = "width: 25px; height: 25px;" /></a></td>
                 <td><a href = "{{url_for('invoices.EditSalesInvoice', invcode = inv[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;' /></a></td>
