@@ -652,7 +652,8 @@ ul.warehouse{
     border-color: #eee;
     box-shadow: 5px 10px 20px rgb(200,200,200);
     overflow: scroll; 
-    margin-left: -12%;   
+    margin-left: -12%;  
+    width: 98%; 
   }
 
   .col-b{
@@ -676,5 +677,6 @@ ul.warehouse{
     margin: 5px; 
     float: left;
     margin-left: -12%;
+    width: 98%;
   }
 }
