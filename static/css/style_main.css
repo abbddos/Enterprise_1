@@ -157,6 +157,14 @@ form{
   border-radius: 15px;
 }
 
+.miniform{
+  width: 95%;
+  background-color: white;
+  padding: 2px;
+  border-radius: 0px;
+  margin-left: 2px; 
+}
+
 #bigform{
   margin-left: -35px;
 }
@@ -351,6 +359,11 @@ table{
   box-shadow: 5px 10px 20px rgb(200,200,200);
   overflow: scroll;
   
+}
+
+.minitable {
+  width: 100%;
+  box-shadow: none;
 }
 
 th{
@@ -634,6 +647,14 @@ ul.warehouse{
 
   #bigform{
     margin-left: -12%;
+  }
+
+  .miniform{
+    width: 95%;
+    background-color: white;
+    padding: 2px;
+    border-radius: 0px;
+    margin-left: 2px; 
   }
 
   .journal-form{

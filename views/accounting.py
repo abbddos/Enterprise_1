@@ -81,7 +81,7 @@ def add_account(category, account):
 @mod.route('/edit_account/<type>/<category>/<account>', methods = ['GET','POST'])
 def edit_account(type, category, account):
     data = AccountingAPI.GetCategories()
-    cats = AccountingAPI.GetCategory(session['username'], session['password'], account)
+    cats = AccountingAPI.GetCategory(session['username'], session['password'], category)
     currencies = AccountingAPI.GetCurrencies()
     AllAccounts = AccountingAPI.GetAccounts(type, category)
     AccountData = AccountingAPI.GetAccountData(session['username'], session['password'], type, category, account)
@@ -259,6 +259,30 @@ def TrialSheet():
                 response.headers['Content-Disposition'] = 'attachement; filename = Trial_Balance_Statement.csv'
                 return response
     return render_template('accounting/get_trial_sheet.html', username = session['username'], role = session['role'], data = data, data1 = data1)
+
+@mod.route('/ExportAccountLedger/<category>/<accountname>', methods = ['GET','POST'])
+def ExportAccountLedger(category, accountname):
+    if request.method == 'POST':
+        if request.form['export'] == 'Export':
+            try:
+                if request.form['export-data'] == 'csv':
+                    file = AccountingAPI.GrabAccountEntriestoCSV(accountname)
+                    response = make_response(file)
+                    response.headers['Content-type'] = 'text/csv'
+                    response.headers['Content-Disposition'] = 'attachement; filename = {}_ledger.csv'.format(accountname)
+                    return response
+                elif request.form['export-data'] == 'pdf':
+                    data1, data2, data3 = AccountingAPI.GrabAccountEntries(accountname)
+                    rendered = render_template('accounting/Account_Ledger.html', data1 = data1, data2 = data2, data3 = data3, AccountName = accountname)
+                    pdf = pdfkit.from_string(rendered, False)
+                    response = make_response(pdf)
+                    response.headers['Content-type'] = 'application/pdf'
+                    response.headers['Content-Disposition'] = 'attachement; filename = {}_Ledger.pdf'.format(accountname)
+                    return response
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('accounting.add_account', category = category, account = accountname))
+    return redirect(url_for('accounting.add_account', category = category, account = accountname))
 
 #REST API
 @mod.route('/checker/')

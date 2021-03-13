@@ -230,7 +230,14 @@ def GrabAccountEntries(AccountName):
     data3 = cur.fetchone()
     con.close()
     return data1, data2, data3
-    
+
+def GrabAccountEntriestoCSV(AccountName):
+    con, cur = EnterpriseAPI.root()
+    df = pd.read_sql("select * from view_journal where accountname = '{}' ORDER BY entrydate".format(AccountName), con)
+    file = df.to_csv()
+    con.close()
+    return file
+
 def GetAllCurrencies():
     con, cur = EnterpriseAPI.root()
     cur.execute('SELECT * FROM currency ORDER BY currencyid')

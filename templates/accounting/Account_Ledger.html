@@ -1,0 +1,93 @@
+<html>
+    <head>
+        <style>
+            body{font-family: "Arial Black", Gadget, sans-serif;}
+
+            p{white-space: pre-wrap;}
+
+            h1{
+                color: white;
+                background-color: rgb(0,0,100);}
+                
+            table{
+                width: 95%;
+                border: solid;
+                border-width: 1px;
+                border-color: #eee;
+                margin-bottom: 25px;
+                font-size: 12px;}
+
+            th{
+                width: auto;
+                background-color: rgb(0,0,100);
+                color: white;
+                text-align: left;
+                padding: 5px;
+                border-bottom: solid;}
+
+            tr{
+                border-bottom: solid;
+                border-width: 1px;
+                border-color: black;
+                background-color: white;}
+
+            tr:nth-child(even){background-color: #eee;}
+
+            .balance-total{
+                background-color:darkgray;
+                font-weight: bold;
+                font-size: 12px;
+            }
+
+            .footer{
+                position: fixed;
+                color: gray;
+                bottom: 0;
+                width: 100%;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>{{AccountName}} Ledger</h1>
+            <table class = 'table-in-form'>
+                <thead>
+                    <tr>
+                        <th>Entry Date:</th>
+                        <th>Debit:</th>
+                        <th>Credit:</th>
+                        <th>Comments:</th>
+                    </tr>
+                </thead>
+                <tbody  id = 'AccountContent'>
+                    {% for i in data1 %}
+                        <tr>
+                        <td>{{i[0]}}</td>
+                        <td>{{i[1]}}</td>
+                        <td>{{i[2]}}</td>
+                        <td>{{i[3]}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr style = 'background-color: rgb(204,204,255);'>
+                        <td><p>Totals:</p></td>
+                        <td>{{data2[0]}}</td>
+                        <td>{{data2[1]}}</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </br>
+            <table class = 'table-in-form'>
+                <tr>
+                    <td>Opening Balance:</td>
+                    <td id = 'openbalance'>{{data3[0]}}</td>
+                </tr>
+                <tr>
+                    <td>Current Balance:</td>
+                    <td id = 'currentbalance'>{{data3[1]}}</td>
+                </tr>
+            </table>
+    </body>
+</html>

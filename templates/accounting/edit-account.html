@@ -9,6 +9,11 @@
             <input type = 'text' name = 'AccountID' value = '{{acdata[0]}}' hidden />
             <div class = 'row'>
                 <div class = 'col-a'>
+                    <a href = '#' style = "text-decoration: none; font-weight: bold; padding-bottom: 20px;" class = 'edit_category'>Edit Category</a>
+                </div>
+            </div><br>
+            <div class = 'row'>
+                <div class = 'col-a'>
                     <label>Account Code:</label>
                 </div>
                 <div class = 'col-b'>
@@ -112,7 +117,7 @@
                         <label>Category Name:</label>
                     </div>
                     <div class = 'col-b'>
-                        <input type = 'text' name = 'CategoryName' value = '{{cats[1]}}'/>
+                        <input type = 'text' name = 'CategoryName' value = '{{cats[1]}}' id = 'cat'/>
                     </div>
                 </div>
                 <div class = 'row'>
@@ -165,14 +170,30 @@
             <td id = 'currentbalance'></td>
         </tr>
     </table>
+    </br>
+    <form class = 'miniform' method = 'POST' id = 'ledger-form'>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+        <table class = 'minitable'>
+            <tr>
+                <td>Export Data as:</td>
+                <td><select name = 'export-data'>
+                    <option value = 'csv'>.csv</option>
+                    <option value = 'pdf'>.pdf</option>
+                </select></td>
+                <td><input type = 'submit' class = 'btn-active' name = 'export' value = 'Export' /></td>
+            </tr>
+        </table>
+    </form>
 </div>
 </div>
 <script>
 $(document).ready(function(){
     $('.t-sheet').click(function(){
         var Name = $(this).attr('id');
+        var Cat = $('#cat').val()
         $('#t-title').text(Name);
         $('#t-title').append('<span class="close">&times;</span>');
+        $('#ledger-form').attr("action","/accounting/ExportAccountLedger/" + Cat + "/" + Name);
         $.getJSON('/accounting/GrabAccountEntries/' + Name, function(data){
             $.each(data['info'], function(key, value){
                 $('#AccountContent').append('<tr><td>'+value[0]+'</td><td>'+value[1]+'</td><td>'+value[2]+'</td><td>'+value[3]+'</td></tr>');

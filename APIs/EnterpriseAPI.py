@@ -396,7 +396,7 @@ def CreateSecondaryUnit(sess_uname, sess_pswd,name, code, unit, measure):
 
 def GetSecondaryUnits():
     con, cur = root()
-    cur.execute('SELECT * FROM SecondaryUnits')
+    cur.execute('SELECT * FROM SecondaryUnits ORDER BY code')
     data = cur.fetchall()
     con.close()
     return data
@@ -635,7 +635,7 @@ def Items_Packs_Inventory_to_PDF(sess_uname, sess_pswd, fromdate, todate, itm, p
 
 def Transactions_Report_to_CSV(sess_uname, sess_pswd):
     con, cur = connector(sess_uname, sess_pswd)
-    data = pd.read_sql('SELECT * FROM TRANSACTIONS', con)
+    data = pd.read_sql('SELECT * FROM TRANSACTIONS ORDER BY id', con)
     file = data.to_csv()
     con.close()
     return file
