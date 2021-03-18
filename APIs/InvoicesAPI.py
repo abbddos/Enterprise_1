@@ -21,7 +21,7 @@ def UpdateCustomer(sess_uname, sess_pswd, cst, name, address, phone1, phone2, em
 
 def GetAllCustomers():
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT id, name, address, phone_1, phone_2, email, pobox FROM customers')
+    cur.execute('SELECT id, name, address, phone_1, phone_2, email, pobox FROM customers ORDER BY id')
     data = cur.fetchall()
     con.close()
     return data
@@ -47,7 +47,7 @@ def UpdateService(sess_uname, sess_pswd, serviceid, servicename, servicetype, se
 
 def GetAllServices():
     con, cur = EnterpriseAPI.root()
-    cur.execute('SELECT * FROM Services')
+    cur.execute('SELECT * FROM Services ORDER BY serviceid')
     data = cur.fetchall()
     con.close()
     return data

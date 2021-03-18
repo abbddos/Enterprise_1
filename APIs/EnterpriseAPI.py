@@ -222,7 +222,7 @@ def UpdateCompanyProfile(sess_uname, sess_pswd, name, address, phone1, phone2, e
 
 def GetProviders():
     con, cur = root()
-    cur.execute('SELECT id, name, address, phone_1, phone_2, email, pobox FROM providers')
+    cur.execute('SELECT id, name, address, phone_1, phone_2, email, pobox FROM providers ORDER BY id')
     data = cur.fetchall()
     con.close()
     return data
