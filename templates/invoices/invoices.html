@@ -37,5 +37,21 @@
       {% endif %}
     {% endwith %}
 {% block invoicespage%}
+<div class = 'app-image-placeholder' >
+  <img src = "{{url_for('static', filename = 'images/invoices.jpg')}}" class = 'app-image'/>
+</div>
+<style>
+  .app-image-placeholder{
+      text-align: center;
+      padding: 5%;
+  }
+
+  .app-image{
+      margin-left: 15%;
+      width: 80%;
+      height:95%;
+
+  }
+</style>
 {% endblock %}
 {% endblock %}
