@@ -7,6 +7,8 @@ read dbusername
 psql -U $dbusername -d postgres -a -f ~/enterprise/model/Model.sql
 
 # INSTALLING DEPENDENCIES...
+apt install python3.9
+apt install python3-pip
 apt install nginx
 apt install supervisor
 apt install wkthmltopdf
