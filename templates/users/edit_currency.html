@@ -1,6 +1,6 @@
-{% extends 'accounting/accounting.html'%}
+{% extends 'users/admin.html'%}
 {% from 'renderfield.html' import render_field %}
-{% block accountingpage%}
+{% block adminpage%}
 <div class = 'actionpage'>
 <form method = 'post'>
   <h3>Edit Currency</h3>
@@ -82,7 +82,7 @@
       <td>{{i[2]}}</td>
       <td>{{i[3]}}</td>
       <td>{{i[4]}}</td>
-      <td><a href = "{{url_for('accounting.EditCurrency', code = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
+      <td><a href = "{{url_for('users.EditCurrency', code = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
     </tr>
   {% endfor %}
 </table>

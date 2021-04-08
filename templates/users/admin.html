@@ -4,8 +4,11 @@
   <h3>Administration</h3>
  <a href = "{{url_for('users.create_user')}}">Create/Edit Users</a>
  <a href = "{{url_for('users.CompanyProfile')}}">Company Profile</a>
+ <a href = "{{url_for('users.currencies')}}">Currencies settings</a>
+ {% if username == 'admin' and 'root' in role %}
+  <a href = "{{url_for('users.change_admin_password', user = 1)}}">Change Admin Password</a>
+ {% endif %}
 </div>
-
   {% block adminpage%}
   {% endblock %}
 

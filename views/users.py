@@ -4,6 +4,8 @@ import app
 from APIs import EnterForms
 from  APIs import EnterpriseAPI
 import os
+from APIs import AccountingForms
+from  APIs import AccountingAPI
 
 
 mod = Blueprint('users', __name__, url_prefix = '/users')
@@ -110,3 +112,68 @@ def CompanyProfile():
                 flash(str(e), category = 'fail')
                 return redirect(url_for('users.CompanyProfile'))
     return render_template('users/company_profile.html', username = session['username'], role = session['role'], pro = profile)
+
+@mod.route('/currencies_settings', methods = ['GET','POST'])
+def currencies():
+    data = AccountingAPI.GetCategories()
+    form = AccountingForms.Currencies(request.form)
+    data1 = AccountingAPI.GetAllCurrencies()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                NewCur = AccountingAPI.AddCurrency(session['username'], session['password'],
+                request.form['CurrencyName'],
+                request.form['CurrencyCode'],
+                request.form['ExchageRate'],
+                request.form['Functional'])
+                if NewCur == False:
+                    flash('Currency is successfully added', category = 'success')
+                    return redirect(url_for('users.currencies'))
+                else:
+                    flash('You already have a functional currency', category = 'fail')
+                    return redirect(url_for('users.currencies'))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('users.currencies'))
+    return render_template('users/currencies.html', username = session['username'], role = session['role'], form = form, data = data, data1 = data1)
+
+@mod.route('/edit_currency/<code>', methods = ['GET','POST'])
+def EditCurrency(code):
+    data = AccountingAPI.GetCategories()
+    data1 = AccountingAPI.GetCurrency(code)
+    data2 = AccountingAPI.GetAllCurrencies()
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit':
+            try:
+                UpCur = AccountingAPI.UpdateCurrency(session['username'], session['password'],
+                code, 
+                request.form['CurrencyName'],
+                request.form['CurrencyCode'],
+                request.form['ExchangeRate'],
+                request.form['Functional'])
+                if UpCur == False:
+                    flash('Currency updated successfully...', category = 'success')
+                    return redirect(url_for('users.currencies'))
+                else:
+                    flash('You already have a functional currency', category = 'fail')
+                    return redirect(url_for('users.EditCurrency', code = code))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+                return redirect(url_for('users.currencies'))
+    return render_template('users/edit_currency.html', username = session['username'], role = session['role'], data = data, data1 = data1, data2 = data2)
+
+@mod.route('/change_admin_password/<user>/', methods = ['GET' ,'POST'])
+def change_admin_password(user):
+    form = EnterForms.ChangePassword(request.form)
+    if request.method == 'POST':
+        if request.form['submit'] == 'Submit' and form.validate():
+            try:
+                EnterpriseAPI.ChangePassword(user, request.form['currentpswd'], request.form['newpswd'])
+                flash('Password changed successfully', category = 'success')
+                return redirect(url_for('users.change_admin_password', user = user))
+            except Exception as e:
+                flash(str(e), category = 'fail')
+        else:
+            flash('Passwords must match', category = 'fail')
+            return render_template('users/change_password.html', username = session['username'], role = session['role'], user = user, form = form)
+    return render_template('users/change_password.html', username = session['username'], role = session['role'], user = user, form = form)

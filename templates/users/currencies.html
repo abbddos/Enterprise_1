@@ -1,0 +1,50 @@
+{% extends 'users/admin.html'%}
+{% from 'renderfield.html' import render_field %}
+{% block adminpage%}
+<div class = 'actionpage'>
+<form method = 'post'>
+  <h3>Currencies settings</h3>
+  <div class = 'fields'>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+    {{ render_field(form.CurrencyName) }}
+    {{ render_field(form.CurrencyCode) }}
+    {{ render_field(form.ExchageRate) }}
+    {{ render_field(form.Functional) }}
+  </div>
+  <div class = 'submission'>
+    <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' />
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+          {% for category, message in messages %}
+            <div class = "{{category}}">
+            <p>{{ message }}</p>
+            </div>
+          {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <p id = 'message'></p>
+  </div>
+</form>
+<input type = 'text'  placeholder = 'Search' id = 'srch' />
+<table>
+  <tr>
+    <th>Currency ID</th>
+    <th>Currency Name</th>
+    <th>Currency Code</th>
+    <th>Exchange Rate</th>
+    <th>Functional Currency</th>
+    <th>Edit</th>
+  </tr>
+  {% for i in data1 %}
+    <tr class = 'table-row'>
+      <td>{{i[0]}}</td>
+      <td>{{i[1]}}</td>
+      <td>{{i[2]}}</td>
+      <td>{{i[3]}}</td>
+      <td>{{i[4]}}</td>
+      <td><a href = "{{url_for('users.EditCurrency', code = i[0])}}"><img src = "{{url_for('static', filename = 'images/edit.png')}}" style = 'width: 25px; height: 25px;'/></a></td>
+    </tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}
