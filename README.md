@@ -13,7 +13,7 @@ Nterprise developers are not currently supporting any licenses of Nterprise inst
     2. PostgreSQL 12 or higher, 
     3. Git  
 
-*Make sure your server is up to date by running:
+* Make sure your server is up to date by running:
 'sudo apt update && sudo apt upgrade'
 
 * The other requirements, such as Python-3.9, nginx webserver and Supervisor will be automatically installed once you run the installation script included in Nterprise package.
@@ -35,10 +35,10 @@ gitclone https://github.com/abbddos/Enterprise_1.git enterprise
 Before running Nterprise make sure you do the following steps: 
 * Navigate to installation directory in enterprise package,
 * open the nginx configuration file 'enterprise' in the installation directory and make sure you enter your server username as per the image below:
-![alt text](/home/abdul/enterprise/snapshots/nginx_conf.png)
+![alt text](https://github.com/abbddos/Enterprise_1/blob/master/snapshots/nginx_conf.png)
 * save and exit.
 * open the Supervisor configuration file 'enterprise.conf' also included in the installation directory, and enter your server username as per the image below:
-![alt text](/home/abdul/enterprise/snapshots/supervisor_conf.png)
+![alt text](https://github.com/abbddos/Enterprise_1/blob/master/snapshots/supervisor_conf.png)
 * save and exit
 * Finally, in the enterprise directory, edit the EnterpriseConfig.py file, and add the required information as per the instructions included in the file. save and exit and you are ready to install and run Nterprise.
 
