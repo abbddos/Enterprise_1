@@ -37,7 +37,9 @@
         <li class="dropdown">
           <a href="javascript:void(0)" class="dropbtn">{{username}}</a>
           <div class="dropdown-content">
+            {% if username != 'admin' or 'root' not in role%}
             <a href="{{url_for('profile.user_profile', user = username)}}">View Profile</a>
+            {% endif %}
             <a href="{{url_for('logout')}}">Log Out</a>
           </div>
         </li>
