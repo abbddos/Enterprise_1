@@ -730,11 +730,11 @@ BEGIN
 					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, amnt_, created_by, rec.comments);
 				END IF;
 				IF EXISTS(SELECT item FROM items WHERE item = rec.description) THEN
-					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
+					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description; 
 					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
 					amnt_ = amnt * ex_rate;
-					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
-					T_cost = T_cost + ln_cost;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost * rec.quantity, created_by, rec.comments);
+					T_cost = T_cost + (ln_cost * rec.quantity);
 				END IF;				
 			END LOOP;
 
@@ -758,8 +758,8 @@ BEGIN
 					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
 					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
 					amnt_ = amnt * ex_rate;
-					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost, created_by, rec.comments);
-					T_cost = T_cost + ln_cost;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, 0, ln_cost * rec.quantity, created_by, rec.comments);
+					T_cost = T_cost + (ln_cost * rec.quantity);
 				END IF;								
 			END LOOP;
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, bill_amnt, 0,  created_by, '--');
@@ -786,8 +786,8 @@ BEGIN
 					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
 					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
 					amnt_ = amnt * ex_rate;
-					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
-					T_cost = T_cost + ln_cost;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost * rec.quantity, 0, created_by, rec.comments);
+					T_cost = T_cost + (ln_cost * rec.quantity);
 				END IF;				
 			END LOOP;
 			PERFORM CreateJournalEntry(jrncode, bill_type, bill_cat, bill_name, crn, 0, bill_amnt, created_by, '--');
@@ -810,8 +810,8 @@ BEGIN
 					SELECT unit_cost INTO ln_cost FROM items WHERE item = rec.description;
 					amnt = rec.lineamount - (rec.lineamount * (rec.discount/100)) + (rec.lineamount * (rec.tax/100));
 					amnt_ = amnt * ex_rate;
-					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost, 0, created_by, rec.comments);
-					T_cost = T_cost + ln_cost;
+					PERFORM CreateJournalEntry(jrncode, acct, cat, rec.description, crn_, ln_cost * rec.quantity, 0, created_by, rec.comments);
+					T_cost = T_cost + (ln_cost * rec.quantity);
 				END IF;						
 			END LOOP;
 			PERFORM CreateJournalEntry(jrncode, sent_type, sent_cat, sent_name, crn, 0, bill_amnt, created_by, '--');

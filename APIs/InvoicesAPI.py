@@ -224,16 +224,16 @@ def CreateBill(sess_uname, sess_pswd, billdate, tpy, acttype, actcat, actname, c
         for i in range(len(acttype)):
             cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
             (code, billdate, tpy, acttype[i], actcat[i], actname[i], currency[i], debit[i], paymethod['debit'], sess_uname, description[i]))
-        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments))
+        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments, comments))
         con.commit()
     elif tpy == 'reception':
         code = 'REC' + '_' + str(date.today()) + str(random.randint(100000,999999))
         for i in range(len(acttype)):
             cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)', 
             (code, billdate, tpy, acttype[i], actcat[i], actname[i], currency[i], paymethod['credit'], credit[i], sess_uname, description[i]))
-        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
-        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments))
+        cur.execute('INSERT INTO BILLS(billcode, billdate, billtype, accounttype, accountcategory, accountname, currency, debit, credit, createdby, description, comments) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+        (code, billdate, tpy, paymethod['acttype'], paymethod['actcat'], paymethod['actname'], paymethod['currency'], paymethod['debit'], paymethod['credit'], sess_uname, comments, comments))
         con.commit()
     con.close()
 
