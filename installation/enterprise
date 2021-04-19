@@ -3,7 +3,7 @@ server {
 	server_name localhost;
 
 	location /static {
-		alias /home/abdul/enterprise/static;
+		alias /home/ENTER YOUR SERVER USERNAME HERE/enterprise/static;
 	}
 
 	location / {
