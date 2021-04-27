@@ -52,6 +52,15 @@
         </div>
         <div class = 'submission'>
             <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' {% if Stat[0] != 'pending'%} disabled {% endif %}/>
+            {% if type == 'sales' %}
+            <a href = "{{url_for('invoices.SalesInvoice')}}" class = "btn-outline">Back to Sales Invoices</a>
+            {% elif type == 'refund' %}
+            <a href = "{{url_for('invoices.RefundInvoice')}}" class = "btn-outline">Back to Refund Invoices</a>
+            {% elif type == 'return' %}
+            <a href = "{{url_for('invoices.ReturnInvoice')}}" class = "btn-outline">Back to Return Invoices</a>
+            {% elif type == 'procurement' %}
+            <a href = "{{url_for('invoices.ProcurementInvoice')}}" class = "btn-outline">Back to Procurement Invoices</a>
+            {% endif%}
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                   {% for category, message in messages %}

@@ -168,6 +168,7 @@
         </div>
         <div class = 'submission'>
             <input type = 'submit' class = 'btn-active' name = 'submit' value = 'Submit' {% if data1[11] != 'pending'%} disabled {% endif %}/>
+            <a href = "{{url_for('invoices.RefundInvoice')}}" class = "btn-outline">Back to Refund Invoices</a>
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                   {% for category, message in messages %}

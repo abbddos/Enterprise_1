@@ -342,6 +342,24 @@ textarea:disabled{
   border-color: rgb(59, 59, 59);
 }
 
+.btn-outline{
+  border: solid black 1px;
+  background-color: rgba(0,0,0,0);
+  color: black;
+  text-decoration: none;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.btn-outline:hover{
+  border: solid black 1px;
+  background-color: black;
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
 .success {
   text-align: center;
   color: rgb(0,0,100);
