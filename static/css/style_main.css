@@ -314,14 +314,16 @@ textarea:disabled{
 }
 
 .btn-active{
-  border: None;
   color: white;
   font-weight: bold;
+  font-size: 16px;
   background-color: rgb(0,0,100);
+  border: solid 1px rgb(0,0,100);
   margin-top: 5px;
   margin-bottom: 5px;
-  height: 35px;
-  width: 100px;
+  width: 200px;
+  height: 40px;
+  padding: 8px 12px;
 }
 
 .btn-active:hover{
@@ -338,7 +340,7 @@ textarea:disabled{
 .btn-active:disabled{
   background-color: rgb(59,59,59);
   color: white;
-  border: solid;
+  border: solid 1px rgb(59, 59, 59);
   border-color: rgb(59, 59, 59);
 }
 
